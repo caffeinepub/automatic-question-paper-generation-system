@@ -1,0 +1,316 @@
+{
+  "kind": "coverage_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-23T11:37:35.884Z",
+  "sources": {
+    "buildRequest": true,
+    "implementationPlan": true
+  },
+  "requirements": {
+    "total": 15,
+    "implemented": 12,
+    "items": [
+      {
+        "id": "REQ-1",
+        "summary": "Implement teacher authentication system with Internet Identity integration for login/logout functionality",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/hooks/useAuth.ts",
+          "frontend/src/components/AuthProvider.tsx",
+          "frontend/src/components/ProtectedRoute.tsx",
+          "frontend/src/App.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/App.tsx"
+        ]
+      },
+      {
+        "id": "REQ-10",
+        "summary": "Build Generate Question Paper page with form containing subject dropdown, exam duration input, total marks input, and number of questions selector for each category (2 Marks, 4 Marks, MCQ, 6 Marks, 8 Marks), plus Generate Paper button that triggers database-based automatic question selection",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/GeneratePaper.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/GeneratePaper.tsx"
+        ]
+      },
+      {
+        "id": "REQ-11",
+        "summary": "Create backend data model for GeneratedPapers with fields: id, subjectId, subjectName, examDuration, totalMarks, questions (array of question IDs grouped by section), setVariants (5 variants: A, B, C, D, E with shuffled question order), createdAt, and teacherId",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-12",
+        "summary": "Build Generated Question Paper Preview page with formal academic layout including college name header, subject name, time and total marks, questions organized in Section A (MCQ), Section B (2 Marks & 4 Marks), Section C (6 Marks & 8 Marks) with proper numbering, and Download PDF button for each of 5 sets (A, B, C, D, E)",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/PaperPreview.tsx",
+          "frontend/src/components/PaperSection.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/PaperPreview.tsx",
+          "frontend/src/components/PaperSection.tsx"
+        ]
+      },
+      {
+        "id": "REQ-13",
+        "summary": "Implement PDF generation functionality that creates downloadable PDFs of generated question papers maintaining formal academic formatting with college header, sections, and proper numbering",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/utils/pdfGenerator.ts",
+          "frontend/src/pages/PaperPreview.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/utils/pdfGenerator.ts",
+          "frontend/src/pages/PaperPreview.tsx"
+        ]
+      },
+      {
+        "id": "REQ-14",
+        "summary": "Create Generated Papers page that lists all previously generated question papers with details (subject, date, marks) and allows accessing preview and PDF download for each paper",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/GeneratedPapers.tsx",
+          "frontend/src/components/PaperCard.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/GeneratedPapers.tsx",
+          "frontend/src/components/PaperCard.tsx"
+        ]
+      },
+      {
+        "id": "REQ-15",
+        "summary": "Apply consistent navy blue, light blue, white, and light grey color palette across all pages with Poppins or Inter font, rounded buttons with subtle shadows, soft shadows on cards, and responsive grid layout",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/tailwind.config.js",
+          "frontend/src/index.css"
+        ],
+        "matchedFiles": [
+          "frontend/tailwind.config.js",
+          "frontend/src/index.css"
+        ]
+      },
+      {
+        "id": "REQ-2",
+        "summary": "Create Teacher Login page with college logo placeholder, system title 'Automatic Question Paper Generation System', Internet Identity login button, and forgot password link",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/Login.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/Login.tsx"
+        ]
+      },
+      {
+        "id": "REQ-3",
+        "summary": "Build Dashboard page with welcome message showing teacher name, navigation sidebar with links to Dashboard, Add Questions, Question Bank, Generate Paper, Generated Papers, and Logout",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/Layout.tsx",
+          "frontend/src/pages/Dashboard.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/Layout.tsx",
+          "frontend/src/pages/Dashboard.tsx"
+        ]
+      },
+      {
+        "id": "REQ-4",
+        "summary": "Display statistics cards on Dashboard showing Total Subjects, Total Questions, and Papers Generated with real-time counts from database",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/StatsCard.tsx",
+          "frontend/src/pages/Dashboard.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/StatsCard.tsx",
+          "frontend/src/pages/Dashboard.tsx"
+        ]
+      },
+      {
+        "id": "REQ-5",
+        "summary": "Implement database structure visualization on Dashboard showing the workflow: Subjects → Question Categories → Stored Questions → Paper Generation Engine → PDF Output",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/WorkflowDiagram.tsx",
+          "frontend/src/pages/Dashboard.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/WorkflowDiagram.tsx",
+          "frontend/src/pages/Dashboard.tsx"
+        ]
+      },
+      {
+        "id": "REQ-6",
+        "summary": "Create backend data model for Subjects with fields: id, name, code, and ability to add, edit, and delete subjects",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-7",
+        "summary": "Create backend data model for Questions with fields: id, subjectId, category (2 Marks, 4 Marks, MCQ, 6 Marks, 8 Marks), questionText, options (array for MCQ), correctAnswer (for MCQ), difficultyLevel (Easy, Medium, Hard), and timestamp",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-8",
+        "summary": "Build Add Questions page with form containing subject dropdown, question category dropdown, question text area, MCQ options fields (visible only when MCQ is selected), difficulty level dropdown, and Save to Database button with success message popup",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/AddQuestion.tsx",
+          "frontend/src/hooks/useToast.ts"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/AddQuestion.tsx"
+        ]
+      },
+      {
+        "id": "REQ-9",
+        "summary": "Create Question Bank page with ability to view all questions grouped by subject and category, and provide edit and delete functionality for both subjects and questions",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/QuestionBank.tsx",
+          "frontend/src/components/QuestionCard.tsx",
+          "frontend/src/components/EditQuestionModal.tsx",
+          "frontend/src/components/SubjectManager.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/QuestionBank.tsx",
+          "frontend/src/components/QuestionCard.tsx",
+          "frontend/src/components/EditQuestionModal.tsx",
+          "frontend/src/components/SubjectManager.tsx"
+        ]
+      }
+    ]
+  },
+  "changedFiles": [
+    "backend/main.mo",
+    "build-request.json",
+    "build-template/Dockerfile",
+    "build-template/LICENSE",
+    "build-template/README.md",
+    "build-template/deploy.sh",
+    "build-template/icp.yaml",
+    "build-template/package.json",
+    "build-template/pnpm-lock.yaml",
+    "build-template/pnpm-workspace.yaml",
+    "build-template/scripts/prune-unused-images.js",
+    "build-template/scripts/resize-images.js",
+    "build-template/src/backend/canister.yaml",
+    "build-template/src/backend/system-idl/aaaaa-aa.did",
+    "build-template/src/frontend/canister.yaml",
+    "build-template/src/frontend/components.json",
+    "build-template/src/frontend/env.json",
+    "build-template/src/frontend/eslint-rules/no-bigint-in-query-keys.js",
+    "build-template/src/frontend/eslint-rules/require-internet-identity-provider.js",
+    "build-template/src/frontend/eslint.config.js",
+    "build-template/src/frontend/package.json",
+    "build-template/src/frontend/postcss.config.js",
+    "build-template/src/frontend/src/components/ui/accordion.tsx",
+    "build-template/src/frontend/src/components/ui/alert-dialog.tsx",
+    "build-template/src/frontend/src/components/ui/alert.tsx",
+    "build-template/src/frontend/src/components/ui/aspect-ratio.tsx",
+    "build-template/src/frontend/src/components/ui/avatar.tsx",
+    "build-template/src/frontend/src/components/ui/badge.tsx",
+    "build-template/src/frontend/src/components/ui/breadcrumb.tsx",
+    "build-template/src/frontend/src/components/ui/button.tsx",
+    "build-template/src/frontend/src/components/ui/calendar.tsx",
+    "build-template/src/frontend/src/components/ui/card.tsx",
+    "build-template/src/frontend/src/components/ui/carousel.tsx",
+    "build-template/src/frontend/src/components/ui/chart.tsx",
+    "build-template/src/frontend/src/components/ui/checkbox.tsx",
+    "build-template/src/frontend/src/components/ui/collapsible.tsx",
+    "build-template/src/frontend/src/components/ui/command.tsx",
+    "build-template/src/frontend/src/components/ui/context-menu.tsx",
+    "build-template/src/frontend/src/components/ui/dialog.tsx",
+    "build-template/src/frontend/src/components/ui/drawer.tsx",
+    "build-template/src/frontend/src/components/ui/dropdown-menu.tsx",
+    "build-template/src/frontend/src/components/ui/form.tsx",
+    "build-template/src/frontend/src/components/ui/hover-card.tsx",
+    "build-template/src/frontend/src/components/ui/input-otp.tsx",
+    "build-template/src/frontend/src/components/ui/input.tsx",
+    "build-template/src/frontend/src/components/ui/label.tsx",
+    "build-template/src/frontend/src/components/ui/menubar.tsx",
+    "build-template/src/frontend/src/components/ui/navigation-menu.tsx",
+    "build-template/src/frontend/src/components/ui/pagination.tsx",
+    "build-template/src/frontend/src/components/ui/popover.tsx",
+    "build-template/src/frontend/src/components/ui/progress.tsx",
+    "build-template/src/frontend/src/components/ui/radio-group.tsx",
+    "build-template/src/frontend/src/components/ui/resizable.tsx",
+    "build-template/src/frontend/src/components/ui/scroll-area.tsx",
+    "build-template/src/frontend/src/components/ui/select.tsx",
+    "build-template/src/frontend/src/components/ui/separator.tsx",
+    "build-template/src/frontend/src/components/ui/sheet.tsx",
+    "build-template/src/frontend/src/components/ui/sidebar.tsx",
+    "build-template/src/frontend/src/components/ui/skeleton.tsx",
+    "build-template/src/frontend/src/components/ui/slider.tsx",
+    "build-template/src/frontend/src/components/ui/sonner.tsx",
+    "build-template/src/frontend/src/components/ui/switch.tsx",
+    "build-template/src/frontend/src/components/ui/table.tsx",
+    "build-template/src/frontend/src/components/ui/tabs.tsx",
+    "build-template/src/frontend/src/components/ui/textarea.tsx",
+    "build-template/src/frontend/src/components/ui/toggle-group.tsx",
+    "build-template/src/frontend/src/components/ui/toggle.tsx",
+    "build-template/src/frontend/src/components/ui/tooltip.tsx",
+    "build-template/src/frontend/src/hooks/use-mobile.tsx",
+    "build-template/src/frontend/src/lib/utils.ts",
+    "build-template/src/frontend/tsconfig.json",
+    "build-template/src/frontend/vite.config.js",
+    "build-template/tsconfig.json",
+    "caffeine.lock.json",
+    "feature_evidence.json",
+    "frontend-file-summaries.txt",
+    "frontend-implementation-plan.json",
+    "frontend/index.css",
+    "frontend/index.html",
+    "frontend/public/assets/generated/college-logo.dim_200x200.png",
+    "frontend/public/assets/generated/icon-add-question.dim_24x24.png",
+    "frontend/public/assets/generated/icon-dashboard.dim_24x24.png",
+    "frontend/public/assets/generated/icon-generate.dim_24x24.png",
+    "frontend/public/assets/generated/icon-paper-count.dim_48x48.png",
+    "frontend/public/assets/generated/icon-papers.dim_24x24.png",
+    "frontend/public/assets/generated/icon-question-bank.dim_24x24.png",
+    "frontend/public/assets/generated/icon-questions.dim_48x48.png",
+    "frontend/public/assets/generated/icon-subjects.dim_48x48.png",
+    "frontend/src/App.tsx",
+    "frontend/src/backend.d.ts",
+    "frontend/src/backend.ts",
+    "frontend/src/components/EditQuestionModal.tsx",
+    "frontend/src/components/Layout.tsx",
+    "frontend/src/components/PaperCard.tsx",
+    "frontend/src/components/PaperSection.tsx",
+    "frontend/src/components/QuestionCard.tsx",
+    "frontend/src/components/StatsCard.tsx",
+    "frontend/src/components/SubjectManager.tsx",
+    "frontend/src/components/WorkflowDiagram.tsx",
+    "frontend/src/config.ts",
+    "frontend/src/declarations/backend.did.d.ts",
+    "frontend/src/declarations/backend.did.js",
+    "frontend/src/hooks/useActor.ts",
+    "frontend/src/hooks/useInternetIdentity.ts",
+    "frontend/src/hooks/useQueries.ts",
+    "frontend/src/index.css",
+    "frontend/src/main.tsx",
+    "frontend/src/pages/AddQuestion.tsx",
+    "frontend/src/pages/Dashboard.tsx",
+    "frontend/src/pages/GeneratePaper.tsx",
+    "frontend/src/pages/GeneratedPapers.tsx",
+    "frontend/src/pages/Login.tsx",
+    "frontend/src/pages/PaperPreview.tsx",
+    "frontend/src/pages/QuestionBank.tsx",
+    "frontend/src/ui-summary.json",
+    "frontend/src/utils/StorageClient.ts",
+    "frontend/src/utils/pdfGenerator.ts",
+    "frontend/tailwind.config.js",
+    "project_state.json",
+    "scratch/component-selection.json",
+    "spec.md",
+    "spec_vs_diff_report.json"
+  ]
+}

@@ -1,0 +1,132 @@
+{
+  "kind": "spec_vs_diff_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-23T11:37:35.878Z",
+  "summary": "The implementation successfully covers most requirements, including Internet Identity authentication, Dashboard with statistics and workflow visualization, Add Questions functionality, Question Bank browsing, paper generation with 5 variants (A-E), and paper preview/listing. However, several important features are incomplete or missing, including PDF generation (REQ-13), edit/delete functionality for questions and subjects, and some backend data model completeness (REQ-11 and REQ-6 backend persistence).",
+  "missing_requirements": [
+    {
+      "id": "REQ-13",
+      "requirement": "Implement PDF generation functionality that creates downloadable PDFs of generated question papers maintaining formal academic formatting with college header, sections, and proper numbering",
+      "reason": "No PDF generation implementation found in any file. PaperPreview.tsx is referenced in routing but not included in diff. No evidence of jsPDF, react-pdf, or similar client-side PDF library usage.",
+      "evidence": [
+        "frontend/src/App.tsx",
+        "frontend/src/pages/GeneratePaper.tsx"
+      ]
+    },
+    {
+      "id": "REQ-12",
+      "requirement": "Build Generated Question Paper Preview page with formal academic layout including college name header, subject name, time and total marks, questions organized in Section A (MCQ), Section B (2 Marks & 4 Marks), Section C (6 Marks & 8 Marks) with proper numbering, and Download PDF button for each of 5 sets (A, B, C, D, E)",
+      "reason": "PaperPreview.tsx is referenced in routing but the file content is not included in the diff. Cannot verify implementation of preview page with sections and download buttons.",
+      "evidence": [
+        "frontend/src/App.tsx"
+      ]
+    },
+    {
+      "id": "REQ-9",
+      "requirement": "Edit and delete functionality for both subjects and questions in Question Bank",
+      "reason": "Edit and delete buttons are present in QuestionCard.tsx and SubjectManager.tsx, but actual backend deletion and editing logic is incomplete. EditQuestionModal only shows a placeholder message. No backend deleteQuestion or updateQuestion methods exist in main.mo.",
+      "evidence": [
+        "frontend/src/components/QuestionCard.tsx",
+        "frontend/src/components/EditQuestionModal.tsx",
+        "backend/main.mo"
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "requirement": "Backend CRUD operations for subjects including edit and delete with stable storage persistence",
+      "reason": "Backend only implements addSubject. Missing updateSubject, deleteSubject, and getAllSubjects methods. Subject management relies heavily on localStorage instead of backend stable storage.",
+      "evidence": [
+        "backend/main.mo",
+        "frontend/src/hooks/useQueries.ts"
+      ]
+    },
+    {
+      "id": "REQ-11",
+      "requirement": "Create backend data model for GeneratedPapers with proper persistence and backend paper generation logic",
+      "reason": "GeneratedPaper type exists in backend but no methods to create, store, or retrieve generated papers from backend. Paper generation and storage happens entirely in frontend localStorage instead of backend stable storage.",
+      "evidence": [
+        "backend/main.mo",
+        "frontend/src/pages/GeneratePaper.tsx"
+      ]
+    },
+    {
+      "id": "REQ-7",
+      "requirement": "Questions persisted in backend stable storage with proper data structures",
+      "reason": "Questions use non-stable Map structure without stable variable declaration. Backend lacks upgrade hooks to preserve data across canister upgrades, violating stable storage requirement.",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    },
+    {
+      "id": "REQ-10",
+      "requirement": "Backend randomly selects questions and ensures no duplicate questions in generated paper",
+      "reason": "Question selection happens entirely in frontend (GeneratePaper.tsx) instead of backend. Backend has no generatePaper method to handle automatic question selection with duplicate prevention.",
+      "evidence": [
+        "backend/main.mo",
+        "frontend/src/pages/GeneratePaper.tsx"
+      ]
+    }
+  ],
+  "hallucinated_features": [
+    {
+      "description": "QuestionBank page implementation (QuestionBank.tsx)",
+      "reason": "File is referenced in routing but not included in the diff summary. Cannot verify if it was actually implemented or if it is a placeholder route.",
+      "evidence": [
+        "frontend/src/App.tsx"
+      ]
+    },
+    {
+      "description": "Dark mode theme support throughout the application",
+      "reason": "index.css includes extensive dark mode theme variables and styling, but dark mode was not requested in requirements. Only navy blue, light blue, white, and light grey palette was specified.",
+      "evidence": [
+        "frontend/src/index.css"
+      ]
+    },
+    {
+      "description": "Module definitions for Subject, Question, PaperVariant, and GeneratedPaper with compare functions",
+      "reason": "Backend includes compare modules that appear unused. No sorting or ordering operations in the codebase use these compare functions.",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    },
+    {
+      "description": "getAllVariants query method in backend",
+      "reason": "Backend implements getAllVariants() method that returns hardcoded A-E variants, but this is never called from frontend and serves no functional purpose since variants are generated in frontend.",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    }
+  ],
+  "confidence": 0.75,
+  "changed_files": [
+    "all_files_summary.json",
+    "backend/main.mo",
+    "frontend-file-summaries.txt",
+    "frontend/index.css",
+    "frontend/index.html",
+    "frontend/src/App.tsx",
+    "frontend/src/components/EditQuestionModal.tsx",
+    "frontend/src/components/Layout.tsx",
+    "frontend/src/components/PaperCard.tsx",
+    "frontend/src/components/PaperSection.tsx",
+    "frontend/src/components/QuestionCard.tsx",
+    "frontend/src/components/StatsCard.tsx",
+    "frontend/src/components/SubjectManager.tsx",
+    "frontend/src/components/WorkflowDiagram.tsx",
+    "frontend/src/hooks/useActor.ts",
+    "frontend/src/hooks/useInternetIdentity.ts",
+    "frontend/src/hooks/useQueries.ts",
+    "frontend/src/index.css",
+    "frontend/src/main.tsx",
+    "frontend/src/pages/AddQuestion.tsx",
+    "frontend/src/pages/Dashboard.tsx",
+    "frontend/src/pages/GeneratePaper.tsx",
+    "frontend/src/pages/GeneratedPapers.tsx",
+    "frontend/src/pages/Login.tsx",
+    "frontend/src/pages/PaperPreview.tsx",
+    "frontend/src/pages/QuestionBank.tsx",
+    "frontend/src/utils/pdfGenerator.ts",
+    "frontend/tailwind.config.js",
+    "project_state.json"
+  ]
+}

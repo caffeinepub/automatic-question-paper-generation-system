@@ -1,0 +1,310 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "Automatic Question Paper Generation System - Frontend Implementation",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "summary": "Implement Internet Identity authentication for teacher login and logout with persistent state",
+      "acceptanceCriteria": [
+        "Teacher can log in using Internet Identity",
+        "Teacher can log out from the navigation sidebar",
+        "Authentication state persists across page refreshes",
+        "Unauthenticated users are redirected to login page"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/useAuth.ts",
+          "operation": "create",
+          "description": "Create authentication hook that manages Internet Identity login/logout state, provides authentication context, handles principal storage in localStorage for persistence, and exposes isAuthenticated status and user principal"
+        },
+        {
+          "path": "frontend/src/components/AuthProvider.tsx",
+          "operation": "create",
+          "description": "Create authentication context provider that wraps the app, initializes Internet Identity client on mount, manages authentication state globally, and provides auth methods to child components"
+        },
+        {
+          "path": "frontend/src/components/ProtectedRoute.tsx",
+          "operation": "create",
+          "description": "Create route wrapper component that checks authentication state and redirects unauthenticated users to login page"
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Wrap application in AuthProvider, configure React Router with routes for /login (Login page), / (Dashboard with ProtectedRoute), /add-question, /question-bank, /generate-paper, /paper-preview/:id, /generated-papers, all protected routes wrapped in ProtectedRoute component and Layout component for consistent sidebar navigation"
+        }
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "summary": "Create Teacher Login page with college logo, system title, Internet Identity button, and forgot password link",
+      "acceptanceCriteria": [
+        "Page displays college logo at top center",
+        "System title is prominently displayed",
+        "Internet Identity login button is clearly visible",
+        "Forgot password link is present and styled appropriately",
+        "Page uses navy blue, light blue, white, and light grey color scheme"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/Login.tsx",
+          "operation": "create",
+          "description": "Create login page with centered layout displaying college logo image from frontend/public/assets/generated/college-logo.dim_200x200.png, system title 'Automatic Question Paper Generation System', Internet Identity login button that triggers authentication, and forgot password link styled with light blue accent color"
+        }
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "summary": "Build Dashboard page with welcome message and navigation sidebar containing all menu links",
+      "acceptanceCriteria": [
+        "Dashboard displays personalized welcome message with teacher's name",
+        "Navigation sidebar is fixed and accessible from all pages",
+        "All navigation links route to correct pages",
+        "Logout option triggers authentication logout",
+        "Sidebar uses minimal academic icons for each menu item"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/Layout.tsx",
+          "operation": "create",
+          "description": "Create main layout component with fixed navigation sidebar containing links to Dashboard, Add Questions, Question Bank, Generate Paper, Generated Papers, and Logout option with icons from frontend/public/assets/generated/icon-dashboard.dim_24x24.png, icon-add-question.dim_24x24.png, icon-question-bank.dim_24x24.png, icon-generate.dim_24x24.png, icon-papers.dim_24x24.png, styled with navy blue background and white text"
+        },
+        {
+          "path": "frontend/src/pages/Dashboard.tsx",
+          "operation": "create",
+          "description": "Create dashboard page with welcome message displaying teacher's principal or name, wrapped in Layout component for consistent navigation"
+        }
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "summary": "Display statistics cards on Dashboard showing Total Subjects, Total Questions, and Papers Generated",
+      "acceptanceCriteria": [
+        "Three cards display accurate counts from backend",
+        "Each card has an appropriate icon",
+        "Cards use rounded corners and subtle shadows",
+        "Counts update when data changes"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/StatsCard.tsx",
+          "operation": "create",
+          "description": "Create reusable statistics card component accepting title, count value, and icon path props, styled with white background, rounded corners, and soft shadow"
+        },
+        {
+          "path": "frontend/src/pages/Dashboard.tsx",
+          "operation": "modify",
+          "description": "Add three StatsCard components displaying Total Subjects, Total Questions, and Papers Generated with icons from frontend/public/assets/generated/icon-subjects.dim_48x48.png, icon-questions.dim_48x48.png, icon-paper-count.dim_48x48.png, fetch counts from backend using getAllVariants and other backend methods, and arrange in responsive grid"
+        }
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "summary": "Implement database structure visualization on Dashboard showing system workflow",
+      "acceptanceCriteria": [
+        "Visual flowchart displays the five stages clearly",
+        "Uses arrows or connectors between stages",
+        "Styled consistently with academic theme",
+        "Provides clear understanding of system architecture"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/WorkflowDiagram.tsx",
+          "operation": "create",
+          "description": "Create workflow visualization component displaying five connected stages: Subjects → Question Categories → Stored Questions → Paper Generation Engine → PDF Output, using boxes with arrows styled in navy blue and light blue colors"
+        },
+        {
+          "path": "frontend/src/pages/Dashboard.tsx",
+          "operation": "modify",
+          "description": "Add WorkflowDiagram component below statistics cards to show system architecture"
+        }
+      ]
+    },
+    {
+      "id": "REQ-8",
+      "summary": "Build Add Questions page with form for subject, category, text, MCQ options, difficulty, and save functionality",
+      "acceptanceCriteria": [
+        "Form displays all required input fields",
+        "Subject dropdown populates from database subjects",
+        "Category dropdown shows: 2 Marks, 4 Marks, MCQ, 6 Marks, 8 Marks",
+        "Four option fields and correct answer selector appear only when MCQ is selected",
+        "Difficulty dropdown shows: Easy, Medium, Hard",
+        "Save button validates inputs and saves question to backend",
+        "Success popup appears after successful save",
+        "Form resets after successful submission"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/AddQuestion.tsx",
+          "operation": "create",
+          "description": "Create add question page with form containing subject dropdown, question category dropdown (2 Marks, 4 Marks, MCQ, 6 Marks, 8 Marks), question text area, conditional MCQ options fields with four inputs and correct answer radio buttons visible only when MCQ selected, difficulty level dropdown (Easy, Medium, Hard), and Save to Database button that calls backend addQuestion method and shows success toast notification"
+        },
+        {
+          "path": "frontend/src/hooks/useToast.ts",
+          "operation": "create",
+          "description": "Create toast notification hook for displaying success and error messages throughout the application"
+        }
+      ]
+    },
+    {
+      "id": "REQ-9",
+      "summary": "Create Question Bank page with view, edit, and delete functionality for questions and subjects",
+      "acceptanceCriteria": [
+        "Question Bank displays all questions organized by subject",
+        "Questions are further grouped by category (2m, 4m, MCQ, 6m, 8m)",
+        "Each question has edit and delete buttons",
+        "Edit button opens modal or form to modify question details",
+        "Delete button prompts confirmation before removing question",
+        "Subject management section allows adding, editing, and deleting subjects",
+        "Changes are persisted to backend immediately"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/QuestionBank.tsx",
+          "operation": "create",
+          "description": "Create question bank page that fetches questions using getQuestionsBySubjectAndCategory for each subject and category combination, displays them organized by subject and category with edit and delete buttons, includes subject management section with add/edit/delete capabilities calling backend addSubject method"
+        },
+        {
+          "path": "frontend/src/components/QuestionCard.tsx",
+          "operation": "create",
+          "description": "Create question card component displaying question text, category badge, difficulty badge, with edit and delete action buttons styled with light blue accents"
+        },
+        {
+          "path": "frontend/src/components/EditQuestionModal.tsx",
+          "operation": "create",
+          "description": "Create modal dialog for editing question details with form fields pre-populated with existing question data, save button to update backend"
+        },
+        {
+          "path": "frontend/src/components/SubjectManager.tsx",
+          "operation": "create",
+          "description": "Create subject management component with list of subjects, add new subject form with id, name, and code fields, edit and delete buttons for each subject"
+        }
+      ]
+    },
+    {
+      "id": "REQ-10",
+      "summary": "Build Generate Question Paper page with form for subject, duration, marks, and question counts per category",
+      "acceptanceCriteria": [
+        "Form displays subject dropdown populated from database",
+        "Exam duration field accepts time in minutes",
+        "Total marks field validates numeric input",
+        "Individual count inputs for each question category (2m, 4m, MCQ, 6m, 8m)",
+        "Generate Paper button validates that requested questions exist in database",
+        "Backend randomly selects questions from database based on criteria",
+        "System ensures no duplicate questions in generated paper",
+        "Generated paper is saved with unique ID and timestamp"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/GeneratePaper.tsx",
+          "operation": "create",
+          "description": "Create generate paper page with form containing subject dropdown, exam duration input (minutes), total marks input with validation, individual number inputs for each category (2 Marks, 4 Marks, MCQ, 6 Marks, 8 Marks), Generate Paper button that fetches questions from backend using getQuestionsBySubjectAndCategory, performs client-side random selection ensuring no duplicates, creates five shuffled variants (Set A-E), saves paper metadata to localStorage with unique ID, and navigates to preview page"
+        }
+      ]
+    },
+    {
+      "id": "REQ-12",
+      "summary": "Build Generated Question Paper Preview page with formal academic layout and set variant switching",
+      "acceptanceCriteria": [
+        "Preview page displays college name at top",
+        "Subject name, exam duration, and total marks are clearly shown",
+        "Questions are organized into three labeled sections",
+        "Section A shows MCQ questions with options",
+        "Section B shows 2 Marks and 4 Marks questions",
+        "Section C shows 6 Marks and 8 Marks questions",
+        "Questions are numbered sequentially within each section",
+        "Five tabs or buttons allow switching between Set A, B, C, D, E",
+        "Each set displays different question order while maintaining structure",
+        "Download PDF button is available for each set"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/PaperPreview.tsx",
+          "operation": "create",
+          "description": "Create paper preview page with formal academic header containing college name, subject name, exam duration, and total marks, organized in three sections (Section A for MCQ with options, Section B for 2 Marks and 4 Marks, Section C for 6 Marks and 8 Marks) with sequential numbering, tab interface to switch between Set A, B, C, D, E variants showing shuffled question order, and Download PDF button for each set"
+        },
+        {
+          "path": "frontend/src/components/PaperSection.tsx",
+          "operation": "create",
+          "description": "Create reusable section component for displaying grouped questions with section title, question list with proper numbering, and formatted display for MCQ options"
+        }
+      ]
+    },
+    {
+      "id": "REQ-13",
+      "summary": "Implement PDF generation functionality for downloadable question papers with academic formatting",
+      "acceptanceCriteria": [
+        "PDF generation uses client-side library (e.g., jsPDF or react-pdf)",
+        "Generated PDF includes college name, subject, time, and marks",
+        "PDF maintains section structure (A, B, C) with proper formatting",
+        "Questions are numbered correctly in PDF",
+        "MCQ options are displayed clearly in PDF",
+        "Each set (A-E) generates a unique PDF file",
+        "PDF filename includes subject name, set variant, and timestamp"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/utils/pdfGenerator.ts",
+          "operation": "create",
+          "description": "Create PDF generation utility using jsPDF library that accepts paper data and set variant, formats college header, subject details, sections A/B/C with proper numbering and spacing, handles MCQ option display, and exports PDF with filename format: SubjectName_SetA_Timestamp.pdf"
+        },
+        {
+          "path": "frontend/src/pages/PaperPreview.tsx",
+          "operation": "modify",
+          "description": "Wire Download PDF button to call pdfGenerator utility with current set variant and paper data"
+        }
+      ]
+    },
+    {
+      "id": "REQ-14",
+      "summary": "Create Generated Papers page listing all previously generated papers with preview access",
+      "acceptanceCriteria": [
+        "Page displays list of all generated papers for logged-in teacher",
+        "Each paper entry shows subject name, creation date, and total marks",
+        "View button opens the preview page for that paper",
+        "Papers are sorted by creation date (newest first)",
+        "Empty state message displays when no papers have been generated"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/GeneratedPapers.tsx",
+          "operation": "create",
+          "description": "Create generated papers list page that retrieves saved papers from localStorage, displays them in cards showing subject name, creation date, and total marks, includes View button that navigates to PaperPreview page with paper ID, sorts by newest first, and shows empty state message when no papers exist"
+        },
+        {
+          "path": "frontend/src/components/PaperCard.tsx",
+          "operation": "create",
+          "description": "Create paper card component displaying paper summary with subject, date, marks, and View action button styled with white background and soft shadow"
+        }
+      ]
+    },
+    {
+      "id": "REQ-15",
+      "summary": "Apply consistent navy blue, light blue, white, and light grey academic theme across all pages",
+      "acceptanceCriteria": [
+        "All pages use navy blue as primary color for headers and key elements",
+        "Light blue is used for accents, hover states, and secondary actions",
+        "White is used for card backgrounds and content areas",
+        "Very light grey is used for page backgrounds",
+        "Typography uses Poppins or Inter font family throughout",
+        "All buttons have rounded corners and subtle box shadows",
+        "Cards have soft shadows and rounded corners",
+        "Layout is responsive and works on desktop, tablet, and mobile",
+        "Grid system provides consistent spacing and alignment",
+        "Overall design feels modern, clean, and professional"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/tailwind.config.js",
+          "operation": "modify",
+          "description": "Extend Tailwind theme with custom color palette defining navy blue primary, light blue accent, very light grey background, add Poppins and Inter to font family, configure rounded corners and shadow utilities for academic theme"
+        },
+        {
+          "path": "frontend/src/index.css",
+          "operation": "modify",
+          "description": "Import Poppins and Inter fonts from Google Fonts, set global typography styles, apply very light grey background to body, define reusable CSS classes for cards with soft shadows and rounded corners, buttons with rounded corners and subtle shadows"
+        }
+      ]
+    }
+  ]
+}

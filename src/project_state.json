@@ -1,0 +1,192 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 3,
+  "summary": "Automatic Question Paper Generation System - A web application for teachers to manage question banks and generate academic exam papers with database connectivity",
+  "architectural_notes": [
+    "Navy blue primary color, light blue accents, light grey background - academic professional theme",
+    "Poppins/Inter font family for modern professional typography",
+    "Database connectivity required for subjects, questions, and paper generation",
+    "Question categorization by marks (2m, 4m, 6m, 8m) and MCQ with difficulty levels",
+    "PDF generation capability for multiple exam sets (Set A through E)",
+    "Responsive grid layout with rounded cards, soft shadows, and minimal icons"
+  ],
+  "known_issues": [],
+  "isFixRequest": false,
+  "imageRequirements": "## Required Images\n- Professional college/school logo placeholder with academic styling (college-logo.dim_200x200.png)\n- Minimal academic icon for Dashboard menu item (icon-dashboard.dim_24x24.png)\n- Minimal academic icon for Add Questions menu item (icon-add-question.dim_24x24.png)\n- Minimal academic icon for Question Bank menu item (icon-question-bank.dim_24x24.png)\n- Minimal academic icon for Generate Paper menu item (icon-generate.dim_24x24.png)\n- Minimal academic icon for Generated Papers menu item (icon-papers.dim_24x24.png)\n- Icon representing total subjects count for dashboard card (icon-subjects.dim_48x48.png)\n- Icon representing total questions count for dashboard card (icon-questions.dim_48x48.png)\n- Icon representing papers generated count for dashboard card (icon-paper-count.dim_48x48.png)",
+  "existing_features": [
+    {
+      "id": "feature-implement-teacher-authentication-system-with-internet-identity-integration-for-login-logout-functionality",
+      "title": "Implement teacher authentication system with Internet Identity integration for login/logout functionality",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-teacher-login-page-with-college-logo-placeholder-system-title-automatic-question-paper-generation-system-internet-identity-login-button-and-forgot-password-link",
+      "title": "Create Teacher Login page with college logo placeholder, system title 'Automatic Question Paper Generation System', Internet Identity login button, and forgot password link",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-build-dashboard-page-with-welcome-message-showing-teacher-name-navigation-sidebar-with-links-to-dashboard-add-questions-question-bank-generate-paper-generated-papers-and-logout",
+      "title": "Build Dashboard page with welcome message showing teacher name, navigation sidebar with links to Dashboard, Add Questions, Question Bank, Generate Paper, Generated Papers, and Logout",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-display-statistics-cards-on-dashboard-showing-total-subjects-total-questions-and-papers-generated-with-real-time-counts-from-database",
+      "title": "Display statistics cards on Dashboard showing Total Subjects, Total Questions, and Papers Generated with real-time counts from database",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-database-structure-visualization-on-dashboard-showing-the-workflow-subjects-question-categories-stored-questions-paper-generation-engine-pdf-output",
+      "title": "Implement database structure visualization on Dashboard showing the workflow: Subjects → Question Categories → Stored Questions → Paper Generation Engine → PDF Output",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-build-add-questions-page-with-form-containing-subject-dropdown-question-category-dropdown-question-text-area-mcq-options-fields-visible-only-when-mcq-is-selected-difficulty-level-dropdown-and-save-to-database-button-with-success-message-popup",
+      "title": "Build Add Questions page with form containing subject dropdown, question category dropdown, question text area, MCQ options fields (visible only when MCQ is selected), difficulty level dropdown, and Save to Database button with success message popup",
+      "reqIds": [
+        "REQ-8"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-question-bank-page-with-ability-to-view-all-questions-grouped-by-subject-and-category-and-provide-edit-and-delete-functionality-for-both-subjects-and-questions",
+      "title": "Create Question Bank page with ability to view all questions grouped by subject and category, and provide edit and delete functionality for both subjects and questions",
+      "reqIds": [
+        "REQ-9"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-build-generate-question-paper-page-with-form-containing-subject-dropdown-exam-duration-input-total-marks-input-and-number-of-questions-selector-for-each-category-2-marks-4-marks-mcq-6-marks-8-marks-plus-generate-paper-button-that-triggers-database-based-automatic-question-selection",
+      "title": "Build Generate Question Paper page with form containing subject dropdown, exam duration input, total marks input, and number of questions selector for each category (2 Marks, 4 Marks, MCQ, 6 Marks, 8 Marks), plus Generate Paper button that triggers database-based automatic question selection",
+      "reqIds": [
+        "REQ-10"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-build-generated-question-paper-preview-page-with-formal-academic-layout-including-college-name-header-subject-name-time-and-total-marks-questions-organized-in-section-a-mcq-section-b-2-marks-4-marks-section-c-6-marks-8-marks-with-proper-numbering-and-download-pdf-button-for-each-of-5-sets-a-b-c-d-e",
+      "title": "Build Generated Question Paper Preview page with formal academic layout including college name header, subject name, time and total marks, questions organized in Section A (MCQ), Section B (2 Marks & 4 Marks), Section C (6 Marks & 8 Marks) with proper numbering, and Download PDF button for each of 5 sets (A, B, C, D, E)",
+      "reqIds": [
+        "REQ-12"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-pdf-generation-functionality-that-creates-downloadable-pdfs-of-generated-question-papers-maintaining-formal-academic-formatting-with-college-header-sections-and-proper-numbering",
+      "title": "Implement PDF generation functionality that creates downloadable PDFs of generated question papers maintaining formal academic formatting with college header, sections, and proper numbering",
+      "reqIds": [
+        "REQ-13"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-generated-papers-page-that-lists-all-previously-generated-question-papers-with-details-subject-date-marks-and-allows-accessing-preview-and-pdf-download-for-each-paper",
+      "title": "Create Generated Papers page that lists all previously generated question papers with details (subject, date, marks) and allows accessing preview and PDF download for each paper",
+      "reqIds": [
+        "REQ-14"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-apply-consistent-navy-blue-light-blue-white-and-light-grey-color-palette-across-all-pages-with-poppins-or-inter-font-rounded-buttons-with-subtle-shadows-soft-shadows-on-cards-and-responsive-grid-layout",
+      "title": "Apply consistent navy blue, light blue, white, and light grey color palette across all pages with Poppins or Inter font, rounded buttons with subtle shadows, soft shadows on cards, and responsive grid layout",
+      "reqIds": [
+        "REQ-15"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Teacher login page with email/username, password, forgot password link, and academic branding",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Dashboard with navigation sidebar, welcome message, and statistics cards (total subjects, questions, papers generated)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Add Questions page with database-connected form: subject dropdown, question category (2m/4m/MCQ/6m/8m), question text, MCQ options, difficulty level, save functionality",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Generate Question Paper page with subject selection, exam duration, total marks, category-wise question count selection, and automatic database-based paper generation",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Generated Paper Preview with formal academic layout, sectioned questions (A: MCQ, B: 2m/4m, C: 6m/8m), PDF download, and 5 different sets (A-E)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-6",
+      "summary": "Question Bank page with ability to view, edit, add, and delete subjects and questions",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-7",
+      "summary": "Database structure visualization in dashboard showing workflow: Subjects → Categories → Questions → Generation → PDF",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-8",
+      "summary": "Engineering subjects support including Discrete Mathematics, Operating System, Microprocessor, etc. with ability to add/modify subjects",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-14",
+      "summary": "Create backend data model for Subjects with fields: id, name, code, and ability to add, edit, and delete subjects",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-15",
+      "summary": "Create backend data model for Questions with fields: id, subjectId, category (2 Marks, 4 Marks, MCQ, 6 Marks, 8 Marks), questionText, options (array for MCQ), correctAnswer (for MCQ), difficultyLevel (Easy, Medium, Hard), and timestamp",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-19",
+      "summary": "Create backend data model for GeneratedPapers with fields: id, subjectId, subjectName, examDuration, totalMarks, questions (array of question IDs grouped by section), setVariants (5 variants: A, B, C, D, E with shuffled question order), createdAt, and teacherId",
+      "reqIds": [
+        "REQ-11"
+      ],
+      "status": "pending"
+    }
+  ],
+  "gameProjectType": "none",
+  "projectName": "Automatic Question Paper Generation System",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}
