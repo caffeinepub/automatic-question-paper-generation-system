@@ -1,7 +1,7 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-24T05:36:08.314Z",
+  "generatedAt": "2026-02-24T07:40:26.422Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
@@ -11,36 +11,8 @@
     "implemented": 4,
     "items": [
       {
-        "id": "REQ-36",
-        "summary": "Update the MCQ category marking scheme from its current value to 1 mark in the backend Question type definition and throughout the application",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/components/QuestionCard.tsx",
-          "frontend/src/pages/GeneratePaper.tsx",
-          "frontend/src/pages/PaperPreview.tsx",
-          "frontend/src/utils/pdfGenerator.ts"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/QuestionCard.tsx",
-          "frontend/src/pages/GeneratePaper.tsx",
-          "frontend/src/pages/PaperPreview.tsx",
-          "frontend/src/utils/pdfGenerator.ts"
-        ]
-      },
-      {
-        "id": "REQ-37",
-        "summary": "Fix the generated paper preview display issue so that generated papers are shown immediately after the generation process completes",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/pages/GeneratePaper.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/pages/GeneratePaper.tsx"
-        ]
-      },
-      {
-        "id": "REQ-38",
-        "summary": "Add a success popup notification in AddQuestion.tsx that appears immediately after a file is successfully uploaded via bulk upload, showing confirmation that the file has been processed",
+        "id": "REQ-54",
+        "summary": "Debug and fix the file upload mechanism in AddQuestion.tsx to identify why uploaded files (CSV, JSON, DOCX) are not being processed when the bulk upload button is clicked",
         "status": "implemented",
         "plannedFiles": [
           "frontend/src/pages/AddQuestion.tsx"
@@ -50,37 +22,46 @@
         ]
       },
       {
-        "id": "REQ-39",
-        "summary": "Add a success popup notification in GeneratePaper.tsx that appears after question papers are successfully generated, confirming the generation and automatically showing the generated paper preview",
+        "id": "REQ-55",
+        "summary": "Add comprehensive error handling to the file upload process in AddQuestion.tsx to catch and display errors during file reading, parsing, and the useBulkUploadQuestions mutation",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/pages/GeneratePaper.tsx"
+          "frontend/src/pages/AddQuestion.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/pages/GeneratePaper.tsx"
+          "frontend/src/pages/AddQuestion.tsx"
+        ]
+      },
+      {
+        "id": "REQ-56",
+        "summary": "Verify that the file input element in AddQuestion.tsx has the correct accept attribute and onChange handler to capture file selection events",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/AddQuestion.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/AddQuestion.tsx"
+        ]
+      },
+      {
+        "id": "REQ-57",
+        "summary": "Add loading indicator and disabled state to the bulk upload button in AddQuestion.tsx during file processing to prevent multiple simultaneous uploads",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/AddQuestion.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/AddQuestion.tsx"
         ]
       }
     ]
   },
   "changedFiles": [
-    "backend/main.mo",
-    "backend/migration.mo",
     "build-request.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/backend.d.ts",
-    "frontend/src/backend.ts",
-    "frontend/src/components/PaperSection.tsx",
-    "frontend/src/components/QuestionCard.tsx",
-    "frontend/src/declarations/backend.did.d.ts",
-    "frontend/src/declarations/backend.did.js",
     "frontend/src/pages/AddQuestion.tsx",
-    "frontend/src/pages/GeneratePaper.tsx",
-    "frontend/src/pages/PaperPreview.tsx",
-    "frontend/src/pages/QuestionBank.tsx",
-    "frontend/src/utils/csvParser.ts",
-    "frontend/src/utils/pdfGenerator.ts",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

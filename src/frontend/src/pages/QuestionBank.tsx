@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { AlertCircle } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
+import { AlertCircle, RefreshCw } from 'lucide-react';
 import { useQueries } from '../hooks/useQueries';
 import QuestionCard from '../components/QuestionCard';
 import SubjectManager from '../components/SubjectManager';
@@ -12,12 +13,54 @@ import { QuestionCategory } from '../backend';
 export default function QuestionBank() {
   const { useGetAllSubjects, useGetAllQuestions } = useQueries();
   const { data: subjects = [] } = useGetAllSubjects();
-  const { data: allQuestions = [], isLoading, isError, error } = useGetAllQuestions();
+  const questionsQuery = useGetAllQuestions();
+  const { data: allQuestions = [], isLoading, isError, error, refetch } = questionsQuery;
   const [selectedSubject, setSelectedSubject] = useState<string>('');
+
+  // Log query state changes
+  useEffect(() => {
+    console.log('📊 QuestionBank - Query state changed:', {
+      isLoading,
+      isError,
+      error: error instanceof Error ? error.message : error,
+      questionsCount: allQuestions.length,
+      queryStatus: questionsQuery.status,
+      isFetching: questionsQuery.isFetching,
+      isRefetching: questionsQuery.isRefetching
+    });
+  }, [isLoading, isError, error, allQuestions.length, questionsQuery.status, questionsQuery.isFetching, questionsQuery.isRefetching]);
+
+  // Log when questions data changes
+  useEffect(() => {
+    if (allQuestions.length > 0) {
+      console.log('✅ Questions loaded in QuestionBank:', {
+        total: allQuestions.length,
+        byCategory: {
+          mcqOneMark: allQuestions.filter(q => q.category === QuestionCategory.mcqOneMark).length,
+          _2Marks: allQuestions.filter(q => q.category === QuestionCategory._2Marks).length,
+          _4Marks: allQuestions.filter(q => q.category === QuestionCategory._4Marks).length,
+          _6Marks: allQuestions.filter(q => q.category === QuestionCategory._6Marks).length,
+          _8Marks: allQuestions.filter(q => q.category === QuestionCategory._8Marks).length,
+        },
+        bySubject: subjects.reduce((acc, subject) => {
+          acc[subject.name] = allQuestions.filter(q => q.subjectId === subject.id).length;
+          return acc;
+        }, {} as Record<string, number>)
+      });
+    } else if (!isLoading && !isError) {
+      console.warn('⚠️ No questions available in QuestionBank');
+    }
+  }, [allQuestions, isLoading, isError, subjects]);
 
   const filteredQuestions = selectedSubject 
     ? allQuestions.filter(q => q.subjectId === selectedSubject)
     : allQuestions;
+
+  console.log('🔍 Filtered questions:', {
+    selectedSubject,
+    filteredCount: filteredQuestions.length,
+    totalCount: allQuestions.length
+  });
 
   const questionsByCategory = {
     [QuestionCategory._2Marks]: filteredQuestions.filter(q => q.category === QuestionCategory._2Marks),
@@ -25,6 +68,11 @@ export default function QuestionBank() {
     [QuestionCategory.mcqOneMark]: filteredQuestions.filter(q => q.category === QuestionCategory.mcqOneMark),
     [QuestionCategory._6Marks]: filteredQuestions.filter(q => q.category === QuestionCategory._6Marks),
     [QuestionCategory._8Marks]: filteredQuestions.filter(q => q.category === QuestionCategory._8Marks),
+  };
+
+  const handleRetry = () => {
+    console.log('🔄 Manual retry triggered');
+    refetch();
   };
 
   return (
@@ -77,8 +125,18 @@ export default function QuestionBank() {
           {isError && (
             <Alert variant="destructive">
               <AlertCircle className="h-4 w-4" />
-              <AlertDescription>
-                Failed to load questions: {error instanceof Error ? error.message : 'Unknown error'}
+              <AlertTitle>Error Loading Questions</AlertTitle>
+              <AlertDescription className="space-y-2">
+                <p>Failed to load questions: {error instanceof Error ? error.message : 'Unknown error'}</p>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={handleRetry}
+                  className="mt-2"
+                >
+                  <RefreshCw className="h-4 w-4 mr-2" />
+                  Retry
+                </Button>
               </AlertDescription>
             </Alert>
           )}
@@ -86,6 +144,9 @@ export default function QuestionBank() {
           {isLoading ? (
             <Card>
               <CardContent className="py-8 space-y-4">
+                <div className="text-center text-muted-foreground mb-4">
+                  Loading questions...
+                </div>
                 <Skeleton className="h-24 w-full" />
                 <Skeleton className="h-24 w-full" />
                 <Skeleton className="h-24 w-full" />
@@ -118,10 +179,16 @@ export default function QuestionBank() {
                 );
               })}
 
-              {filteredQuestions.length === 0 && !isLoading && (
+              {filteredQuestions.length === 0 && !isLoading && !isError && (
                 <Card>
-                  <CardContent className="py-12 text-center text-muted-foreground">
-                    No questions found. Add some questions to get started.
+                  <CardContent className="py-12 text-center">
+                    <AlertCircle className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+                    <p className="text-lg font-medium mb-2">No questions found</p>
+                    <p className="text-muted-foreground">
+                      {selectedSubject 
+                        ? 'No questions available for the selected subject. Try adding some questions first.'
+                        : 'No questions available. Add some questions to get started.'}
+                    </p>
                   </CardContent>
                 </Card>
               )}

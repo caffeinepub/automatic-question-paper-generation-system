@@ -1,13 +1,12 @@
 # Specification
 
 ## Summary
-**Goal:** Fix MCQ marking to 1 mark, add upload/generation success popups, and automatically display generated paper preview.
+**Goal:** Fix the bulk upload file upload mechanism so that CSV, JSON, and DOCX files are successfully processed when users click the upload button.
 
 **Planned changes:**
-- Update MCQ category to use 1 mark instead of current value throughout backend and frontend
-- Add success popup in AddQuestion.tsx after bulk file upload completes, showing confirmation and question count
-- Add success popup in GeneratePaper.tsx after paper generation completes
-- Automatically redirect to and display generated paper preview after generation success
-- Fix issue where generated paper preview is not showing after generation
+- Debug and fix file reading mechanism in AddQuestion.tsx to ensure files are properly captured and passed to parsers
+- Add comprehensive error handling with try-catch blocks and user-friendly error messages for file operations
+- Verify file input element has correct accept attribute and onChange handler
+- Add loading indicator and disabled state to bulk upload button during processing
 
-**User-visible outcome:** Users will see MCQ questions correctly marked as 1 mark, receive clear success notifications when uploading questions or generating papers, and automatically view the generated paper preview with all 5 variants (A-E) properly displayed.
+**User-visible outcome:** Users can successfully upload CSV, JSON, and DOCX files through the bulk upload feature, see loading feedback during processing, and receive clear error messages if uploads fail.

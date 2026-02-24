@@ -35,6 +35,7 @@ export default function AddQuestion() {
 
   const [bulkUploadFile, setBulkUploadFile] = useState<File | null>(null);
   const [validationErrors, setValidationErrors] = useState<{ row?: number; index?: number; message: string }[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -85,13 +86,20 @@ export default function AddQuestion() {
       });
     } catch (error) {
       toast.error('Failed to add question');
-      console.error(error);
+      console.error('Error adding question:', error);
     }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      console.log('📁 File selected:', {
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        lastModified: new Date(file.lastModified).toISOString()
+      });
+
       const fileExtension = file.name.split('.').pop()?.toLowerCase();
       const validExtensions = ['csv', 'json'];
       
@@ -103,6 +111,7 @@ export default function AddQuestion() {
       
       setBulkUploadFile(file);
       setValidationErrors([]);
+      console.log('✅ File stored in state successfully');
     }
   };
 
@@ -112,37 +121,53 @@ export default function AddQuestion() {
       return;
     }
 
+    console.log('🚀 Starting bulk upload process for file:', bulkUploadFile.name);
     setValidationErrors([]);
+    setIsUploading(true);
 
     try {
-      const fileText = await bulkUploadFile.text();
       const fileExtension = bulkUploadFile.name.split('.').pop()?.toLowerCase();
+      console.log('📄 File extension detected:', fileExtension);
 
       let parseResult: { validQuestions: any[]; errors: any[] };
 
       if (fileExtension === 'csv') {
+        console.log('📊 Processing CSV file...');
+        const fileText = await bulkUploadFile.text();
+        console.log('📝 File content read, length:', fileText.length);
         parseResult = parseCSV(fileText);
       } else if (fileExtension === 'json') {
+        console.log('📋 Processing JSON file...');
+        const fileText = await bulkUploadFile.text();
+        console.log('📝 File content read, length:', fileText.length);
         parseResult = parseJSON(fileText);
       } else {
-        toast.error('Unsupported file format. Please use .csv or .json');
-        return;
+        throw new Error('Unsupported file format. Please use .csv or .json');
       }
+
+      console.log('✅ File parsed:', {
+        validQuestions: parseResult.validQuestions.length,
+        errors: parseResult.errors.length
+      });
 
       if (parseResult.errors.length > 0) {
         setValidationErrors(parseResult.errors);
         toast.error(`Found ${parseResult.errors.length} validation error(s). Please fix them and try again.`);
+        setIsUploading(false);
         return;
       }
 
       if (parseResult.validQuestions.length === 0) {
         toast.error('No valid questions found in the file');
+        setIsUploading(false);
         return;
       }
 
+      console.log('📤 Uploading questions to backend...');
       // Upload valid questions
       const count = await bulkUploadMutation.mutateAsync(parseResult.validQuestions);
       
+      console.log('✅ Upload complete! Questions added:', count);
       toast.success(`File uploaded successfully! ${count} question(s) have been added to the database.`);
       
       // Reset file input
@@ -152,8 +177,16 @@ export default function AddQuestion() {
       if (fileInput) fileInput.value = '';
       
     } catch (error) {
-      toast.error('Failed to upload questions');
-      console.error(error);
+      console.error('❌ Error during bulk upload:', error);
+      console.error('Error details:', {
+        message: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : 'No stack trace'
+      });
+      
+      const errorMessage = error instanceof Error ? error.message : 'Failed to upload questions';
+      toast.error(errorMessage);
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -333,11 +366,11 @@ export default function AddQuestion() {
               type="file"
               accept=".csv,.json"
               onChange={handleFileChange}
-              disabled={bulkUploadMutation.isPending}
+              disabled={isUploading || bulkUploadMutation.isPending}
             />
             {bulkUploadFile && (
               <p className="text-sm text-muted-foreground">
-                Selected: {bulkUploadFile.name}
+                Selected: {bulkUploadFile.name} ({(bulkUploadFile.size / 1024).toFixed(2)} KB)
               </p>
             )}
           </div>
@@ -366,9 +399,9 @@ export default function AddQuestion() {
           <Button
             onClick={handleBulkUpload}
             className="w-full bg-navy hover:bg-navy/90"
-            disabled={!bulkUploadFile || bulkUploadMutation.isPending}
+            disabled={!bulkUploadFile || isUploading || bulkUploadMutation.isPending}
           >
-            {bulkUploadMutation.isPending ? (
+            {(isUploading || bulkUploadMutation.isPending) ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 Uploading...

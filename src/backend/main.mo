@@ -3,12 +3,12 @@ import Array "mo:core/Array";
 import List "mo:core/List";
 import Iter "mo:core/Iter";
 import Order "mo:core/Order";
-import Migration "migration";
+
 import Runtime "mo:core/Runtime";
 import Nat "mo:core/Nat";
 import Principal "mo:core/Principal";
 
-(with migration = Migration.run)
+
 actor {
   type SubjectId = Text;
   type QuestionId = Nat;

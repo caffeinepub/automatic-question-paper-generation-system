@@ -2,47 +2,8 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-update-the-mcq-category-marking-scheme-from-its-current-value-to-1-mark-in-the-backend-question-type-definition-and-throughout-the-application",
-      "featureTitle": "Update the MCQ category marking scheme from its current value to 1 mark in the backend Question type definition and throughout the application",
-      "files": [
-        "frontend/src/components/QuestionCard.tsx",
-        "frontend/src/pages/GeneratePaper.tsx",
-        "frontend/src/pages/PaperPreview.tsx",
-        "frontend/src/utils/pdfGenerator.ts"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-36"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-fix-the-generated-paper-preview-display-issue-so-that-generated-papers-are-shown-immediately-after-the-generation-process-completes",
-      "featureTitle": "Fix the generated paper preview display issue so that generated papers are shown immediately after the generation process completes",
-      "files": [
-        "frontend/src/pages/GeneratePaper.tsx"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-37"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-add-a-success-popup-notification-in-addquestion-tsx-that-appears-immediately-after-a-file-is-successfully-uploaded-via-bulk-upload-showing-confirmation-that-the-file-has-been-processed",
-      "featureTitle": "Add a success popup notification in AddQuestion.tsx that appears immediately after a file is successfully uploaded via bulk upload, showing confirmation that the file has been processed",
+      "featureId": "feature-debug-and-fix-the-file-upload-mechanism-in-addquestion-tsx-to-identify-why-uploaded-files-csv-json-docx-are-not-being-processed-when-the-bulk-upload-button-is-clicked",
+      "featureTitle": "Debug and fix the file upload mechanism in AddQuestion.tsx to identify why uploaded files (CSV, JSON, DOCX) are not being processed when the bulk upload button is clicked",
       "files": [
         "frontend/src/pages/AddQuestion.tsx"
       ],
@@ -54,15 +15,15 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-38"
+        "REQ-54"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-add-a-success-popup-notification-in-generatepaper-tsx-that-appears-after-question-papers-are-successfully-generated-confirming-the-generation-and-automatically-showing-the-generated-paper-preview",
-      "featureTitle": "Add a success popup notification in GeneratePaper.tsx that appears after question papers are successfully generated, confirming the generation and automatically showing the generated paper preview",
+      "featureId": "feature-add-comprehensive-error-handling-to-the-file-upload-process-in-addquestion-tsx-to-catch-and-display-errors-during-file-reading-parsing-and-the-usebulkuploadquestions-mutation",
+      "featureTitle": "Add comprehensive error handling to the file upload process in AddQuestion.tsx to catch and display errors during file reading, parsing, and the useBulkUploadQuestions mutation",
       "files": [
-        "frontend/src/pages/GeneratePaper.tsx"
+        "frontend/src/pages/AddQuestion.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -72,7 +33,43 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-39"
+        "REQ-55"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-verify-that-the-file-input-element-in-addquestion-tsx-has-the-correct-accept-attribute-and-onchange-handler-to-capture-file-selection-events",
+      "featureTitle": "Verify that the file input element in AddQuestion.tsx has the correct accept attribute and onChange handler to capture file selection events",
+      "files": [
+        "frontend/src/pages/AddQuestion.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-56"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-loading-indicator-and-disabled-state-to-the-bulk-upload-button-in-addquestion-tsx-during-file-processing-to-prevent-multiple-simultaneous-uploads",
+      "featureTitle": "Add loading indicator and disabled state to the bulk upload button in AddQuestion.tsx during file processing to prevent multiple simultaneous uploads",
+      "files": [
+        "frontend/src/pages/AddQuestion.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-57"
       ],
       "confidence": "high"
     }

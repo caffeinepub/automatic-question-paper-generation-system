@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 13,
+  "projectStateVersion": 21,
   "summary": "Automatic Question Paper Generation System - A web application for teachers to manage question banks and generate academic exam papers with database connectivity",
   "architectural_notes": [
     "Navy blue primary color, light blue accents, light grey background - academic professional theme",
@@ -18,7 +18,10 @@
     "Questions added via bulk upload are not displaying in the Question Bank",
     "Paper generation process is slow or unresponsive",
     "Generated question papers are not displaying after generation completes",
-    "No confirmation popup shown when bulk upload file is successfully processed"
+    "No confirmation popup shown when bulk upload file is successfully processed",
+    "Generated question papers still not displaying after generation completes in Version 7",
+    "Questions not loading in Version 8",
+    "Bulk upload file is not uploading - upload process failing completely"
   ],
   "isFixRequest": true,
   "existing_features": [
@@ -285,6 +288,142 @@
         "REQ-39"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-debug-the-generatepaper-tsx-component-to-identify-why-the-paper-preview-is-not-displaying-after-the-generate-paper-button-is-clicked-and-paper-generation-completes",
+      "title": "Debug the GeneratePaper.tsx component to identify why the paper preview is not displaying after the Generate Paper button is clicked and paper generation completes",
+      "reqIds": [
+        "REQ-40"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-fix-the-paper-preview-display-flow-in-generatepaper-tsx-so-that-after-paper-generation-completes-successfully-the-generated-paper-preview-is-immediately-shown-to-the-user",
+      "title": "Fix the paper preview display flow in GeneratePaper.tsx so that after paper generation completes successfully, the generated paper preview is immediately shown to the user",
+      "reqIds": [
+        "REQ-41"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-verify-that-generated-paper-data-is-correctly-saved-to-localstorage-in-generatepaper-tsx-before-attempting-to-navigate-to-the-preview",
+      "title": "Verify that generated paper data is correctly saved to localStorage in GeneratePaper.tsx before attempting to navigate to the preview",
+      "reqIds": [
+        "REQ-42"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-the-paperpreview-tsx-component-correctly-loads-and-displays-paper-data-from-localstorage-when-navigated-to-from-generatepaper-tsx",
+      "title": "Ensure the PaperPreview.tsx component correctly loads and displays paper data from localStorage when navigated to from GeneratePaper.tsx",
+      "reqIds": [
+        "REQ-43"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-console-logging-or-error-boundary-handling-in-generatepaper-tsx-to-capture-any-runtime-errors-that-occur-during-paper-generation-or-navigation",
+      "title": "Add console logging or error boundary handling in GeneratePaper.tsx to capture any runtime errors that occur during paper generation or navigation",
+      "reqIds": [
+        "REQ-44"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-debug-the-generatepaper-tsx-component-to-identify-why-the-navigation-to-paperpreview-page-is-failing-after-successful-paper-generation-and-localstorage-save",
+      "title": "Debug the GeneratePaper.tsx component to identify why the navigation to PaperPreview page is failing after successful paper generation and localStorage save",
+      "reqIds": [
+        "REQ-45"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-fix-the-router-navigation-in-generatepaper-tsx-to-ensure-successful-transition-to-the-paperpreview-page-after-paper-generation-completes-and-data-is-saved-to-localstorage",
+      "title": "Fix the router navigation in GeneratePaper.tsx to ensure successful transition to the PaperPreview page after paper generation completes and data is saved to localStorage",
+      "reqIds": [
+        "REQ-46"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-comprehensive-error-logging-in-generatepaper-tsx-for-the-entire-paper-generation-flow-including-question-fetching-validation-shuffling-localstorage-save-and-navigation-steps",
+      "title": "Add comprehensive error logging in GeneratePaper.tsx for the entire paper generation flow including question fetching, validation, shuffling, localStorage save, and navigation steps",
+      "reqIds": [
+        "REQ-47"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-verify-that-the-paperpreview-tsx-component-properly-handles-the-case-when-navigated-to-directly-after-generation-ensuring-it-correctly-reads-from-localstorage-and-renders-the-paper-data",
+      "title": "Verify that the PaperPreview.tsx component properly handles the case when navigated to directly after generation, ensuring it correctly reads from localStorage and renders the paper data",
+      "reqIds": [
+        "REQ-48"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-debug-the-usequestions-react-query-hook-in-frontend-src-hooks-usequeries-ts-to-identify-why-questions-are-not-being-fetched-from-the-backend-getquestions-function",
+      "title": "Debug the useQuestions React Query hook in frontend/src/hooks/useQueries.ts to identify why questions are not being fetched from the backend getQuestions function",
+      "reqIds": [
+        "REQ-49"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-error-handling-and-loading-states-to-the-questionbank-tsx-component-to-display-meaningful-messages-when-questions-fail-to-load-or-are-still-loading",
+      "title": "Add error handling and loading states to the QuestionBank.tsx component to display meaningful messages when questions fail to load or are still loading",
+      "reqIds": [
+        "REQ-51"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-verify-that-the-useactor-hook-properly-invalidates-and-refetches-the-questions-query-when-the-backend-actor-changes-or-reconnects",
+      "title": "Verify that the useActor hook properly invalidates and refetches the questions query when the backend actor changes or reconnects",
+      "reqIds": [
+        "REQ-52"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-comprehensive-error-logging-to-the-generatepaper-tsx-component-to-identify-why-questions-are-not-loading-during-paper-generation",
+      "title": "Add comprehensive error logging to the GeneratePaper.tsx component to identify why questions are not loading during paper generation",
+      "reqIds": [
+        "REQ-53"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-debug-and-fix-the-file-upload-mechanism-in-addquestion-tsx-to-identify-why-uploaded-files-csv-json-docx-are-not-being-processed-when-the-bulk-upload-button-is-clicked",
+      "title": "Debug and fix the file upload mechanism in AddQuestion.tsx to identify why uploaded files (CSV, JSON, DOCX) are not being processed when the bulk upload button is clicked",
+      "reqIds": [
+        "REQ-54"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-comprehensive-error-handling-to-the-file-upload-process-in-addquestion-tsx-to-catch-and-display-errors-during-file-reading-parsing-and-the-usebulkuploadquestions-mutation",
+      "title": "Add comprehensive error handling to the file upload process in AddQuestion.tsx to catch and display errors during file reading, parsing, and the useBulkUploadQuestions mutation",
+      "reqIds": [
+        "REQ-55"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-verify-that-the-file-input-element-in-addquestion-tsx-has-the-correct-accept-attribute-and-onchange-handler-to-capture-file-selection-events",
+      "title": "Verify that the file input element in AddQuestion.tsx has the correct accept attribute and onChange handler to capture file selection events",
+      "reqIds": [
+        "REQ-56"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-loading-indicator-and-disabled-state-to-the-bulk-upload-button-in-addquestion-tsx-during-file-processing-to-prevent-multiple-simultaneous-uploads",
+      "title": "Add loading indicator and disabled state to the bulk upload button in AddQuestion.tsx during file processing to prevent multiple simultaneous uploads",
+      "reqIds": [
+        "REQ-57"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -412,6 +551,14 @@
       "id": "AR-30",
       "summary": "Show popup confirmation message when file is successfully uploaded during bulk upload",
       "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-32",
+      "summary": "Fix the backend getQuestions function in backend/main.mo to ensure it correctly returns all questions stored in the questions map as an array",
+      "reqIds": [
+        "REQ-50"
+      ],
       "status": "pending"
     }
   ],

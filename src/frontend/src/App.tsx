@@ -20,108 +20,77 @@ function RootComponent() {
   return <Layout />;
 }
 
+// Create root route
+const rootRoute = createRootRoute({
+  component: RootComponent
+});
+
+// Create all routes
+const loginRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/login',
+  component: Login,
+});
+
+const dashboardRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/',
+  component: Dashboard,
+});
+
+const addQuestionRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/add-question',
+  component: AddQuestion,
+});
+
+const questionBankRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/question-bank',
+  component: QuestionBank,
+});
+
+const generatePaperRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/generate-paper',
+  component: GeneratePaper,
+});
+
+const paperPreviewRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/paper-preview/$id',
+  component: PaperPreview,
+});
+
+const generatedPapersRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/generated-papers',
+  component: GeneratedPapers,
+});
+
+// Create route tree
+const routeTree = rootRoute.addChildren([
+  loginRoute,
+  dashboardRoute,
+  addQuestionRoute,
+  questionBankRoute,
+  generatePaperRoute,
+  paperPreviewRoute,
+  generatedPapersRoute
+]);
+
+// Create router instance outside component
+const router = createRouter({ routeTree });
+
+// Register router for type safety
+declare module '@tanstack/react-router' {
+  interface Register {
+    router: typeof router;
+  }
+}
+
 function App() {
-  const { identity, isInitializing } = useInternetIdentity();
-
-  const rootRoute = createRootRoute({
-    component: RootComponent
-  });
-
-  const loginRoute = createRoute({
-    getParentRoute: () => rootRoute,
-    path: '/login',
-    component: Login,
-    beforeLoad: () => {
-      const isAuthenticated = !!identity && !identity.getPrincipal().isAnonymous();
-      if (isAuthenticated) {
-        throw redirect({ to: '/' });
-      }
-    }
-  });
-
-  const dashboardRoute = createRoute({
-    getParentRoute: () => rootRoute,
-    path: '/',
-    component: Dashboard,
-    beforeLoad: () => {
-      const isAuthenticated = !!identity && !identity.getPrincipal().isAnonymous();
-      if (!isAuthenticated) {
-        throw redirect({ to: '/login' });
-      }
-    }
-  });
-
-  const addQuestionRoute = createRoute({
-    getParentRoute: () => rootRoute,
-    path: '/add-question',
-    component: AddQuestion,
-    beforeLoad: () => {
-      const isAuthenticated = !!identity && !identity.getPrincipal().isAnonymous();
-      if (!isAuthenticated) {
-        throw redirect({ to: '/login' });
-      }
-    }
-  });
-
-  const questionBankRoute = createRoute({
-    getParentRoute: () => rootRoute,
-    path: '/question-bank',
-    component: QuestionBank,
-    beforeLoad: () => {
-      const isAuthenticated = !!identity && !identity.getPrincipal().isAnonymous();
-      if (!isAuthenticated) {
-        throw redirect({ to: '/login' });
-      }
-    }
-  });
-
-  const generatePaperRoute = createRoute({
-    getParentRoute: () => rootRoute,
-    path: '/generate-paper',
-    component: GeneratePaper,
-    beforeLoad: () => {
-      const isAuthenticated = !!identity && !identity.getPrincipal().isAnonymous();
-      if (!isAuthenticated) {
-        throw redirect({ to: '/login' });
-      }
-    }
-  });
-
-  const paperPreviewRoute = createRoute({
-    getParentRoute: () => rootRoute,
-    path: '/paper-preview/$id',
-    component: PaperPreview,
-    beforeLoad: () => {
-      const isAuthenticated = !!identity && !identity.getPrincipal().isAnonymous();
-      if (!isAuthenticated) {
-        throw redirect({ to: '/login' });
-      }
-    }
-  });
-
-  const generatedPapersRoute = createRoute({
-    getParentRoute: () => rootRoute,
-    path: '/generated-papers',
-    component: GeneratedPapers,
-    beforeLoad: () => {
-      const isAuthenticated = !!identity && !identity.getPrincipal().isAnonymous();
-      if (!isAuthenticated) {
-        throw redirect({ to: '/login' });
-      }
-    }
-  });
-
-  const routeTree = rootRoute.addChildren([
-    loginRoute,
-    dashboardRoute,
-    addQuestionRoute,
-    questionBankRoute,
-    generatePaperRoute,
-    paperPreviewRoute,
-    generatedPapersRoute
-  ]);
-
-  const router = createRouter({ routeTree });
+  const { isInitializing } = useInternetIdentity();
 
   if (isInitializing) {
     return (

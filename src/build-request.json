@@ -1,95 +1,94 @@
 {
   "kind": "build_request",
-  "title": "Fix MCQ marks to 1, add upload/generation success popups, and show generated paper preview",
+  "title": "Fix bulk upload file upload failure",
   "priority": "high",
   "requirements": [
     {
-      "id": "REQ-36",
-      "text": "Update the MCQ category marking scheme from its current value to 1 mark in the backend Question type definition and throughout the application",
-      "target": "both",
-      "source": {
-        "messageIds": [
-          "msg-last"
-        ],
-        "quotes": [
-          "mcq should have 1marks"
-        ]
-      },
-      "acceptanceCriteria": [
-        "MCQ questions are consistently displayed as 1 mark in the UI",
-        "Paper generation correctly calculates total marks with MCQ as 1 mark each",
-        "Generated paper preview shows MCQ section with 1 mark per question"
-      ]
-    },
-    {
-      "id": "REQ-37",
-      "text": "Fix the generated paper preview display issue so that generated papers are shown immediately after the generation process completes",
+      "id": "REQ-54",
+      "text": "Debug and fix the file upload mechanism in AddQuestion.tsx to identify why uploaded files (CSV, JSON, DOCX) are not being processed when the bulk upload button is clicked",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-last"
+          "msg-user-final"
         ],
         "quotes": [
-          "it is not showuing generated paper"
+          "yes...the file is also not uploading let the file upload"
         ]
       },
       "acceptanceCriteria": [
-        "After clicking Generate Paper button, the paper preview displays without requiring manual navigation",
-        "All 5 variants (A-E) are visible in the preview",
-        "Questions are properly organized into sections A, B, and C"
+        "File input successfully reads selected files",
+        "File content is correctly passed to the appropriate parser (csvParser, jsonParser, or docxParser)",
+        "Console logging shows file metadata (name, size, type) when file is selected",
+        "Error messages display if file reading fails"
       ]
     },
     {
-      "id": "REQ-38",
-      "text": "Add a success popup notification in AddQuestion.tsx that appears immediately after a file is successfully uploaded via bulk upload, showing confirmation that the file has been processed",
+      "id": "REQ-55",
+      "text": "Add comprehensive error handling to the file upload process in AddQuestion.tsx to catch and display errors during file reading, parsing, and the useBulkUploadQuestions mutation",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-last"
+          "msg-user-final"
         ],
         "quotes": [
-          "if file uploaded provide pop up message that it has uploaded"
+          "yes...the file is also not uploading let the file upload"
         ]
       },
       "acceptanceCriteria": [
-        "Popup appears immediately after file upload completes",
-        "Message clearly states the file was successfully uploaded and processed",
-        "Popup includes the count of questions successfully added",
-        "Popup can be dismissed by the user"
+        "Try-catch blocks wrap file reading operations",
+        "User-friendly error messages display for different failure scenarios (file read error, parse error, upload error)",
+        "Loading state is properly cleared even when errors occur",
+        "Console errors log detailed information for debugging"
       ]
     },
     {
-      "id": "REQ-39",
-      "text": "Add a success popup notification in GeneratePaper.tsx that appears after question papers are successfully generated, confirming the generation and automatically showing the generated paper preview",
+      "id": "REQ-56",
+      "text": "Verify that the file input element in AddQuestion.tsx has the correct accept attribute and onChange handler to capture file selection events",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-last"
+          "msg-user-final"
         ],
         "quotes": [
-          "if question paper generated probvide popup and show generated paper"
+          "yes...the file is also not uploading let the file upload"
         ]
       },
       "acceptanceCriteria": [
-        "Popup appears immediately after paper generation completes",
-        "Message confirms successful generation of all 5 paper variants",
-        "After popup is dismissed or auto-closes, user is redirected to the paper preview page",
-        "The generated paper data is correctly passed to the preview page"
+        "File input accepts .csv, .json, and .docx file types",
+        "onChange handler successfully captures the selected file",
+        "Selected file is stored in component state or ref",
+        "File input is not disabled by any condition"
+      ]
+    },
+    {
+      "id": "REQ-57",
+      "text": "Add loading indicator and disabled state to the bulk upload button in AddQuestion.tsx during file processing to prevent multiple simultaneous uploads",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-user-final"
+        ],
+        "quotes": [
+          "yes...the file is also not uploading let the file upload"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Bulk upload button shows loading spinner while processing file",
+        "Button is disabled during file upload to prevent duplicate submissions",
+        "Loading state clears after successful upload or error",
+        "User sees clear visual feedback that upload is in progress"
       ]
     }
   ],
   "constraints": [
-    "Do not modify frontend/src/hooks/useInternetIdentity.ts",
-    "Do not modify frontend/src/hooks/useActor.ts",
-    "Do not modify frontend/src/main.tsx",
-    "Do not modify files in frontend/src/components/ui directory",
-    "Maintain the existing single-actor backend architecture in backend/main.mo"
+    "Preserve existing CSV, JSON, and DOCX parser utilities without modification",
+    "Maintain the current useBulkUploadQuestions React Query hook structure",
+    "Do not change the backend addQuestionsInBulk function"
   ],
   "nonGoals": [
-    "Changing the overall paper generation algorithm beyond MCQ marks fix",
-    "Modifying the PDF generation logic",
-    "Altering the bulk upload file format requirements",
-    "Redesigning the UI layout or color scheme"
+    "Redesigning the bulk upload UI layout",
+    "Adding new file format support beyond CSV, JSON, and DOCX",
+    "Modifying the question validation logic in parsers"
   ],
   "imageRequirements": {
     "required": [],

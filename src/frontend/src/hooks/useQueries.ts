@@ -51,15 +51,51 @@ export function useQueries() {
 
   // Get all questions using the backend's getQuestions method
   const useGetAllQuestions = () => {
+    console.log('🔍 useGetAllQuestions hook initialized');
+    
     return useQuery<Question[]>({
       queryKey: ['allQuestions'],
       queryFn: async () => {
-        if (!actor) return [];
-        // Use the backend's getQuestions method which returns all questions
-        const questions = await actor.getQuestions();
-        return questions;
+        console.log('📡 useGetAllQuestions queryFn called');
+        console.log('Actor status:', { 
+          actorExists: !!actor, 
+          isFetching,
+          actorType: actor ? typeof actor : 'undefined'
+        });
+
+        if (!actor) {
+          console.warn('⚠️ Actor not available, returning empty array');
+          return [];
+        }
+
+        try {
+          console.log('🚀 Calling actor.getQuestions()...');
+          const questions = await actor.getQuestions();
+          console.log('✅ Questions received from backend:', {
+            count: questions.length,
+            sample: questions.length > 0 ? {
+              firstQuestion: {
+                id: questions[0].id.toString(),
+                category: questions[0].category,
+                subjectId: questions[0].subjectId,
+                questionText: questions[0].questionText.substring(0, 50) + '...'
+              }
+            } : 'No questions available'
+          });
+          return questions;
+        } catch (error) {
+          console.error('❌ Error fetching questions from backend:', error);
+          console.error('Error details:', {
+            message: error instanceof Error ? error.message : 'Unknown error',
+            stack: error instanceof Error ? error.stack : 'No stack trace',
+            errorType: typeof error
+          });
+          throw error;
+        }
       },
       enabled: !!actor && !isFetching,
+      retry: 3,
+      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
     });
   };
 
@@ -74,6 +110,7 @@ export function useQueries() {
         correctAnswer: string | null;
         difficultyLevel: DifficultyLevel;
       }) => {
+        console.log('📝 Adding single question:', data);
         if (!actor) throw new Error('Actor not initialized');
         await actor.addQuestion(
           data.subjectId,
@@ -83,8 +120,10 @@ export function useQueries() {
           data.correctAnswer,
           data.difficultyLevel
         );
+        console.log('✅ Question added successfully');
       },
       onSuccess: () => {
+        console.log('🔄 Invalidating allQuestions query after adding question');
         queryClient.invalidateQueries({ queryKey: ['allQuestions'] });
       },
     });
@@ -94,6 +133,7 @@ export function useQueries() {
   const useBulkUploadQuestions = () => {
     return useMutation({
       mutationFn: async (questions: Omit<Question, 'id' | 'timestamp'>[]) => {
+        console.log('📦 Bulk uploading questions:', { count: questions.length });
         if (!actor) throw new Error('Actor not initialized');
         
         // Convert questions to the format expected by backend
@@ -104,10 +144,13 @@ export function useQueries() {
           timestamp: BigInt(Date.now()),
         }));
         
+        console.log('🚀 Calling actor.addQuestionsInBulk with', questionsWithIds.length, 'questions');
         const count = await actor.addQuestionsInBulk(questionsWithIds);
+        console.log('✅ Bulk upload completed. Questions added:', Number(count));
         return Number(count);
       },
-      onSuccess: () => {
+      onSuccess: (count) => {
+        console.log('🔄 Invalidating allQuestions query after bulk upload. Count:', count);
         // Invalidate queries to refetch all questions
         queryClient.invalidateQueries({ queryKey: ['allQuestions'] });
       },

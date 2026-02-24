@@ -1,86 +1,73 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Fix MCQ marks to 1, add upload/generation success popups, and show generated paper preview",
+  "title": "Fix bulk upload file upload failure",
   "requirements": [
     {
-      "id": "REQ-36",
-      "summary": "Update MCQ category display from current marks value to consistently show 1 mark throughout the frontend UI",
+      "id": "REQ-54",
+      "summary": "Debug and fix the file upload mechanism to ensure uploaded files are properly read and processed when the bulk upload button is clicked",
       "acceptanceCriteria": [
-        "MCQ questions are consistently displayed as 1 mark in the UI",
-        "Paper generation correctly calculates total marks with MCQ as 1 mark each",
-        "Generated paper preview shows MCQ section with 1 mark per question"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/QuestionCard.tsx",
-          "operation": "modify",
-          "description": "Update the category badge display logic to show '1 Mark' for mcqOneMark category instead of the current marks value"
-        },
-        {
-          "path": "frontend/src/pages/GeneratePaper.tsx",
-          "operation": "modify",
-          "description": "Update the total marks calculation in the handleGenerate function to use 1 mark per MCQ question when computing the paper's total marks"
-        },
-        {
-          "path": "frontend/src/pages/PaperPreview.tsx",
-          "operation": "modify",
-          "description": "Update the section rendering logic to display '(1 mark each)' for Section A (MCQ) in the paper preview"
-        },
-        {
-          "path": "frontend/src/utils/pdfGenerator.ts",
-          "operation": "modify",
-          "description": "Update the PDF generation logic to correctly display MCQ section with 1 mark per question and ensure accurate total marks calculation in the generated PDF"
-        }
-      ]
-    },
-    {
-      "id": "REQ-37",
-      "summary": "Fix the paper preview display by automatically navigating to the preview page after successful paper generation",
-      "acceptanceCriteria": [
-        "After clicking Generate Paper button, the paper preview displays without requiring manual navigation",
-        "All 5 variants (A-E) are visible in the preview",
-        "Questions are properly organized into sections A, B, and C"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/pages/GeneratePaper.tsx",
-          "operation": "modify",
-          "description": "Add navigation logic using useNavigate hook to automatically redirect to the paper preview page (/paper-preview) after the paper generation completes successfully, passing the generated paper data via navigation state"
-        }
-      ]
-    },
-    {
-      "id": "REQ-38",
-      "summary": "Add success popup notification in AddQuestion.tsx after bulk file upload completes",
-      "acceptanceCriteria": [
-        "Popup appears immediately after file upload completes",
-        "Message clearly states the file was successfully uploaded and processed",
-        "Popup includes the count of questions successfully added",
-        "Popup can be dismissed by the user"
+        "File input successfully reads selected files",
+        "File content is correctly passed to the appropriate parser (csvParser, jsonParser, or docxParser)",
+        "Console logging shows file metadata (name, size, type) when file is selected",
+        "Error messages display if file reading fails"
       ],
       "file_operations": [
         {
           "path": "frontend/src/pages/AddQuestion.tsx",
           "operation": "modify",
-          "description": "Add a success toast/dialog notification in the handleBulkUpload function that displays after the bulkUploadMutation succeeds, showing the count of questions added and allowing user dismissal"
+          "description": "Fix the file upload mechanism by ensuring the file input onChange handler properly captures the selected file and stores it in component state. Add a FileReader to read the file content as text when the bulk upload button is clicked. Implement logic to detect file type based on file extension and pass the content to the appropriate parser (csvParser for .csv, jsonParser for .json, docxParser for .docx). Add console.log statements to track file metadata (name, size, type) when a file is selected and when processing begins. Ensure the file reading happens before calling the mutation and that the parsed questions array is passed to useBulkUploadQuestions.mutate()."
         }
       ]
     },
     {
-      "id": "REQ-39",
-      "summary": "Add success popup notification in GeneratePaper.tsx after paper generation with automatic preview navigation",
+      "id": "REQ-55",
+      "summary": "Add comprehensive error handling to catch and display errors during file reading, parsing, and upload mutations",
       "acceptanceCriteria": [
-        "Popup appears immediately after paper generation completes",
-        "Message confirms successful generation of all 5 paper variants",
-        "After popup is dismissed or auto-closes, user is redirected to the paper preview page",
-        "The generated paper data is correctly passed to the preview page"
+        "Try-catch blocks wrap file reading operations",
+        "User-friendly error messages display for different failure scenarios (file read error, parse error, upload error)",
+        "Loading state is properly cleared even when errors occur",
+        "Console errors log detailed information for debugging"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/GeneratePaper.tsx",
+          "path": "frontend/src/pages/AddQuestion.tsx",
           "operation": "modify",
-          "description": "Add a success toast/dialog notification in the handleGenerate function that displays after paper generation completes, confirms all 5 variants (A-E) were created, and automatically navigates to the paper preview page with the generated paper data after dismissal or auto-close"
+          "description": "Wrap the FileReader operations in try-catch blocks to handle file reading errors. Add error handling for FileReader.onerror event. Display user-friendly error messages using a toast or alert component for different scenarios: 'Failed to read file', 'Failed to parse file', and 'Failed to upload questions'. Ensure the loading state (isUploading or similar) is set to false in both success and error cases. Add console.error calls with detailed error information for debugging purposes. Handle errors from the useBulkUploadQuestions mutation using the onError callback."
+        }
+      ]
+    },
+    {
+      "id": "REQ-56",
+      "summary": "Verify and fix the file input element to have correct accept attribute and onChange handler for capturing file selections",
+      "acceptanceCriteria": [
+        "File input accepts .csv, .json, and .docx file types",
+        "onChange handler successfully captures the selected file",
+        "Selected file is stored in component state or ref",
+        "File input is not disabled by any condition"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/AddQuestion.tsx",
+          "operation": "modify",
+          "description": "Ensure the file input element has accept=\".csv,.json,.docx\" attribute. Verify the onChange handler is properly attached and captures event.target.files[0]. Add or update React state (using useState) to store the selected file object. Remove any disabled conditions from the file input element. Add a visual indicator (like displaying the selected filename) to confirm a file has been chosen."
+        }
+      ]
+    },
+    {
+      "id": "REQ-57",
+      "summary": "Add loading indicator and disabled state to the bulk upload button during file processing to prevent multiple simultaneous uploads",
+      "acceptanceCriteria": [
+        "Bulk upload button shows loading spinner while processing file",
+        "Button is disabled during file upload to prevent duplicate submissions",
+        "Loading state clears after successful upload or error",
+        "User sees clear visual feedback that upload is in progress"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/AddQuestion.tsx",
+          "operation": "modify",
+          "description": "Add a loading state variable (e.g., isUploading) using useState or utilize the isPending state from useBulkUploadQuestions. Add a disabled attribute to the bulk upload button that is true when isUploading or isPending is true. Display a loading spinner icon (using Loader2 from lucide-react with animate-spin class) inside the button when loading. Update button text to show 'Uploading...' during the upload process. Ensure the loading state is set to true at the start of file processing and set to false after successful upload or error in both the onSuccess and onError callbacks of the mutation."
         }
       ]
     }
