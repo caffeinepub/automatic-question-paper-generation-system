@@ -107,16 +107,18 @@ export enum DifficultyLevel {
     medium = "medium"
 }
 export enum QuestionCategory {
-    mcq = "mcq",
     _2Marks = "_2Marks",
     _8Marks = "_8Marks",
     _6Marks = "_6Marks",
-    _4Marks = "_4Marks"
+    _4Marks = "_4Marks",
+    mcqOneMark = "mcqOneMark"
 }
 export interface backendInterface {
     addQuestion(subjectId: SubjectId, category: QuestionCategory, questionText: string, options: Array<string> | null, correctAnswer: string | null, difficultyLevel: DifficultyLevel): Promise<void>;
+    addQuestionsInBulk(questionsArray: Array<Question>): Promise<bigint>;
     addSubject(id: SubjectId, name: string, code: string): Promise<void>;
     getAllVariants(): Promise<Array<string>>;
+    getQuestions(): Promise<Array<Question>>;
     getQuestionsBySubjectAndCategory(subjectId: SubjectId, category: QuestionCategory): Promise<Array<Question>>;
 }
 import type { DifficultyLevel as _DifficultyLevel, Question as _Question, QuestionCategory as _QuestionCategory, QuestionId as _QuestionId, SubjectId as _SubjectId } from "./declarations/backend.did.d.ts";
@@ -133,6 +135,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.addQuestion(arg0, to_candid_QuestionCategory_n1(this._uploadFile, this._downloadFile, arg1), arg2, to_candid_opt_n3(this._uploadFile, this._downloadFile, arg3), to_candid_opt_n4(this._uploadFile, this._downloadFile, arg4), to_candid_DifficultyLevel_n5(this._uploadFile, this._downloadFile, arg5));
+            return result;
+        }
+    }
+    async addQuestionsInBulk(arg0: Array<Question>): Promise<bigint> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.addQuestionsInBulk(to_candid_vec_n7(this._uploadFile, this._downloadFile, arg0));
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.addQuestionsInBulk(to_candid_vec_n7(this._uploadFile, this._downloadFile, arg0));
             return result;
         }
     }
@@ -164,37 +180,51 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async getQuestions(): Promise<Array<Question>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getQuestions();
+                return from_candid_vec_n10(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getQuestions();
+            return from_candid_vec_n10(this._uploadFile, this._downloadFile, result);
+        }
+    }
     async getQuestionsBySubjectAndCategory(arg0: SubjectId, arg1: QuestionCategory): Promise<Array<Question>> {
         if (this.processError) {
             try {
                 const result = await this.actor.getQuestionsBySubjectAndCategory(arg0, to_candid_QuestionCategory_n1(this._uploadFile, this._downloadFile, arg1));
-                return from_candid_vec_n7(this._uploadFile, this._downloadFile, result);
+                return from_candid_vec_n10(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getQuestionsBySubjectAndCategory(arg0, to_candid_QuestionCategory_n1(this._uploadFile, this._downloadFile, arg1));
-            return from_candid_vec_n7(this._uploadFile, this._downloadFile, result);
+            return from_candid_vec_n10(this._uploadFile, this._downloadFile, result);
         }
     }
 }
-function from_candid_DifficultyLevel_n10(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _DifficultyLevel): DifficultyLevel {
-    return from_candid_variant_n11(_uploadFile, _downloadFile, value);
-}
-function from_candid_QuestionCategory_n13(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _QuestionCategory): QuestionCategory {
+function from_candid_DifficultyLevel_n13(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _DifficultyLevel): DifficultyLevel {
     return from_candid_variant_n14(_uploadFile, _downloadFile, value);
 }
-function from_candid_Question_n8(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _Question): Question {
-    return from_candid_record_n9(_uploadFile, _downloadFile, value);
+function from_candid_QuestionCategory_n16(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _QuestionCategory): QuestionCategory {
+    return from_candid_variant_n17(_uploadFile, _downloadFile, value);
 }
-function from_candid_opt_n12(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [string]): string | null {
+function from_candid_Question_n11(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _Question): Question {
+    return from_candid_record_n12(_uploadFile, _downloadFile, value);
+}
+function from_candid_opt_n15(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [string]): string | null {
     return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n15(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [Array<string>]): Array<string> | null {
+function from_candid_opt_n18(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [Array<string>]): Array<string> | null {
     return value.length === 0 ? null : value[0];
 }
-function from_candid_record_n9(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+function from_candid_record_n12(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     id: _QuestionId;
     difficultyLevel: _DifficultyLevel;
     correctAnswer: [] | [string];
@@ -215,16 +245,16 @@ function from_candid_record_n9(_uploadFile: (file: ExternalBlob) => Promise<Uint
 } {
     return {
         id: value.id,
-        difficultyLevel: from_candid_DifficultyLevel_n10(_uploadFile, _downloadFile, value.difficultyLevel),
-        correctAnswer: record_opt_to_undefined(from_candid_opt_n12(_uploadFile, _downloadFile, value.correctAnswer)),
+        difficultyLevel: from_candid_DifficultyLevel_n13(_uploadFile, _downloadFile, value.difficultyLevel),
+        correctAnswer: record_opt_to_undefined(from_candid_opt_n15(_uploadFile, _downloadFile, value.correctAnswer)),
         questionText: value.questionText,
         subjectId: value.subjectId,
         timestamp: value.timestamp,
-        category: from_candid_QuestionCategory_n13(_uploadFile, _downloadFile, value.category),
-        options: record_opt_to_undefined(from_candid_opt_n15(_uploadFile, _downloadFile, value.options))
+        category: from_candid_QuestionCategory_n16(_uploadFile, _downloadFile, value.category),
+        options: record_opt_to_undefined(from_candid_opt_n18(_uploadFile, _downloadFile, value.options))
     };
 }
-function from_candid_variant_n11(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+function from_candid_variant_n14(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     easy: null;
 } | {
     hard: null;
@@ -233,9 +263,7 @@ function from_candid_variant_n11(_uploadFile: (file: ExternalBlob) => Promise<Ui
 }): DifficultyLevel {
     return "easy" in value ? DifficultyLevel.easy : "hard" in value ? DifficultyLevel.hard : "medium" in value ? DifficultyLevel.medium : value;
 }
-function from_candid_variant_n14(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
-    mcq: null;
-} | {
+function from_candid_variant_n17(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     _2Marks: null;
 } | {
     _8Marks: null;
@@ -243,11 +271,13 @@ function from_candid_variant_n14(_uploadFile: (file: ExternalBlob) => Promise<Ui
     _6Marks: null;
 } | {
     _4Marks: null;
+} | {
+    mcqOneMark: null;
 }): QuestionCategory {
-    return "mcq" in value ? QuestionCategory.mcq : "_2Marks" in value ? QuestionCategory._2Marks : "_8Marks" in value ? QuestionCategory._8Marks : "_6Marks" in value ? QuestionCategory._6Marks : "_4Marks" in value ? QuestionCategory._4Marks : value;
+    return "_2Marks" in value ? QuestionCategory._2Marks : "_8Marks" in value ? QuestionCategory._8Marks : "_6Marks" in value ? QuestionCategory._6Marks : "_4Marks" in value ? QuestionCategory._4Marks : "mcqOneMark" in value ? QuestionCategory.mcqOneMark : value;
 }
-function from_candid_vec_n7(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<_Question>): Array<Question> {
-    return value.map((x)=>from_candid_Question_n8(_uploadFile, _downloadFile, x));
+function from_candid_vec_n10(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<_Question>): Array<Question> {
+    return value.map((x)=>from_candid_Question_n11(_uploadFile, _downloadFile, x));
 }
 function to_candid_DifficultyLevel_n5(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: DifficultyLevel): _DifficultyLevel {
     return to_candid_variant_n6(_uploadFile, _downloadFile, value);
@@ -255,15 +285,46 @@ function to_candid_DifficultyLevel_n5(_uploadFile: (file: ExternalBlob) => Promi
 function to_candid_QuestionCategory_n1(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: QuestionCategory): _QuestionCategory {
     return to_candid_variant_n2(_uploadFile, _downloadFile, value);
 }
+function to_candid_Question_n8(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Question): _Question {
+    return to_candid_record_n9(_uploadFile, _downloadFile, value);
+}
 function to_candid_opt_n3(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<string> | null): [] | [Array<string>] {
     return value === null ? candid_none() : candid_some(value);
 }
 function to_candid_opt_n4(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: string | null): [] | [string] {
     return value === null ? candid_none() : candid_some(value);
 }
+function to_candid_record_n9(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    id: QuestionId;
+    difficultyLevel: DifficultyLevel;
+    correctAnswer?: string;
+    questionText: string;
+    subjectId: SubjectId;
+    timestamp: bigint;
+    category: QuestionCategory;
+    options?: Array<string>;
+}): {
+    id: _QuestionId;
+    difficultyLevel: _DifficultyLevel;
+    correctAnswer: [] | [string];
+    questionText: string;
+    subjectId: _SubjectId;
+    timestamp: bigint;
+    category: _QuestionCategory;
+    options: [] | [Array<string>];
+} {
+    return {
+        id: value.id,
+        difficultyLevel: to_candid_DifficultyLevel_n5(_uploadFile, _downloadFile, value.difficultyLevel),
+        correctAnswer: value.correctAnswer ? candid_some(value.correctAnswer) : candid_none(),
+        questionText: value.questionText,
+        subjectId: value.subjectId,
+        timestamp: value.timestamp,
+        category: to_candid_QuestionCategory_n1(_uploadFile, _downloadFile, value.category),
+        options: value.options ? candid_some(value.options) : candid_none()
+    };
+}
 function to_candid_variant_n2(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: QuestionCategory): {
-    mcq: null;
-} | {
     _2Marks: null;
 } | {
     _8Marks: null;
@@ -271,10 +332,10 @@ function to_candid_variant_n2(_uploadFile: (file: ExternalBlob) => Promise<Uint8
     _6Marks: null;
 } | {
     _4Marks: null;
+} | {
+    mcqOneMark: null;
 } {
-    return value == QuestionCategory.mcq ? {
-        mcq: null
-    } : value == QuestionCategory._2Marks ? {
+    return value == QuestionCategory._2Marks ? {
         _2Marks: null
     } : value == QuestionCategory._8Marks ? {
         _8Marks: null
@@ -282,6 +343,8 @@ function to_candid_variant_n2(_uploadFile: (file: ExternalBlob) => Promise<Uint8
         _6Marks: null
     } : value == QuestionCategory._4Marks ? {
         _4Marks: null
+    } : value == QuestionCategory.mcqOneMark ? {
+        mcqOneMark: null
     } : value;
 }
 function to_candid_variant_n6(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: DifficultyLevel): {
@@ -298,6 +361,9 @@ function to_candid_variant_n6(_uploadFile: (file: ExternalBlob) => Promise<Uint8
     } : value == DifficultyLevel.medium ? {
         medium: null
     } : value;
+}
+function to_candid_vec_n7(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<Question>): Array<_Question> {
+    return value.map((x)=>to_candid_Question_n8(_uploadFile, _downloadFile, x));
 }
 export interface CreateActorOptions {
     agent?: Agent;

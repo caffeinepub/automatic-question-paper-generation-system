@@ -2,178 +2,11 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-implement-teacher-authentication-system-with-internet-identity-integration-for-login-logout-functionality",
-      "featureTitle": "Implement teacher authentication system with Internet Identity integration for login/logout functionality",
+      "featureId": "feature-update-the-mcq-category-marking-scheme-from-its-current-value-to-1-mark-in-the-backend-question-type-definition-and-throughout-the-application",
+      "featureTitle": "Update the MCQ category marking scheme from its current value to 1 mark in the backend Question type definition and throughout the application",
       "files": [
-        "frontend/src/App.tsx"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-1"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-create-teacher-login-page-with-college-logo-placeholder-system-title-automatic-question-paper-generation-system-internet-identity-login-button-and-forgot-password-link",
-      "featureTitle": "Create Teacher Login page with college logo placeholder, system title 'Automatic Question Paper Generation System', Internet Identity login button, and forgot password link",
-      "files": [
-        "frontend/src/pages/Login.tsx"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-2"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-build-dashboard-page-with-welcome-message-showing-teacher-name-navigation-sidebar-with-links-to-dashboard-add-questions-question-bank-generate-paper-generated-papers-and-logout",
-      "featureTitle": "Build Dashboard page with welcome message showing teacher name, navigation sidebar with links to Dashboard, Add Questions, Question Bank, Generate Paper, Generated Papers, and Logout",
-      "files": [
-        "frontend/src/components/Layout.tsx",
-        "frontend/src/pages/Dashboard.tsx"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-3"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-display-statistics-cards-on-dashboard-showing-total-subjects-total-questions-and-papers-generated-with-real-time-counts-from-database",
-      "featureTitle": "Display statistics cards on Dashboard showing Total Subjects, Total Questions, and Papers Generated with real-time counts from database",
-      "files": [
-        "frontend/src/components/StatsCard.tsx",
-        "frontend/src/pages/Dashboard.tsx"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-4"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-implement-database-structure-visualization-on-dashboard-showing-the-workflow-subjects-question-categories-stored-questions-paper-generation-engine-pdf-output",
-      "featureTitle": "Implement database structure visualization on Dashboard showing the workflow: Subjects → Question Categories → Stored Questions → Paper Generation Engine → PDF Output",
-      "files": [
-        "frontend/src/components/WorkflowDiagram.tsx",
-        "frontend/src/pages/Dashboard.tsx"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-5"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-build-add-questions-page-with-form-containing-subject-dropdown-question-category-dropdown-question-text-area-mcq-options-fields-visible-only-when-mcq-is-selected-difficulty-level-dropdown-and-save-to-database-button-with-success-message-popup",
-      "featureTitle": "Build Add Questions page with form containing subject dropdown, question category dropdown, question text area, MCQ options fields (visible only when MCQ is selected), difficulty level dropdown, and Save to Database button with success message popup",
-      "files": [
-        "frontend/src/pages/AddQuestion.tsx"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-8"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-create-question-bank-page-with-ability-to-view-all-questions-grouped-by-subject-and-category-and-provide-edit-and-delete-functionality-for-both-subjects-and-questions",
-      "featureTitle": "Create Question Bank page with ability to view all questions grouped by subject and category, and provide edit and delete functionality for both subjects and questions",
-      "files": [
-        "frontend/src/components/EditQuestionModal.tsx",
         "frontend/src/components/QuestionCard.tsx",
-        "frontend/src/components/SubjectManager.tsx",
-        "frontend/src/pages/QuestionBank.tsx"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-9"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-build-generate-question-paper-page-with-form-containing-subject-dropdown-exam-duration-input-total-marks-input-and-number-of-questions-selector-for-each-category-2-marks-4-marks-mcq-6-marks-8-marks-plus-generate-paper-button-that-triggers-database-based-automatic-question-selection",
-      "featureTitle": "Build Generate Question Paper page with form containing subject dropdown, exam duration input, total marks input, and number of questions selector for each category (2 Marks, 4 Marks, MCQ, 6 Marks, 8 Marks), plus Generate Paper button that triggers database-based automatic question selection",
-      "files": [
-        "frontend/src/pages/GeneratePaper.tsx"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-10"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-build-generated-question-paper-preview-page-with-formal-academic-layout-including-college-name-header-subject-name-time-and-total-marks-questions-organized-in-section-a-mcq-section-b-2-marks-4-marks-section-c-6-marks-8-marks-with-proper-numbering-and-download-pdf-button-for-each-of-5-sets-a-b-c-d-e",
-      "featureTitle": "Build Generated Question Paper Preview page with formal academic layout including college name header, subject name, time and total marks, questions organized in Section A (MCQ), Section B (2 Marks & 4 Marks), Section C (6 Marks & 8 Marks) with proper numbering, and Download PDF button for each of 5 sets (A, B, C, D, E)",
-      "files": [
-        "frontend/src/components/PaperSection.tsx",
-        "frontend/src/pages/PaperPreview.tsx"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-12"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-implement-pdf-generation-functionality-that-creates-downloadable-pdfs-of-generated-question-papers-maintaining-formal-academic-formatting-with-college-header-sections-and-proper-numbering",
-      "featureTitle": "Implement PDF generation functionality that creates downloadable PDFs of generated question papers maintaining formal academic formatting with college header, sections, and proper numbering",
-      "files": [
+        "frontend/src/pages/GeneratePaper.tsx",
         "frontend/src/pages/PaperPreview.tsx",
         "frontend/src/utils/pdfGenerator.ts"
       ],
@@ -185,16 +18,15 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-13"
+        "REQ-36"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-create-generated-papers-page-that-lists-all-previously-generated-question-papers-with-details-subject-date-marks-and-allows-accessing-preview-and-pdf-download-for-each-paper",
-      "featureTitle": "Create Generated Papers page that lists all previously generated question papers with details (subject, date, marks) and allows accessing preview and PDF download for each paper",
+      "featureId": "feature-fix-the-generated-paper-preview-display-issue-so-that-generated-papers-are-shown-immediately-after-the-generation-process-completes",
+      "featureTitle": "Fix the generated paper preview display issue so that generated papers are shown immediately after the generation process completes",
       "files": [
-        "frontend/src/components/PaperCard.tsx",
-        "frontend/src/pages/GeneratedPapers.tsx"
+        "frontend/src/pages/GeneratePaper.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -204,16 +36,15 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-14"
+        "REQ-37"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-apply-consistent-navy-blue-light-blue-white-and-light-grey-color-palette-across-all-pages-with-poppins-or-inter-font-rounded-buttons-with-subtle-shadows-soft-shadows-on-cards-and-responsive-grid-layout",
-      "featureTitle": "Apply consistent navy blue, light blue, white, and light grey color palette across all pages with Poppins or Inter font, rounded buttons with subtle shadows, soft shadows on cards, and responsive grid layout",
+      "featureId": "feature-add-a-success-popup-notification-in-addquestion-tsx-that-appears-immediately-after-a-file-is-successfully-uploaded-via-bulk-upload-showing-confirmation-that-the-file-has-been-processed",
+      "featureTitle": "Add a success popup notification in AddQuestion.tsx that appears immediately after a file is successfully uploaded via bulk upload, showing confirmation that the file has been processed",
       "files": [
-        "frontend/src/index.css",
-        "frontend/tailwind.config.js"
+        "frontend/src/pages/AddQuestion.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -223,7 +54,25 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-15"
+        "REQ-38"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-a-success-popup-notification-in-generatepaper-tsx-that-appears-after-question-papers-are-successfully-generated-confirming-the-generation-and-automatically-showing-the-generated-paper-preview",
+      "featureTitle": "Add a success popup notification in GeneratePaper.tsx that appears after question papers are successfully generated, confirming the generation and automatically showing the generated paper preview",
+      "files": [
+        "frontend/src/pages/GeneratePaper.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-39"
       ],
       "confidence": "high"
     }

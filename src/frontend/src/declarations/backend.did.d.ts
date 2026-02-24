@@ -23,11 +23,11 @@ export interface Question {
   'category' : QuestionCategory,
   'options' : [] | [Array<string>],
 }
-export type QuestionCategory = { 'mcq' : null } |
-  { '_2Marks' : null } |
+export type QuestionCategory = { '_2Marks' : null } |
   { '_8Marks' : null } |
   { '_6Marks' : null } |
-  { '_4Marks' : null };
+  { '_4Marks' : null } |
+  { 'mcqOneMark' : null };
 export type QuestionId = bigint;
 export type SubjectId = string;
 export interface _SERVICE {
@@ -42,8 +42,10 @@ export interface _SERVICE {
     ],
     undefined
   >,
+  'addQuestionsInBulk' : ActorMethod<[Array<Question>], bigint>,
   'addSubject' : ActorMethod<[SubjectId, string, string], undefined>,
   'getAllVariants' : ActorMethod<[], Array<string>>,
+  'getQuestions' : ActorMethod<[], Array<Question>>,
   'getQuestionsBySubjectAndCategory' : ActorMethod<
     [SubjectId, QuestionCategory],
     Array<Question>

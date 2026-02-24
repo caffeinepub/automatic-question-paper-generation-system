@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 3,
+  "projectStateVersion": 13,
   "summary": "Automatic Question Paper Generation System - A web application for teachers to manage question banks and generate academic exam papers with database connectivity",
   "architectural_notes": [
     "Navy blue primary color, light blue accents, light grey background - academic professional theme",
@@ -8,11 +8,19 @@
     "Database connectivity required for subjects, questions, and paper generation",
     "Question categorization by marks (2m, 4m, 6m, 8m) and MCQ with difficulty levels",
     "PDF generation capability for multiple exam sets (Set A through E)",
-    "Responsive grid layout with rounded cards, soft shadows, and minimal icons"
+    "Responsive grid layout with rounded cards, soft shadows, and minimal icons",
+    "Word document (.docx) parsing capability required for bulk question upload",
+    "MCQ questions should be 1 mark each",
+    "Display popup confirmation messages for successful file uploads and paper generation",
+    "Automatically show generated paper preview after successful generation"
   ],
-  "known_issues": [],
-  "isFixRequest": false,
-  "imageRequirements": "## Required Images\n- Professional college/school logo placeholder with academic styling (college-logo.dim_200x200.png)\n- Minimal academic icon for Dashboard menu item (icon-dashboard.dim_24x24.png)\n- Minimal academic icon for Add Questions menu item (icon-add-question.dim_24x24.png)\n- Minimal academic icon for Question Bank menu item (icon-question-bank.dim_24x24.png)\n- Minimal academic icon for Generate Paper menu item (icon-generate.dim_24x24.png)\n- Minimal academic icon for Generated Papers menu item (icon-papers.dim_24x24.png)\n- Icon representing total subjects count for dashboard card (icon-subjects.dim_48x48.png)\n- Icon representing total questions count for dashboard card (icon-questions.dim_48x48.png)\n- Icon representing papers generated count for dashboard card (icon-paper-count.dim_48x48.png)",
+  "known_issues": [
+    "Questions added via bulk upload are not displaying in the Question Bank",
+    "Paper generation process is slow or unresponsive",
+    "Generated question papers are not displaying after generation completes",
+    "No confirmation popup shown when bulk upload file is successfully processed"
+  ],
+  "isFixRequest": true,
   "existing_features": [
     {
       "id": "feature-implement-teacher-authentication-system-with-internet-identity-integration-for-login-logout-functionality",
@@ -109,6 +117,174 @@
         "REQ-15"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-add-a-bulk-upload-section-to-the-add-questions-page-with-a-file-upload-input-accepting-csv-or-json-format-and-a-bulk-upload-button",
+      "title": "Add a bulk upload section to the Add Questions page with a file upload input accepting CSV or JSON format and a bulk upload button",
+      "reqIds": [
+        "REQ-16"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-csv-parser-on-frontend-that-converts-uploaded-csv-files-into-question-objects-array-with-columns-subject-category-questiontext-options-pipe-separated-for-mcq-correctanswer-difficultylevel",
+      "title": "Implement CSV parser on frontend that converts uploaded CSV files into question objects array with columns: subject, category, questionText, options (pipe-separated for MCQ), correctAnswer, difficultyLevel",
+      "reqIds": [
+        "REQ-18"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-json-parser-on-frontend-that-validates-uploaded-json-files-contain-an-array-of-question-objects-matching-the-question-type-structure",
+      "title": "Implement JSON parser on frontend that validates uploaded JSON files contain an array of question objects matching the Question type structure",
+      "reqIds": [
+        "REQ-19"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-react-query-mutation-hook-usebulkuploadquestions-that-calls-the-backend-addquestionsinbulk-function-and-invalidates-the-questions-query-on-success",
+      "title": "Create React Query mutation hook useBulkUploadQuestions that calls the backend addQuestionsInBulk function and invalidates the questions query on success",
+      "reqIds": [
+        "REQ-20"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-display-success-message-popup-showing-the-count-of-questions-successfully-uploaded-after-bulk-upload-completes",
+      "title": "Display success message popup showing the count of questions successfully uploaded after bulk upload completes",
+      "reqIds": [
+        "REQ-21"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-display-validation-error-messages-when-bulk-upload-file-contains-invalid-data-showing-specific-issues-like-missing-required-fields-or-invalid-category-values",
+      "title": "Display validation error messages when bulk upload file contains invalid data, showing specific issues like missing required fields or invalid category values",
+      "reqIds": [
+        "REQ-22"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-downloadable-csv-template-file-link-on-the-add-questions-page-that-provides-the-correct-format-with-example-rows-for-users-to-follow",
+      "title": "Add a downloadable CSV template file link on the Add Questions page that provides the correct format with example rows for users to follow",
+      "reqIds": [
+        "REQ-23"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-word-document-parser-utility-frontend-src-utils-docxparser-ts-that-extracts-questions-from-docx-files-and-converts-them-into-question-objects-matching-the-question-type-structure",
+      "title": "Create a Word document parser utility (frontend/src/utils/docxParser.ts) that extracts questions from .docx files and converts them into question objects matching the Question type structure",
+      "reqIds": [
+        "REQ-25"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-bulk-upload-file-input-on-the-add-questions-page-to-accept-word-document-format-docx-in-addition-to-csv-and-json",
+      "title": "Update the bulk upload file input on the Add Questions page to accept Word document format (.docx) in addition to CSV and JSON",
+      "reqIds": [
+        "REQ-26"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-integrate-word-document-parser-into-the-bulk-upload-flow-in-addquestion-tsx-so-that-when-a-docx-file-is-uploaded-it-is-parsed-using-the-docxparser-utility-and-processed-through-the-existing-usebulkuploadquestions-mutation",
+      "title": "Integrate Word document parser into the bulk upload flow in AddQuestion.tsx so that when a .docx file is uploaded, it is parsed using the docxParser utility and processed through the existing useBulkUploadQuestions mutation",
+      "reqIds": [
+        "REQ-27"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-and-provide-a-downloadable-word-document-template-docx-file-that-demonstrates-the-required-format-for-bulk-question-upload-including-example-questions-with-all-required-fields",
+      "title": "Create and provide a downloadable Word document template (.docx) file that demonstrates the required format for bulk question upload, including example questions with all required fields",
+      "reqIds": [
+        "REQ-28"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-fix-the-question-bank-page-to-correctly-display-all-questions-added-via-bulk-upload-by-ensuring-the-usequestions-hook-properly-fetches-and-returns-all-questions-from-the-backend-including-those-added-through-addquestionsinbulk",
+      "title": "Fix the Question Bank page to correctly display all questions added via bulk upload by ensuring the useQuestions hook properly fetches and returns all questions from the backend, including those added through addQuestionsInBulk",
+      "reqIds": [
+        "REQ-29"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-optimize-the-paper-generation-process-in-generatepaper-tsx-to-complete-within-2-3-seconds-by-improving-the-question-selection-algorithm-and-reducing-unnecessary-re-renders-during-the-generation-of-5-paper-variants",
+      "title": "Optimize the paper generation process in GeneratePaper.tsx to complete within 2-3 seconds by improving the question selection algorithm and reducing unnecessary re-renders during the generation of 5 paper variants",
+      "reqIds": [
+        "REQ-30"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-error-handling-and-loading-states-to-the-bulk-upload-flow-in-addquestion-tsx-to-provide-clear-feedback-when-upload-is-in-progress-successful-or-fails",
+      "title": "Add error handling and loading states to the bulk upload flow in AddQuestion.tsx to provide clear feedback when upload is in progress, successful, or fails",
+      "reqIds": [
+        "REQ-32"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-debug-and-fix-the-pdf-generation-functionality-in-frontend-src-utils-pdfgenerator-ts-to-ensure-generated-question-papers-display-correctly-when-the-download-pdf-button-is-clicked-on-the-paper-preview-page",
+      "title": "Debug and fix the PDF generation functionality in frontend/src/utils/pdfGenerator.ts to ensure generated question papers display correctly when the Download PDF button is clicked on the Paper Preview page",
+      "reqIds": [
+        "REQ-33"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-verify-that-the-paperpreview-page-correctly-passes-the-selected-paper-variant-data-to-the-pdfgenerator-utility-when-download-pdf-button-is-clicked",
+      "title": "Verify that the PaperPreview page correctly passes the selected paper variant data to the pdfGenerator utility when Download PDF button is clicked",
+      "reqIds": [
+        "REQ-34"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-error-handling-to-the-pdf-generation-process-in-paperpreview-tsx-to-display-a-user-friendly-error-message-if-pdf-generation-fails",
+      "title": "Add error handling to the PDF generation process in PaperPreview.tsx to display a user-friendly error message if PDF generation fails",
+      "reqIds": [
+        "REQ-35"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-mcq-category-marking-scheme-from-its-current-value-to-1-mark-in-the-backend-question-type-definition-and-throughout-the-application",
+      "title": "Update the MCQ category marking scheme from its current value to 1 mark in the backend Question type definition and throughout the application",
+      "reqIds": [
+        "REQ-36"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-fix-the-generated-paper-preview-display-issue-so-that-generated-papers-are-shown-immediately-after-the-generation-process-completes",
+      "title": "Fix the generated paper preview display issue so that generated papers are shown immediately after the generation process completes",
+      "reqIds": [
+        "REQ-37"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-success-popup-notification-in-addquestion-tsx-that-appears-immediately-after-a-file-is-successfully-uploaded-via-bulk-upload-showing-confirmation-that-the-file-has-been-processed",
+      "title": "Add a success popup notification in AddQuestion.tsx that appears immediately after a file is successfully uploaded via bulk upload, showing confirmation that the file has been processed",
+      "reqIds": [
+        "REQ-38"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-success-popup-notification-in-generatepaper-tsx-that-appears-after-question-papers-are-successfully-generated-confirming-the-generation-and-automatically-showing-the-generated-paper-preview",
+      "title": "Add a success popup notification in GeneratePaper.tsx that appears after question papers are successfully generated, confirming the generation and automatically showing the generated paper preview",
+      "reqIds": [
+        "REQ-39"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -182,6 +358,60 @@
       "reqIds": [
         "REQ-11"
       ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-20",
+      "summary": "Bulk question upload functionality to add multiple questions at once",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-22",
+      "summary": "Create backend function addQuestionsInBulk that accepts an array of question objects and adds them all to the questions map, returning the count of successfully added questions",
+      "reqIds": [
+        "REQ-17"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-23",
+      "summary": "Accept multiple questions at a time in Word (.docx) format for bulk upload",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-24",
+      "summary": "Install and configure a Word document (.docx) parsing library (such as mammoth or docx) in the frontend to extract text content from uploaded .docx files",
+      "reqIds": [
+        "REQ-24"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-27",
+      "summary": "Ensure the backend getQuestions function returns all questions stored in the questions map, and verify that the addQuestionsInBulk function properly stores all questions with unique IDs",
+      "reqIds": [
+        "REQ-31"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-28",
+      "summary": "Change MCQ category to 1 mark instead of current marking scheme",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-29",
+      "summary": "Display generated paper preview immediately after paper generation with popup confirmation",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-30",
+      "summary": "Show popup confirmation message when file is successfully uploaded during bulk upload",
+      "reqIds": [],
       "status": "pending"
     }
   ],

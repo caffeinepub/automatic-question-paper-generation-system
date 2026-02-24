@@ -25,15 +25,17 @@ export enum DifficultyLevel {
     medium = "medium"
 }
 export enum QuestionCategory {
-    mcq = "mcq",
     _2Marks = "_2Marks",
     _8Marks = "_8Marks",
     _6Marks = "_6Marks",
-    _4Marks = "_4Marks"
+    _4Marks = "_4Marks",
+    mcqOneMark = "mcqOneMark"
 }
 export interface backendInterface {
     addQuestion(subjectId: SubjectId, category: QuestionCategory, questionText: string, options: Array<string> | null, correctAnswer: string | null, difficultyLevel: DifficultyLevel): Promise<void>;
+    addQuestionsInBulk(questionsArray: Array<Question>): Promise<bigint>;
     addSubject(id: SubjectId, name: string, code: string): Promise<void>;
     getAllVariants(): Promise<Array<string>>;
+    getQuestions(): Promise<Array<Question>>;
     getQuestionsBySubjectAndCategory(subjectId: SubjectId, category: QuestionCategory): Promise<Array<Question>>;
 }

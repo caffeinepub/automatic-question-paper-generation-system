@@ -49,34 +49,15 @@ export function useQueries() {
     });
   };
 
-  // Get all questions (fetch from all subjects and categories)
+  // Get all questions using the backend's getQuestions method
   const useGetAllQuestions = () => {
     return useQuery<Question[]>({
       queryKey: ['allQuestions'],
       queryFn: async () => {
         if (!actor) return [];
-        
-        const stored = localStorage.getItem('subjects');
-        const subjects = stored ? JSON.parse(stored) : [];
-        
-        const categories = [
-          QuestionCategory._2Marks,
-          QuestionCategory._4Marks,
-          QuestionCategory.mcq,
-          QuestionCategory._6Marks,
-          QuestionCategory._8Marks,
-        ];
-
-        const allQuestions: Question[] = [];
-        
-        for (const subject of subjects) {
-          for (const category of categories) {
-            const questions = await actor.getQuestionsBySubjectAndCategory(subject.id, category);
-            allQuestions.push(...questions);
-          }
-        }
-        
-        return allQuestions;
+        // Use the backend's getQuestions method which returns all questions
+        const questions = await actor.getQuestions();
+        return questions;
       },
       enabled: !!actor && !isFetching,
     });
@@ -109,6 +90,30 @@ export function useQueries() {
     });
   };
 
+  // Bulk upload questions
+  const useBulkUploadQuestions = () => {
+    return useMutation({
+      mutationFn: async (questions: Omit<Question, 'id' | 'timestamp'>[]) => {
+        if (!actor) throw new Error('Actor not initialized');
+        
+        // Convert questions to the format expected by backend
+        // Generate unique temporary IDs for each question
+        const questionsWithIds: Question[] = questions.map((q, index) => ({
+          ...q,
+          id: BigInt(Date.now() * 1000 + index), // Unique temporary ID
+          timestamp: BigInt(Date.now()),
+        }));
+        
+        const count = await actor.addQuestionsInBulk(questionsWithIds);
+        return Number(count);
+      },
+      onSuccess: () => {
+        // Invalidate queries to refetch all questions
+        queryClient.invalidateQueries({ queryKey: ['allQuestions'] });
+      },
+    });
+  };
+
   // Get generated papers count
   const useGetGeneratedPapersCount = () => {
     const papers = JSON.parse(localStorage.getItem('generatedPapers') || '[]');
@@ -120,6 +125,7 @@ export function useQueries() {
     useAddSubject,
     useGetAllQuestions,
     useAddQuestion,
+    useBulkUploadQuestions,
     useGetGeneratedPapersCount,
   };
 }

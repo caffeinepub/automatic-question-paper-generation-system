@@ -1,15 +1,44 @@
 import { QuestionCategory } from '../backend';
 
-export function generatePDF(paper: any, variant: string, sections: any) {
+interface PaperData {
+  subjectName: string;
+  examDuration: number;
+  totalMarks: number;
+}
+
+interface Question {
+  questionText: string;
+  category: QuestionCategory;
+  options?: string[];
+}
+
+interface Sections {
+  sectionA: Question[];
+  sectionB: Question[];
+  sectionC: Question[];
+}
+
+export function generatePDF(paper: PaperData, variant: string, sections: Sections) {
+  // Validate input data
+  if (!paper || !variant || !sections) {
+    console.error('Missing required data for PDF generation', { paper, variant, sections });
+    throw new Error('Missing required data for PDF generation');
+  }
+
+  const { sectionA, sectionB, sectionC } = sections;
+
+  // Validate sections
+  if (!Array.isArray(sectionA) || !Array.isArray(sectionB) || !Array.isArray(sectionC)) {
+    console.error('Invalid sections data', sections);
+    throw new Error('Invalid sections data');
+  }
+
   // Create a new window for printing
   const printWindow = window.open('', '_blank');
   
   if (!printWindow) {
-    alert('Please allow pop-ups to download the PDF');
-    return;
+    throw new Error('Please allow pop-ups to download the PDF');
   }
-
-  const { sectionA, sectionB, sectionC } = sections;
 
   // Generate HTML content
   const htmlContent = `
@@ -17,7 +46,7 @@ export function generatePDF(paper: any, variant: string, sections: any) {
     <html>
       <head>
         <meta charset="UTF-8">
-        <title>${paper.subjectName} - Set ${variant}</title>
+        <title>${escapeHtml(paper.subjectName)} - Set ${escapeHtml(variant)}</title>
         <style>
           @media print {
             @page {
@@ -34,6 +63,10 @@ export function generatePDF(paper: any, variant: string, sections: any) {
             .no-break {
               page-break-inside: avoid;
             }
+          }
+          
+          * {
+            box-sizing: border-box;
           }
           
           body {
@@ -123,24 +156,24 @@ export function generatePDF(paper: any, variant: string, sections: any) {
       <body>
         <div class="header">
           <h1>Engineering College</h1>
-          <h2>${paper.subjectName}</h2>
+          <h2>${escapeHtml(paper.subjectName)}</h2>
           <div class="paper-info">
             <span>Time: ${paper.examDuration} minutes</span>
             <span>Total Marks: ${paper.totalMarks}</span>
-            <span>Set: ${variant}</span>
+            <span>Set: ${escapeHtml(variant)}</span>
           </div>
         </div>
 
         ${sectionA.length > 0 ? `
           <div class="section">
-            <div class="section-title">Section A - Multiple Choice Questions</div>
-            ${sectionA.map((question: any, index: number) => `
+            <div class="section-title">Section A - Multiple Choice Questions (1 mark each)</div>
+            ${sectionA.map((question: Question, index: number) => `
               <div class="question">
                 <div class="question-text">
                   <span class="question-number">${index + 1}.</span>
                   ${escapeHtml(question.questionText)}
                 </div>
-                ${question.options ? `
+                ${question.options && question.options.length > 0 ? `
                   <div class="options">
                     ${question.options.map((option: string, idx: number) => `
                       <div class="option">
@@ -157,8 +190,8 @@ export function generatePDF(paper: any, variant: string, sections: any) {
 
         ${sectionB.length > 0 ? `
           <div class="section">
-            <div class="section-title">Section B - Short Answer Questions</div>
-            ${sectionB.map((question: any, index: number) => `
+            <div class="section-title">Section B - Short Answer Questions (2 Marks & 4 Marks)</div>
+            ${sectionB.map((question: Question, index: number) => `
               <div class="question">
                 <div class="question-text">
                   <span class="question-number">${sectionA.length + index + 1}.</span>
@@ -171,8 +204,8 @@ export function generatePDF(paper: any, variant: string, sections: any) {
 
         ${sectionC.length > 0 ? `
           <div class="section">
-            <div class="section-title">Section C - Long Answer Questions</div>
-            ${sectionC.map((question: any, index: number) => `
+            <div class="section-title">Section C - Long Answer Questions (6 Marks & 8 Marks)</div>
+            ${sectionC.map((question: Question, index: number) => `
               <div class="question">
                 <div class="question-text">
                   <span class="question-number">${sectionA.length + sectionB.length + index + 1}.</span>
@@ -184,23 +217,41 @@ export function generatePDF(paper: any, variant: string, sections: any) {
         ` : ''}
 
         <script>
-          window.onload = function() {
-            window.print();
-          };
+          // Wait for content to be fully loaded before printing
+          window.addEventListener('load', function() {
+            setTimeout(function() {
+              window.print();
+            }, 250);
+          });
           
-          window.onafterprint = function() {
-            window.close();
-          };
+          // Close window after printing (optional)
+          window.addEventListener('afterprint', function() {
+            // Uncomment the line below if you want to auto-close after printing
+            // window.close();
+          });
         </script>
       </body>
     </html>
   `;
 
-  printWindow.document.write(htmlContent);
-  printWindow.document.close();
+  try {
+    printWindow.document.open();
+    printWindow.document.write(htmlContent);
+    printWindow.document.close();
+  } catch (error) {
+    console.error('Error writing to print window:', error);
+    printWindow.close();
+    throw new Error('Failed to generate PDF content');
+  }
 }
 
-function escapeHtml(text: string): string {
+function escapeHtml(text: string | number): string {
+  if (typeof text === 'number') {
+    return text.toString();
+  }
+  if (!text) {
+    return '';
+  }
   const div = document.createElement('div');
   div.textContent = text;
   return div.innerHTML;

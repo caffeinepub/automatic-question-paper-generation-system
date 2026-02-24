@@ -10,11 +10,11 @@ import { IDL } from '@icp-sdk/core/candid';
 
 export const SubjectId = IDL.Text;
 export const QuestionCategory = IDL.Variant({
-  'mcq' : IDL.Null,
   '_2Marks' : IDL.Null,
   '_8Marks' : IDL.Null,
   '_6Marks' : IDL.Null,
   '_4Marks' : IDL.Null,
+  'mcqOneMark' : IDL.Null,
 });
 export const DifficultyLevel = IDL.Variant({
   'easy' : IDL.Null,
@@ -46,8 +46,10 @@ export const idlService = IDL.Service({
       [],
       [],
     ),
+  'addQuestionsInBulk' : IDL.Func([IDL.Vec(Question)], [IDL.Nat], []),
   'addSubject' : IDL.Func([SubjectId, IDL.Text, IDL.Text], [], []),
   'getAllVariants' : IDL.Func([], [IDL.Vec(IDL.Text)], ['query']),
+  'getQuestions' : IDL.Func([], [IDL.Vec(Question)], ['query']),
   'getQuestionsBySubjectAndCategory' : IDL.Func(
       [SubjectId, QuestionCategory],
       [IDL.Vec(Question)],
@@ -60,11 +62,11 @@ export const idlInitArgs = [];
 export const idlFactory = ({ IDL }) => {
   const SubjectId = IDL.Text;
   const QuestionCategory = IDL.Variant({
-    'mcq' : IDL.Null,
     '_2Marks' : IDL.Null,
     '_8Marks' : IDL.Null,
     '_6Marks' : IDL.Null,
     '_4Marks' : IDL.Null,
+    'mcqOneMark' : IDL.Null,
   });
   const DifficultyLevel = IDL.Variant({
     'easy' : IDL.Null,
@@ -96,8 +98,10 @@ export const idlFactory = ({ IDL }) => {
         [],
         [],
       ),
+    'addQuestionsInBulk' : IDL.Func([IDL.Vec(Question)], [IDL.Nat], []),
     'addSubject' : IDL.Func([SubjectId, IDL.Text, IDL.Text], [], []),
     'getAllVariants' : IDL.Func([], [IDL.Vec(IDL.Text)], ['query']),
+    'getQuestions' : IDL.Func([], [IDL.Vec(Question)], ['query']),
     'getQuestionsBySubjectAndCategory' : IDL.Func(
         [SubjectId, QuestionCategory],
         [IDL.Vec(Question)],

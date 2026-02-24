@@ -16,7 +16,7 @@ export default function QuestionCard({ question }: QuestionCardProps) {
   const categoryLabel = {
     [QuestionCategory._2Marks]: '2 Marks',
     [QuestionCategory._4Marks]: '4 Marks',
-    [QuestionCategory.mcq]: 'MCQ',
+    [QuestionCategory.mcqOneMark]: '1 Mark',
     [QuestionCategory._6Marks]: '6 Marks',
     [QuestionCategory._8Marks]: '8 Marks',
   }[question.category];
@@ -44,7 +44,7 @@ export default function QuestionCard({ question }: QuestionCardProps) {
               
               <p className="text-sm">{question.questionText}</p>
               
-              {question.category === QuestionCategory.mcq && question.options && (
+              {question.category === QuestionCategory.mcqOneMark && question.options && (
                 <div className="text-xs space-y-1 pl-4 text-muted-foreground">
                   {question.options.map((option, idx) => (
                     <div key={idx} className="flex items-center gap-2">

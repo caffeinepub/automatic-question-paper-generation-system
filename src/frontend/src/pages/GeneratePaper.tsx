@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 import { QuestionCategory } from '../backend';
 import { useNavigate } from '@tanstack/react-router';
 import { useActor } from '../hooks/useActor';
+import { Loader2 } from 'lucide-react';
 
 export default function GeneratePaper() {
   const { useGetAllSubjects } = useQueries();
@@ -16,6 +17,7 @@ export default function GeneratePaper() {
   const { actor } = useActor();
   const navigate = useNavigate();
 
+  const [isGenerating, setIsGenerating] = useState(false);
   const [formData, setFormData] = useState({
     subjectId: '',
     examDuration: '',
@@ -26,6 +28,15 @@ export default function GeneratePaper() {
     count6Marks: '',
     count8Marks: ''
   });
+
+  // Memoize the question counts to avoid recalculation
+  const questionCounts = useMemo(() => ({
+    [QuestionCategory._2Marks]: parseInt(formData.count2Marks) || 0,
+    [QuestionCategory._4Marks]: parseInt(formData.count4Marks) || 0,
+    [QuestionCategory.mcqOneMark]: parseInt(formData.countMCQ) || 0,
+    [QuestionCategory._6Marks]: parseInt(formData.count6Marks) || 0,
+    [QuestionCategory._8Marks]: parseInt(formData.count8Marks) || 0,
+  }), [formData.count2Marks, formData.count4Marks, formData.countMCQ, formData.count6Marks, formData.count8Marks]);
 
   const handleGenerate = async () => {
     if (!formData.subjectId || !formData.examDuration || !formData.totalMarks) {
@@ -38,23 +49,17 @@ export default function GeneratePaper() {
       return;
     }
 
-    const counts = {
-      [QuestionCategory._2Marks]: parseInt(formData.count2Marks) || 0,
-      [QuestionCategory._4Marks]: parseInt(formData.count4Marks) || 0,
-      [QuestionCategory.mcq]: parseInt(formData.countMCQ) || 0,
-      [QuestionCategory._6Marks]: parseInt(formData.count6Marks) || 0,
-      [QuestionCategory._8Marks]: parseInt(formData.count8Marks) || 0,
-    };
-
-    const totalQuestions = Object.values(counts).reduce((sum, count) => sum + count, 0);
+    const totalQuestions = Object.values(questionCounts).reduce((sum, count) => sum + count, 0);
     if (totalQuestions === 0) {
       toast.error('Please select at least one question');
       return;
     }
 
+    setIsGenerating(true);
+
     try {
-      // Fetch questions for each category
-      const questionPromises = Object.entries(counts).map(async ([category, count]) => {
+      // Fetch questions for each category in parallel
+      const questionPromises = Object.entries(questionCounts).map(async ([category, count]) => {
         if (count > 0) {
           const questions = await actor.getQuestionsBySubjectAndCategory(
             formData.subjectId,
@@ -74,6 +79,7 @@ export default function GeneratePaper() {
           toast.error(
             `Not enough questions in ${result!.category}. Available: ${result!.questions.length}, Requested: ${result!.requestedCount}`
           );
+          setIsGenerating(false);
           return;
         }
       }
@@ -110,11 +116,15 @@ export default function GeneratePaper() {
       existingPapers.push(paper);
       localStorage.setItem('generatedPapers', JSON.stringify(existingPapers));
 
-      toast.success('Question paper generated successfully!');
+      toast.success('Question paper generated successfully! All 5 variants (A-E) are ready.');
+      
+      // Navigate to paper preview
       navigate({ to: `/paper-preview/${paper.id}` });
     } catch (error) {
       toast.error('Failed to generate paper');
       console.error(error);
+    } finally {
+      setIsGenerating(false);
     }
   };
 
@@ -128,7 +138,11 @@ export default function GeneratePaper() {
         <CardContent className="space-y-6">
           <div className="space-y-2">
             <Label htmlFor="subject">Subject *</Label>
-            <Select value={formData.subjectId} onValueChange={(value) => setFormData({ ...formData, subjectId: value })}>
+            <Select 
+              value={formData.subjectId} 
+              onValueChange={(value) => setFormData({ ...formData, subjectId: value })}
+              disabled={isGenerating}
+            >
               <SelectTrigger id="subject">
                 <SelectValue placeholder="Select a subject" />
               </SelectTrigger>
@@ -151,6 +165,7 @@ export default function GeneratePaper() {
                 value={formData.examDuration}
                 onChange={(e) => setFormData({ ...formData, examDuration: e.target.value })}
                 placeholder="e.g., 180"
+                disabled={isGenerating}
               />
             </div>
 
@@ -162,6 +177,7 @@ export default function GeneratePaper() {
                 value={formData.totalMarks}
                 onChange={(e) => setFormData({ ...formData, totalMarks: e.target.value })}
                 placeholder="e.g., 100"
+                disabled={isGenerating}
               />
             </div>
           </div>
@@ -179,6 +195,7 @@ export default function GeneratePaper() {
                   value={formData.count2Marks}
                   onChange={(e) => setFormData({ ...formData, count2Marks: e.target.value })}
                   placeholder="0"
+                  disabled={isGenerating}
                 />
               </div>
 
@@ -191,11 +208,12 @@ export default function GeneratePaper() {
                   value={formData.count4Marks}
                   onChange={(e) => setFormData({ ...formData, count4Marks: e.target.value })}
                   placeholder="0"
+                  disabled={isGenerating}
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="countMCQ">MCQ Questions</Label>
+                <Label htmlFor="countMCQ">MCQ Questions (1 Mark each)</Label>
                 <Input
                   id="countMCQ"
                   type="number"
@@ -203,6 +221,7 @@ export default function GeneratePaper() {
                   value={formData.countMCQ}
                   onChange={(e) => setFormData({ ...formData, countMCQ: e.target.value })}
                   placeholder="0"
+                  disabled={isGenerating}
                 />
               </div>
 
@@ -215,6 +234,7 @@ export default function GeneratePaper() {
                   value={formData.count6Marks}
                   onChange={(e) => setFormData({ ...formData, count6Marks: e.target.value })}
                   placeholder="0"
+                  disabled={isGenerating}
                 />
               </div>
 
@@ -227,6 +247,7 @@ export default function GeneratePaper() {
                   value={formData.count8Marks}
                   onChange={(e) => setFormData({ ...formData, count8Marks: e.target.value })}
                   placeholder="0"
+                  disabled={isGenerating}
                 />
               </div>
             </div>
@@ -235,8 +256,16 @@ export default function GeneratePaper() {
           <Button 
             onClick={handleGenerate}
             className="w-full bg-navy hover:bg-navy/90"
+            disabled={isGenerating}
           >
-            Generate Paper
+            {isGenerating ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Generating Paper...
+              </>
+            ) : (
+              'Generate Paper'
+            )}
           </Button>
         </CardContent>
       </Card>

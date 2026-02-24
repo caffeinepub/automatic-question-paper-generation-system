@@ -16,7 +16,7 @@ export default function PaperSection({ title, questions, startNumber }: PaperSec
       <div className="space-y-4">
         {questions.map((question, index) => {
           const questionNumber = startNumber + index;
-          const isMCQ = question.category === QuestionCategory.mcq;
+          const isMCQ = question.category === QuestionCategory.mcqOneMark;
           
           return (
             <div key={question.id.toString()} className="space-y-2">

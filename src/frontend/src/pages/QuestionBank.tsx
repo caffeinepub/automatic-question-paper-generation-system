@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { AlertCircle } from 'lucide-react';
 import { useQueries } from '../hooks/useQueries';
 import QuestionCard from '../components/QuestionCard';
 import SubjectManager from '../components/SubjectManager';
@@ -9,7 +12,7 @@ import { QuestionCategory } from '../backend';
 export default function QuestionBank() {
   const { useGetAllSubjects, useGetAllQuestions } = useQueries();
   const { data: subjects = [] } = useGetAllSubjects();
-  const { data: allQuestions = [] } = useGetAllQuestions();
+  const { data: allQuestions = [], isLoading, isError, error } = useGetAllQuestions();
   const [selectedSubject, setSelectedSubject] = useState<string>('');
 
   const filteredQuestions = selectedSubject 
@@ -19,7 +22,7 @@ export default function QuestionBank() {
   const questionsByCategory = {
     [QuestionCategory._2Marks]: filteredQuestions.filter(q => q.category === QuestionCategory._2Marks),
     [QuestionCategory._4Marks]: filteredQuestions.filter(q => q.category === QuestionCategory._4Marks),
-    [QuestionCategory.mcq]: filteredQuestions.filter(q => q.category === QuestionCategory.mcq),
+    [QuestionCategory.mcqOneMark]: filteredQuestions.filter(q => q.category === QuestionCategory.mcqOneMark),
     [QuestionCategory._6Marks]: filteredQuestions.filter(q => q.category === QuestionCategory._6Marks),
     [QuestionCategory._8Marks]: filteredQuestions.filter(q => q.category === QuestionCategory._8Marks),
   };
@@ -71,40 +74,59 @@ export default function QuestionBank() {
             </CardContent>
           </Card>
 
-          <div className="space-y-6">
-            {Object.entries(questionsByCategory).map(([category, questions]) => {
-              const categoryLabel = {
-                [QuestionCategory._2Marks]: '2 Marks',
-                [QuestionCategory._4Marks]: '4 Marks',
-                [QuestionCategory.mcq]: 'MCQ',
-                [QuestionCategory._6Marks]: '6 Marks',
-                [QuestionCategory._8Marks]: '8 Marks',
-              }[category as QuestionCategory];
+          {isError && (
+            <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>
+                Failed to load questions: {error instanceof Error ? error.message : 'Unknown error'}
+              </AlertDescription>
+            </Alert>
+          )}
 
-              if (questions.length === 0) return null;
+          {isLoading ? (
+            <Card>
+              <CardContent className="py-8 space-y-4">
+                <Skeleton className="h-24 w-full" />
+                <Skeleton className="h-24 w-full" />
+                <Skeleton className="h-24 w-full" />
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="space-y-6">
+              {Object.entries(questionsByCategory).map(([category, questions]) => {
+                const categoryLabel = {
+                  [QuestionCategory._2Marks]: '2 Marks',
+                  [QuestionCategory._4Marks]: '4 Marks',
+                  [QuestionCategory.mcqOneMark]: 'MCQ (1 Mark)',
+                  [QuestionCategory._6Marks]: '6 Marks',
+                  [QuestionCategory._8Marks]: '8 Marks',
+                }[category as QuestionCategory];
 
-              return (
-                <Card key={category}>
-                  <CardHeader>
-                    <CardTitle className="text-xl">{categoryLabel} Questions ({questions.length})</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    {questions.map((question) => (
-                      <QuestionCard key={question.id.toString()} question={question} />
-                    ))}
+                if (questions.length === 0) return null;
+
+                return (
+                  <Card key={category}>
+                    <CardHeader>
+                      <CardTitle className="text-xl">{categoryLabel} Questions ({questions.length})</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      {questions.map((question) => (
+                        <QuestionCard key={question.id.toString()} question={question} />
+                      ))}
+                    </CardContent>
+                  </Card>
+                );
+              })}
+
+              {filteredQuestions.length === 0 && !isLoading && (
+                <Card>
+                  <CardContent className="py-12 text-center text-muted-foreground">
+                    No questions found. Add some questions to get started.
                   </CardContent>
                 </Card>
-              );
-            })}
-
-            {filteredQuestions.length === 0 && (
-              <Card>
-                <CardContent className="py-12 text-center text-muted-foreground">
-                  No questions found. Add some questions to get started.
-                </CardContent>
-              </Card>
-            )}
-          </div>
+              )}
+            </div>
+          )}
         </TabsContent>
 
         <TabsContent value="subjects">

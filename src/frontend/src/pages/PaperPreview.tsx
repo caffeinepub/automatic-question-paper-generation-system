@@ -33,7 +33,7 @@ export default function PaperPreview() {
   const currentVariant = paper.variants.find((v: any) => v.variant === selectedVariant);
   const questions = currentVariant?.questions || [];
 
-  const sectionA = questions.filter((q: any) => q.category === QuestionCategory.mcq);
+  const sectionA = questions.filter((q: any) => q.category === QuestionCategory.mcqOneMark);
   const sectionB = questions.filter((q: any) => 
     q.category === QuestionCategory._2Marks || q.category === QuestionCategory._4Marks
   );
@@ -43,11 +43,49 @@ export default function PaperPreview() {
 
   const handleDownloadPDF = () => {
     try {
-      generatePDF(paper, selectedVariant, { sectionA, sectionB, sectionC });
+      // Validate data before generating PDF
+      if (!paper || !selectedVariant) {
+        toast.error('Paper data is missing');
+        console.error('Missing paper or variant data', { paper, selectedVariant });
+        return;
+      }
+
+      if (!currentVariant || !questions || questions.length === 0) {
+        toast.error('No questions found for this variant');
+        console.error('Missing questions for variant', { currentVariant, questions });
+        return;
+      }
+
+      // Log data for debugging
+      console.log('Generating PDF with data:', {
+        paper: {
+          subjectName: paper.subjectName,
+          examDuration: paper.examDuration,
+          totalMarks: paper.totalMarks
+        },
+        variant: selectedVariant,
+        sections: {
+          sectionA: sectionA.length,
+          sectionB: sectionB.length,
+          sectionC: sectionC.length
+        }
+      });
+
+      generatePDF(
+        {
+          subjectName: paper.subjectName,
+          examDuration: paper.examDuration,
+          totalMarks: paper.totalMarks
+        },
+        selectedVariant,
+        { sectionA, sectionB, sectionC }
+      );
+      
       toast.success('Opening print dialog...');
     } catch (error) {
-      toast.error('Failed to generate PDF');
-      console.error(error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to generate PDF';
+      toast.error(errorMessage);
+      console.error('PDF generation error:', error);
     }
   };
 
@@ -87,10 +125,10 @@ export default function PaperPreview() {
                   </div>
                 </div>
               </CardHeader>
-              <CardContent className="p-8 space-y-8">
+              <CardContent className="p-6 space-y-8">
                 {sectionA.length > 0 && (
                   <PaperSection
-                    title="Section A - Multiple Choice Questions"
+                    title="Section A - Multiple Choice Questions (1 mark each)"
                     questions={sectionA}
                     startNumber={1}
                   />
@@ -98,7 +136,7 @@ export default function PaperPreview() {
 
                 {sectionB.length > 0 && (
                   <PaperSection
-                    title="Section B - Short Answer Questions"
+                    title="Section B - Short Answer Questions (2 Marks & 4 Marks)"
                     questions={sectionB}
                     startNumber={sectionA.length + 1}
                   />
@@ -106,7 +144,7 @@ export default function PaperPreview() {
 
                 {sectionC.length > 0 && (
                   <PaperSection
-                    title="Section C - Long Answer Questions"
+                    title="Section C - Long Answer Questions (6 Marks & 8 Marks)"
                     questions={sectionC}
                     startNumber={sectionA.length + sectionB.length + 1}
                   />

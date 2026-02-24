@@ -3,9 +3,12 @@ import Array "mo:core/Array";
 import List "mo:core/List";
 import Iter "mo:core/Iter";
 import Order "mo:core/Order";
+import Migration "migration";
 import Runtime "mo:core/Runtime";
+import Nat "mo:core/Nat";
 import Principal "mo:core/Principal";
 
+(with migration = Migration.run)
 actor {
   type SubjectId = Text;
   type QuestionId = Nat;
@@ -16,7 +19,7 @@ actor {
     #_4Marks;
     #_6Marks;
     #_8Marks;
-    #mcq;
+    #mcqOneMark;
   };
 
   type DifficultyLevel = {
@@ -122,6 +125,20 @@ actor {
     nextQuestionId += 1;
   };
 
+  public shared ({ caller }) func addQuestionsInBulk(questionsArray : [Question]) : async Nat {
+    let validQuestions = questionsArray.filter(
+      func(q) { questions.get(q.id) == null }
+    );
+
+    validQuestions.forEach(
+      func(q) {
+        questions.add(q.id, q);
+      }
+    );
+
+    validQuestions.size();
+  };
+
   public query ({ caller }) func getQuestionsBySubjectAndCategory(subjectId : SubjectId, category : QuestionCategory) : async [Question] {
     questions.values().toArray().filter(
       func(q) {
@@ -138,5 +155,9 @@ actor {
     variants.add("D");
     variants.add("E");
     variants.toArray();
+  };
+
+  public query ({ caller }) func getQuestions() : async [Question] {
+    questions.values().toArray();
   };
 };
