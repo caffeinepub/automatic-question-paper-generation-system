@@ -1,21 +1,37 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Allow non-admin (Teacher) users to add subjects",
+  "title": "Rename app on welcome/login page and enable subject edit/delete in question bank",
   "requirements": [
     {
-      "id": "REQ-2",
-      "summary": "Remove UI-level admin-only restriction from SubjectManager component so Teacher users can add subjects",
+      "id": "REQ-1",
+      "summary": "Update the Login page branding from 'Exam Craft' to 'Automatic Question Paper Generation System'",
       "acceptanceCriteria": [
-        "The 'Add Subject' button is visible and enabled for Teacher-role users.",
-        "No 'only admins' warning or disabled state is shown to non-admin authenticated users.",
-        "The Add Subject dialog opens and submits successfully for Teacher users."
+        "The Login page no longer shows 'Exam Craft' anywhere.",
+        "The Login page displays 'Automatic Question Paper Generation System' as the app name/branding."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/SubjectManager.tsx",
+          "path": "frontend/src/pages/Login.tsx",
           "operation": "modify",
-          "description": "Remove the admin-only check from the Add Subject dialog. Currently, the component displays 'Unauthorized: Only admins can add subjects' for non-admin users. Remove the `useGetCallerUserRole` hook call and the conditional rendering that shows the unauthorized message. Ensure the Add Subject dialog is accessible to all authenticated users (including Teacher role). Keep the dialog structure, form validation, and `useAddSubject` mutation intact. Do not modify the Subject data model (name and code fields only)."
+          "description": "Replace any instances of 'Exam Craft' in the branding panel with 'Automatic Question Paper Generation System'. Update the main heading text and any other branding references to use the new app name."
+        }
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "summary": "Add Edit and Delete buttons for each subject in the Question Bank Subjects tab, enabling inline subject management",
+      "acceptanceCriteria": [
+        "Each subject listed in the Subjects tab of the Question Bank has a visible Edit button and a Delete button.",
+        "Clicking Edit opens a dialog pre-filled with the subject's current name; saving the form updates the subject.",
+        "Clicking Delete shows a confirmation prompt; confirming removes the subject from the list.",
+        "After editing or deleting, the subject list refreshes to reflect the updated state."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/QuestionBank.tsx",
+          "operation": "modify",
+          "description": "In the Subjects tab, modify the subject list rendering to display Edit and Delete buttons for each subject. Wire the Edit button to open the SubjectManager's edit dialog with the subject data pre-filled. Wire the Delete button to show a confirmation dialog and then call the deleteSubject mutation from useQueries.ts. Ensure the subject list re-queries after successful edit or delete operations."
         }
       ]
     }

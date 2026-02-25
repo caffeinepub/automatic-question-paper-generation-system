@@ -1,4 +1,24 @@
 {
   "kind": "feature_evidence_report",
-  "features": []
+  "features": [
+    {
+      "featureId": "feature-on-the-login-welcome-page-frontend-src-pages-login-tsx-update-any-displayed-app-name-or-branding-text-that-reads-exam-craft-to-automatic-question-paper-generation-system",
+      "featureTitle": "On the Login/welcome page (frontend/src/pages/Login.tsx), update any displayed app name or branding text that reads 'Exam Craft' to 'Automatic Question Paper Generation System'.",
+      "files": [
+        "frontend/src/pages/Login.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0"
+      ],
+      "testIds": [
+        "REQ-1"
+      ],
+      "confidence": "high"
+    }
+  ]
 }

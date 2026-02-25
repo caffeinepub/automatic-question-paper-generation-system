@@ -1,54 +1,54 @@
 {
   "kind": "build_request",
-  "title": "Allow non-admin (Teacher) users to add subjects",
+  "title": "Rename app on welcome/login page and enable subject edit/delete in question bank",
+  "projectName": "Automatic Question Paper Generation System",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Remove the admin-only restriction on the 'add subject' operation so that all authenticated users (including Teacher role) can add subjects. The backend currently rejects subject creation with 'Unauthorized: Only admins can add subjects' for non-admin principals — this restriction should be lifted so any logged-in user can create subjects.",
-      "target": "backend",
-      "source": {
-        "messageIds": [
-          "msg-1"
-        ],
-        "quotes": [
-          "subject should add",
-          "Unauthorized: Only admins can add subjects"
-        ]
-      },
-      "acceptanceCriteria": [
-        "A logged-in Teacher user can successfully add a subject via the Add Subject dialog without receiving an 'Unauthorized' error.",
-        "The subject is persisted after submission and appears in the Subjects list.",
-        "Admin users retain the ability to add subjects as before."
-      ]
-    },
-    {
-      "id": "REQ-2",
-      "text": "Update the SubjectManager frontend component to remove any UI-level guard or messaging that implies only admins can add subjects, so Teacher users see the Add Subject form and button without restriction.",
+      "text": "On the Login/welcome page (frontend/src/pages/Login.tsx), update any displayed app name or branding text that reads 'Exam Craft' to 'Automatic Question Paper Generation System'.",
       "target": "frontend",
       "source": {
         "messageIds": [
           "msg-1"
         ],
         "quotes": [
-          "Unauthorized: Only admins can add subjects"
+          "change name exam craft on welcome page as Automatic Question Ppaper Generation System"
         ]
       },
       "acceptanceCriteria": [
-        "The 'Add Subject' button is visible and enabled for Teacher-role users.",
-        "No 'only admins' warning or disabled state is shown to non-admin authenticated users.",
-        "The Add Subject dialog opens and submits successfully for Teacher users."
+        "The Login page no longer shows 'Exam Craft' anywhere.",
+        "The Login page displays 'Automatic Question Paper Generation System' as the app name/branding."
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "text": "In the Question Bank page (frontend/src/pages/QuestionBank.tsx), within the Subjects tab, render each subject entry with an Edit button and a Delete button. Clicking Edit should open an edit dialog (reuse or extend SubjectManager's edit dialog) pre-filled with the subject's current name. Clicking Delete should prompt for confirmation and then delete the subject via the existing delete mutation in useQueries.ts.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "in question bank section allow edit and delete subject"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Each subject listed in the Subjects tab of the Question Bank has a visible Edit button and a Delete button.",
+        "Clicking Edit opens a dialog pre-filled with the subject's current name; saving the form updates the subject.",
+        "Clicking Delete shows a confirmation prompt; confirming removes the subject from the list.",
+        "After editing or deleting, the subject list refreshes to reflect the updated state."
       ]
     }
   ],
   "constraints": [
-    "Do not change the Subject data model (name and code fields only).",
-    "Do not modify files listed in frontend.immutablePaths."
+    "Do not modify any file under frontend/src/hooks/ (immutable paths).",
+    "Do not alter the existing backend schema or data model."
   ],
   "nonGoals": [
-    "Adding new fields to the Subject form.",
-    "Changing any other role-based access controls beyond subject creation.",
-    "Modifying question or paper generation permissions."
+    "Changing the app name in any page other than the Login/welcome page.",
+    "Adding or editing questions from the Subjects tab.",
+    "Any changes to the question edit/delete functionality (already exists)."
   ],
   "imageRequirements": {
     "required": [],

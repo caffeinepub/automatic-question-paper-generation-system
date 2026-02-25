@@ -120,10 +120,13 @@ export default function SubjectManager() {
       </div>
 
       {/* Add Subject Dialog */}
-      <Dialog open={showAddDialog} onOpenChange={(open) => {
-        if (!open) resetAddForm();
-        setShowAddDialog(open);
-      }}>
+      <Dialog
+        open={showAddDialog}
+        onOpenChange={(open) => {
+          if (!open) resetAddForm();
+          setShowAddDialog(open);
+        }}
+      >
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="text-navy-900 font-poppins">Add New Subject</DialogTitle>
@@ -194,13 +197,16 @@ export default function SubjectManager() {
       </Dialog>
 
       {/* Edit Subject Dialog */}
-      <Dialog open={!!editingSubject} onOpenChange={(open) => {
-        if (!open) {
-          setEditingSubject(null);
-          setEditForm({ name: '', code: '' });
-          setEditError('');
-        }
-      }}>
+      <Dialog
+        open={!!editingSubject}
+        onOpenChange={(open) => {
+          if (!open) {
+            setEditingSubject(null);
+            setEditForm({ name: '', code: '' });
+            setEditError('');
+          }
+        }}
+      >
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="text-navy-900 font-poppins">Edit Subject</DialogTitle>
@@ -315,27 +321,31 @@ export default function SubjectManager() {
                 </div>
               </div>
               <div className="flex items-center gap-1 shrink-0">
+                {/* Edit Button */}
                 <button
                   onClick={() => startEdit(subject)}
-                  className="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center text-gray-400 hover:text-navy-600 transition-colors"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-navy-50 text-navy-600 hover:text-navy-800 border border-transparent hover:border-navy-200 transition-colors text-xs font-medium"
                   title="Edit subject"
                 >
                   <Edit2 className="w-3.5 h-3.5" />
+                  Edit
                 </button>
+                {/* Delete Button with Confirmation */}
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
                     <button
-                      className="w-8 h-8 rounded-lg hover:bg-red-50 flex items-center justify-center text-gray-400 hover:text-red-500 transition-colors"
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-red-50 text-gray-400 hover:text-red-600 border border-transparent hover:border-red-200 transition-colors text-xs font-medium"
                       title="Delete subject"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
+                      Delete
                     </button>
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>
                       <AlertDialogTitle>Delete Subject</AlertDialogTitle>
                       <AlertDialogDescription>
-                        Are you sure you want to delete "{subject.name}"? This action cannot be undone.
+                        Are you sure you want to delete <strong>"{subject.name}"</strong>? This action cannot be undone and may affect questions linked to this subject.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
@@ -344,7 +354,7 @@ export default function SubjectManager() {
                         onClick={() => handleDelete(subject.code)}
                         className="bg-red-600 hover:bg-red-700 text-white"
                       >
-                        Delete
+                        {deleteSubject.isPending ? 'Deleting...' : 'Delete'}
                       </AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>

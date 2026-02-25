@@ -1,36 +1,44 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "New project",
+  "summary": "A question paper generation system (formerly 'Exam Craft') with features including a question bank, CSV reference template, and automatic question paper generation.",
   "architectural_notes": [],
   "known_issues": [],
   "isFixRequest": false,
-  "existing_features": [],
+  "existing_features": [
+    {
+      "id": "feature-on-the-login-welcome-page-frontend-src-pages-login-tsx-update-any-displayed-app-name-or-branding-text-that-reads-exam-craft-to-automatic-question-paper-generation-system",
+      "title": "On the Login/welcome page (frontend/src/pages/Login.tsx), update any displayed app name or branding text that reads 'Exam Craft' to 'Automatic Question Paper Generation System'.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    }
+  ],
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Add 'subject' field",
+      "summary": "Change app name from 'Exam Craft' to 'Automatic Question Paper Generation System' on welcome page",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-2",
-      "summary": "Remove the admin-only restriction on the 'add subject' operation so that all authenticated users (including Teacher role) can add subjects. The backend currently rejects subject creation with 'Unauthorized: Only admins can add subjects' for non-admin principals — this restriction should be lifted so any logged-in user can create subjects.",
-      "reqIds": [
-        "REQ-1"
-      ],
+      "summary": "Allow edit and delete subject in question bank section",
+      "reqIds": [],
       "status": "pending"
     },
     {
-      "id": "AR-3",
-      "summary": "Update the SubjectManager frontend component to remove any UI-level guard or messaging that implies only admins can add subjects, so Teacher users see the Add Subject form and button without restriction.",
+      "id": "AR-4",
+      "summary": "In the Question Bank page (frontend/src/pages/QuestionBank.tsx), within the Subjects tab, render each subject entry with an Edit button and a Delete button. Clicking Edit should open an edit dialog (reuse or extend SubjectManager's edit dialog) pre-filled with the subject's current name. Clicking Delete should prompt for confirmation and then delete the subject via the existing delete mutation in useQueries.ts.",
       "reqIds": [
         "REQ-2"
       ],
       "status": "pending"
     }
   ],
-  "projectName": "Allow non-admin (Teacher) users to add subjects",
+  "gameProjectType": "none",
+  "projectName": "Automatic Question Paper Generation System",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

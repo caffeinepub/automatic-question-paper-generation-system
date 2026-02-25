@@ -1,14 +1,24 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-25T08:39:42.080Z",
-  "summary": "Both requirements are implemented. REQ-1 is addressed in backend/main.mo by changing the addSubject guard from admin-only to #user permission (any authenticated user). REQ-2 is addressed in the SubjectManager frontend component, which according to the file summary had its form state and UI updated to remove admin-only restrictions. The project_state.json still shows both as 'pending', but that appears to be a state tracking artifact rather than evidence of missing implementation.",
+  "generatedAt": "2026-02-25T09:36:44.572Z",
+  "summary": "Both REQ-1 and REQ-2 appear to be implemented. REQ-1 is satisfied in Login.tsx where 'Automatic Question Paper Generation System' is displayed as the app name. REQ-2 is addressed in SubjectManager.tsx which now includes Edit and Delete buttons with confirmation dialog and edit dialog. However, the build request specifies that the Edit/Delete functionality should be rendered in QuestionBank.tsx (Subjects tab), and the diff shows the changes are in SubjectManager.tsx — this is acceptable if QuestionBank.tsx uses SubjectManager as its Subjects tab renderer. One concern flagged: Layout.tsx sidebar branding was also updated, which the build request explicitly marks as a non-goal.",
   "missing_requirements": [],
-  "hallucinated_features": [],
-  "confidence": 0.88,
+  "hallucinated_features": [
+    {
+      "description": "Layout.tsx sidebar branding updated to 'Automatic Question Paper Generation System' and footer copyright text updated",
+      "reason": "The build request explicitly states as a non-goal: 'Changing the app name in any page other than the Login/welcome page.' The file summary confirms Layout.tsx was updated to replace 'ExamCraft' branding in the sidebar header and footer copyright text, which is outside the allowed scope.",
+      "evidence": [
+        "frontend/src/components/Layout.tsx",
+        "frontend-file-summaries.txt"
+      ]
+    }
+  ],
+  "confidence": 0.78,
   "changed_files": [
-    "backend/main.mo",
     "frontend-file-summaries.txt",
+    "frontend/src/components/SubjectManager.tsx",
+    "frontend/src/pages/Login.tsx",
     "project_state.json"
   ]
 }

@@ -51,7 +51,9 @@ export default function Login() {
               />
             </div>
             <div>
-              <h1 className="text-xl font-bold font-poppins leading-tight">Automatic Question Paper Generation System</h1>
+              <h1 className="text-xl font-bold font-poppins leading-tight">
+                Automatic Question Paper Generation System
+              </h1>
               <p className="text-navy-200 text-sm">Intelligent Exam Paper Generator</p>
             </div>
           </div>

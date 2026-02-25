@@ -5,7 +5,7 @@ import { QuestionCategory, DifficultyLevel } from '../backend';
 import { parseCSV } from '../utils/csvParser';
 import { parseJSON } from '../utils/jsonParser';
 import { downloadCSVTemplate } from '../utils/csvTemplate';
-import { PlusCircle, Upload, Download, X, CheckCircle, AlertCircle } from 'lucide-react';
+import { PlusCircle, Upload, Download, X, CheckCircle, AlertCircle, Info } from 'lucide-react';
 
 const CATEGORY_OPTIONS = [
   { value: QuestionCategory.mcqOneMark, label: 'MCQ (1 Mark)' },
@@ -341,11 +341,29 @@ export default function AddQuestion() {
               <h2 className="font-semibold text-navy-800">Upload Questions File</h2>
               <button
                 onClick={downloadCSVTemplate}
-                className="flex items-center gap-2 text-lightblue-600 hover:text-lightblue-700 text-sm font-medium"
+                className="flex items-center gap-2 text-lightblue-600 hover:text-lightblue-700 text-sm font-medium transition-colors"
               >
                 <Download className="w-4 h-4" />
                 Download CSV Template
               </button>
+            </div>
+
+            {/* CSV Format Guide */}
+            <div className="mb-4 bg-blue-50 border border-blue-100 rounded-xl p-4 text-sm text-blue-800">
+              <div className="flex items-start gap-2">
+                <Info className="w-4 h-4 shrink-0 mt-0.5 text-blue-500" />
+                <div>
+                  <p className="font-semibold mb-1">CSV Format Guide</p>
+                  <ul className="space-y-1 text-blue-700 text-xs">
+                    <li>• <strong>subjectId</strong>: Use the subject code (e.g. <code className="bg-blue-100 px-1 rounded">CS101</code>) — must match a subject added in the system</li>
+                    <li>• <strong>category</strong>: <code className="bg-blue-100 px-1 rounded">mcqOneMark</code> | <code className="bg-blue-100 px-1 rounded">_2Marks</code> | <code className="bg-blue-100 px-1 rounded">_4Marks</code> | <code className="bg-blue-100 px-1 rounded">_6Marks</code> | <code className="bg-blue-100 px-1 rounded">_8Marks</code></li>
+                    <li>• <strong>options</strong>: For MCQ only — separate options with <code className="bg-blue-100 px-1 rounded">|</code> (pipe), e.g. <code className="bg-blue-100 px-1 rounded">A|B|C|D</code></li>
+                    <li>• <strong>correctAnswer</strong>: For MCQ only — the correct option text</li>
+                    <li>• <strong>difficultyLevel</strong>: <code className="bg-blue-100 px-1 rounded">easy</code> | <code className="bg-blue-100 px-1 rounded">medium</code> | <code className="bg-blue-100 px-1 rounded">hard</code></li>
+                    <li>• <strong>marks</strong>: Must match category (mcqOneMark=1, _2Marks=2, _4Marks=4, _6Marks=6, _8Marks=8)</li>
+                  </ul>
+                </div>
+              </div>
             </div>
 
             <div
