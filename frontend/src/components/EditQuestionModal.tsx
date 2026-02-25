@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { Question, QuestionCategory, DifficultyLevel } from '../backend';
+import { useUpdateQuestion } from '../hooks/useQueries';
 import {
   Dialog,
   DialogContent,
@@ -6,202 +8,214 @@ import {
   DialogTitle,
   DialogFooter,
 } from '@/components/ui/dialog';
-import { Loader2 } from 'lucide-react';
-import { useUpdateQuestion } from '../hooks/useQueries';
-import { toast } from 'sonner';
-import type { Question, Subject } from '../backend';
-import { QuestionCategory, DifficultyLevel } from '../backend';
+import { AlertCircle, CheckCircle } from 'lucide-react';
 
 interface EditQuestionModalProps {
   question: Question;
-  subjects: Subject[];
-  open: boolean;
   onClose: () => void;
 }
 
-export default function EditQuestionModal({ question, subjects: _subjects, open, onClose }: EditQuestionModalProps) {
+const CATEGORY_OPTIONS = [
+  { value: QuestionCategory.mcqOneMark, label: 'MCQ (1 Mark)' },
+  { value: QuestionCategory._2Marks, label: '2 Marks' },
+  { value: QuestionCategory._4Marks, label: '4 Marks' },
+  { value: QuestionCategory._6Marks, label: '6 Marks' },
+  { value: QuestionCategory._8Marks, label: '8 Marks' },
+];
+
+const DIFFICULTY_OPTIONS = [
+  { value: DifficultyLevel.easy, label: 'Easy' },
+  { value: DifficultyLevel.medium, label: 'Medium' },
+  { value: DifficultyLevel.hard, label: 'Hard' },
+];
+
+export default function EditQuestionModal({ question, onClose }: EditQuestionModalProps) {
   const updateQuestion = useUpdateQuestion();
 
-  const [questionText, setQuestionText] = useState(question.questionText);
-  const [category, setCategory] = useState<QuestionCategory>(question.category as QuestionCategory);
-  const [difficulty, setDifficulty] = useState<DifficultyLevel>(question.difficultyLevel as DifficultyLevel);
-  const [options, setOptions] = useState<string[]>(question.options ?? ['', '', '', '']);
-  const [correctAnswer, setCorrectAnswer] = useState(question.correctAnswer ?? '');
+  const [form, setForm] = useState({
+    questionText: question.questionText,
+    category: question.category,
+    difficultyLevel: question.difficultyLevel,
+    options: question.options ? [...question.options, '', '', ''].slice(0, 4) : ['', '', '', ''],
+    correctAnswer: question.correctAnswer ?? '',
+  });
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
-  useEffect(() => {
-    setQuestionText(question.questionText);
-    setCategory(question.category as QuestionCategory);
-    setDifficulty(question.difficultyLevel as DifficultyLevel);
-    setOptions(question.options ?? ['', '', '', '']);
-    setCorrectAnswer(question.correctAnswer ?? '');
-  }, [question]);
+  const isMCQ = form.category === QuestionCategory.mcqOneMark;
 
-  const isMCQ = category === QuestionCategory.mcqOneMark;
+  const handleChange = (field: string, value: string) => {
+    setForm((prev) => ({ ...prev, [field]: value }));
+    setError('');
+    setSuccess('');
+  };
 
-  const handleSave = async () => {
-    if (!questionText.trim()) {
-      toast.error('Question text is required');
+  const handleOptionChange = (index: number, value: string) => {
+    setForm((prev) => {
+      const newOptions = [...prev.options];
+      newOptions[index] = value;
+      return { ...prev, options: newOptions };
+    });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setSuccess('');
+
+    if (!form.questionText.trim()) {
+      setError('Question text is required.');
       return;
     }
     if (isMCQ) {
-      const filledOptions = options.filter((o) => o.trim());
+      const filledOptions = form.options.filter((o) => o.trim());
       if (filledOptions.length < 2) {
-        toast.error('MCQ questions require at least 2 options');
+        setError('MCQ questions require at least 2 options.');
         return;
       }
-      if (!correctAnswer.trim()) {
-        toast.error('Please specify the correct answer');
+      if (!form.correctAnswer.trim()) {
+        setError('Please provide the correct answer for MCQ.');
         return;
       }
     }
 
     const updatedQuestion: Question = {
       ...question,
-      questionText: questionText.trim(),
-      category,
-      difficultyLevel: difficulty,
-      options: isMCQ ? options.filter((o) => o.trim()) : undefined,
-      correctAnswer: isMCQ ? correctAnswer.trim() : undefined,
+      questionText: form.questionText.trim(),
+      category: form.category as QuestionCategory,
+      difficultyLevel: form.difficultyLevel as DifficultyLevel,
+      options: isMCQ ? form.options.filter((o) => o.trim()) : undefined,
+      correctAnswer: isMCQ ? form.correctAnswer.trim() : undefined,
     };
 
     try {
       await updateQuestion.mutateAsync({ id: question.id, updatedQuestion });
-      toast.success('Question updated successfully');
-      onClose();
+      setSuccess('Question updated successfully!');
+      setTimeout(onClose, 800);
     } catch (err: any) {
-      toast.error(err?.message ?? 'Failed to update question');
+      setError(err?.message ?? 'Failed to update question.');
     }
   };
 
-  const selectClass = "w-full px-3 py-2 text-sm rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring";
-  const inputClass = "w-full px-3 py-2 text-sm rounded-lg border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring";
-
   return (
-    <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
+    <Dialog open onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="font-poppins">Edit Question</DialogTitle>
+          <DialogTitle>Edit Question</DialogTitle>
         </DialogHeader>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-sm font-medium text-navy-800 mb-1">Category</label>
+              <select
+                value={form.category}
+                onChange={(e) => handleChange('category', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-navy-300 bg-white"
+              >
+                {CATEGORY_OPTIONS.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-navy-800 mb-1">Difficulty</label>
+              <select
+                value={form.difficultyLevel}
+                onChange={(e) => handleChange('difficultyLevel', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-navy-300 bg-white"
+              >
+                {DIFFICULTY_OPTIONS.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
 
-        <div className="space-y-4 py-2">
-          {/* Question Text */}
           <div>
-            <label className="block text-xs font-semibold text-muted-foreground mb-1.5 uppercase tracking-wide">
-              Question Text
-            </label>
+            <label className="block text-sm font-medium text-navy-800 mb-1">Question Text *</label>
             <textarea
-              value={questionText}
-              onChange={(e) => setQuestionText(e.target.value)}
+              value={form.questionText}
+              onChange={(e) => handleChange('questionText', e.target.value)}
               rows={3}
-              className={inputClass}
-              placeholder="Enter question text..."
+              className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-navy-300 resize-none"
             />
           </div>
 
-          {/* Category */}
-          <div>
-            <label className="block text-xs font-semibold text-muted-foreground mb-1.5 uppercase tracking-wide">
-              Category
-            </label>
-            <select
-              value={category}
-              onChange={(e) => setCategory(e.target.value as QuestionCategory)}
-              className={selectClass}
-            >
-              <option value={QuestionCategory.mcqOneMark}>MCQ (1 Mark)</option>
-              <option value={QuestionCategory._2Marks}>2 Marks</option>
-              <option value={QuestionCategory._4Marks}>4 Marks</option>
-              <option value={QuestionCategory._6Marks}>6 Marks</option>
-              <option value={QuestionCategory._8Marks}>8 Marks</option>
-            </select>
-          </div>
-
-          {/* Difficulty */}
-          <div>
-            <label className="block text-xs font-semibold text-muted-foreground mb-1.5 uppercase tracking-wide">
-              Difficulty Level
-            </label>
-            <select
-              value={difficulty}
-              onChange={(e) => setDifficulty(e.target.value as DifficultyLevel)}
-              className={selectClass}
-            >
-              <option value={DifficultyLevel.easy}>Easy</option>
-              <option value={DifficultyLevel.medium}>Medium</option>
-              <option value={DifficultyLevel.hard}>Hard</option>
-            </select>
-          </div>
-
-          {/* MCQ Options */}
           {isMCQ && (
             <>
               <div>
-                <label className="block text-xs font-semibold text-muted-foreground mb-1.5 uppercase tracking-wide">
-                  Options
-                </label>
+                <label className="block text-sm font-medium text-navy-800 mb-2">Options</label>
                 <div className="space-y-2">
-                  {options.map((opt, idx) => (
+                  {form.options.map((opt, idx) => (
                     <div key={idx} className="flex items-center gap-2">
-                      <span
-                        className="w-6 h-6 rounded flex items-center justify-center text-xs font-bold text-white shrink-0"
-                        style={{ backgroundColor: 'var(--navy-600)' }}
-                      >
-                        {['A', 'B', 'C', 'D'][idx]}
+                      <span className="w-6 h-6 rounded-full bg-navy-100 text-navy-700 text-xs font-bold flex items-center justify-center shrink-0">
+                        {String.fromCharCode(65 + idx)}
                       </span>
                       <input
                         type="text"
                         value={opt}
-                        onChange={(e) => {
-                          const newOpts = [...options];
-                          newOpts[idx] = e.target.value;
-                          setOptions(newOpts);
-                        }}
-                        className={inputClass}
-                        placeholder={`Option ${['A', 'B', 'C', 'D'][idx]}`}
+                        onChange={(e) => handleOptionChange(idx, e.target.value)}
+                        placeholder={`Option ${String.fromCharCode(65 + idx)}`}
+                        className="flex-1 px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-navy-300"
                       />
                     </div>
                   ))}
                 </div>
               </div>
-
               <div>
-                <label className="block text-xs font-semibold text-muted-foreground mb-1.5 uppercase tracking-wide">
-                  Correct Answer
-                </label>
-                <select
-                  value={correctAnswer}
-                  onChange={(e) => setCorrectAnswer(e.target.value)}
-                  className={selectClass}
-                >
-                  <option value="">Select correct answer...</option>
-                  {options.filter((o) => o.trim()).map((opt, idx) => (
-                    <option key={idx} value={opt}>{opt}</option>
-                  ))}
-                </select>
+                <label className="block text-sm font-medium text-navy-800 mb-1">Correct Answer</label>
+                <input
+                  type="text"
+                  value={form.correctAnswer}
+                  onChange={(e) => handleChange('correctAnswer', e.target.value)}
+                  placeholder="Enter the correct answer"
+                  className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-navy-300"
+                />
               </div>
             </>
           )}
-        </div>
 
-        <DialogFooter className="gap-2">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 rounded-lg text-sm font-medium border border-border text-foreground hover:bg-muted transition-colors"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleSave}
-            disabled={updateQuestion.isPending}
-            className="px-4 py-2 rounded-lg text-sm font-semibold text-white flex items-center gap-2 transition-all disabled:opacity-60"
-            style={{ backgroundColor: 'var(--navy-700)' }}
-            onMouseEnter={(e) => !updateQuestion.isPending && (e.currentTarget.style.backgroundColor = 'var(--navy-800)')}
-            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'var(--navy-700)')}
-          >
-            {updateQuestion.isPending && <Loader2 className="w-4 h-4 animate-spin" />}
-            Save Changes
-          </button>
-        </DialogFooter>
+          {error && (
+            <div className="flex items-center gap-2 text-red-600 bg-red-50 rounded-xl px-3 py-2 text-sm">
+              <AlertCircle className="w-4 h-4 shrink-0" />
+              {error}
+            </div>
+          )}
+          {success && (
+            <div className="flex items-center gap-2 text-green-600 bg-green-50 rounded-xl px-3 py-2 text-sm">
+              <CheckCircle className="w-4 h-4 shrink-0" />
+              {success}
+            </div>
+          )}
+
+          <DialogFooter>
+            <button
+              type="button"
+              onClick={onClose}
+              className="border border-gray-200 hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-xl text-sm font-medium transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={updateQuestion.isPending}
+              className="bg-navy-800 hover:bg-navy-700 disabled:opacity-60 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors flex items-center gap-2"
+            >
+              {updateQuestion.isPending ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  Saving...
+                </>
+              ) : (
+                'Save Changes'
+              )}
+            </button>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   );

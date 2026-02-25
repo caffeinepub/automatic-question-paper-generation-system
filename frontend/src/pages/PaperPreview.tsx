@@ -1,12 +1,20 @@
-import React, { useState } from 'react';
-import { useParams, useNavigate } from '@tanstack/react-router';
-import { useGetAllQuestions, useGetMyPapers } from '../hooks/useQueries';
+import { useState } from 'react';
+import { useNavigate, useSearch } from '@tanstack/react-router';
+import { useGetPaper, useGetAllQuestions, useGetSubjects } from '../hooks/useQueries';
 import PaperSection from '../components/PaperSection';
 import { generatePDF } from '../utils/pdfGenerator';
-import { ArrowLeft, Download, Loader2, FileText } from 'lucide-react';
-import type { Question, GeneratedPaper } from '../backend';
+import { Download, ArrowLeft, FileText } from 'lucide-react';
+import { Question, QuestionCategory } from '../backend';
 
-function toPDFQuestions(questions: Question[]) {
+interface PDFQuestion {
+  id: string;
+  questionText: string;
+  options?: string[];
+  correctAnswer?: string;
+  category: QuestionCategory;
+}
+
+function toPDFQuestions(questions: Question[]): PDFQuestion[] {
   return questions.map((q) => ({
     id: String(q.id),
     questionText: q.questionText,
@@ -17,220 +25,171 @@ function toPDFQuestions(questions: Question[]) {
 }
 
 export default function PaperPreview() {
-  const { paperId } = useParams({ from: '/layout/paper-preview/$paperId' });
   const navigate = useNavigate();
-  const [activeVariant, setActiveVariant] = useState(0);
-  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+  const search = useSearch({ strict: false }) as { paperId?: string };
+  const paperId = search.paperId ? BigInt(search.paperId) : undefined;
 
-  const { data: allPapers = [], isLoading: papersLoading } = useGetMyPapers();
-  const { data: allQuestions = [], isLoading: questionsLoading } = useGetAllQuestions();
+  const { data: paper, isLoading: paperLoading } = useGetPaper(paperId);
+  const { data: allQuestions = [] } = useGetAllQuestions();
+  const { data: subjects = [] } = useGetSubjects();
 
-  const isLoading = papersLoading || questionsLoading;
+  const [selectedVariant, setSelectedVariant] = useState('A');
 
-  const paper: GeneratedPaper | undefined = allPapers.find(
-    (p) => String(p.id) === paperId
-  );
-
-  if (isLoading) {
+  if (paperLoading) {
     return (
-      <div className="flex items-center justify-center py-24 gap-3 text-muted-foreground">
-        <Loader2 className="w-6 h-6 animate-spin" />
-        <span className="text-sm">Loading paper...</span>
+      <div className="flex items-center justify-center min-h-64">
+        <div className="text-center">
+          <div className="w-8 h-8 border-2 border-navy-300 border-t-navy-700 rounded-full animate-spin mx-auto mb-3" />
+          <p className="text-gray-500 text-sm">Loading paper...</p>
+        </div>
       </div>
     );
   }
 
   if (!paper) {
     return (
-      <div className="academic-card text-center py-16">
-        <FileText className="w-12 h-12 mx-auto mb-4 text-muted-foreground opacity-40" />
-        <h3 className="text-base font-semibold font-poppins text-foreground mb-2">Paper Not Found</h3>
-        <p className="text-sm text-muted-foreground mb-6">The requested paper could not be found.</p>
+      <div className="text-center py-12">
+        <FileText className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+        <h3 className="font-semibold text-navy-800 mb-2">Paper Not Found</h3>
+        <p className="text-gray-500 text-sm mb-4">The requested paper could not be found.</p>
         <button
           onClick={() => navigate({ to: '/generated-papers' })}
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold text-white"
-          style={{ backgroundColor: 'var(--navy-700)' }}
+          className="bg-navy-800 hover:bg-navy-700 text-white px-4 py-2 rounded-xl text-sm font-medium"
         >
-          <ArrowLeft className="w-4 h-4" />
           Back to Papers
         </button>
       </div>
     );
   }
 
-  const questionMap = new Map<bigint, Question>(
-    allQuestions.map((q) => [q.id, q])
-  );
+  const subject = subjects.find((s) => s.id === paper.subjectId);
+  const variantData = paper.setVariants.find((v) => v.variant === selectedVariant);
+  const variantQuestionIds = variantData?.questions ?? paper.questions;
 
-  const currentVariant = paper.setVariants?.[activeVariant];
-  const variantQuestions: Question[] = (currentVariant?.questions ?? paper.questions ?? [])
-    .map((id) => questionMap.get(id))
+  const variantQuestions = variantQuestionIds
+    .map((id) => allQuestions.find((q) => q.id === id))
     .filter((q): q is Question => q !== undefined);
 
-  // Group questions by category
-  const mcqQuestions = variantQuestions.filter((q) => q.category === 'mcqOneMark');
-  const twoMarkQuestions = variantQuestions.filter((q) => q.category === '_2Marks');
-  const fourMarkQuestions = variantQuestions.filter((q) => q.category === '_4Marks');
-  const sixMarkQuestions = variantQuestions.filter((q) => q.category === '_6Marks');
-  const eightMarkQuestions = variantQuestions.filter((q) => q.category === '_8Marks');
+  const mcqQuestions = variantQuestions.filter((q) => q.category === QuestionCategory.mcqOneMark);
+  const twoMarkQuestions = variantQuestions.filter((q) => q.category === QuestionCategory._2Marks);
+  const fourMarkQuestions = variantQuestions.filter((q) => q.category === QuestionCategory._4Marks);
+  const sixMarkQuestions = variantQuestions.filter((q) => q.category === QuestionCategory._6Marks);
+  const eightMarkQuestions = variantQuestions.filter((q) => q.category === QuestionCategory._8Marks);
 
-  const handleDownloadPDF = async () => {
-    setIsGeneratingPDF(true);
-    try {
-      const variantLabel = currentVariant?.variant ?? 'A';
-      const sections: Record<string, ReturnType<typeof toPDFQuestions>> = {
-        mcqOneMark: toPDFQuestions(mcqQuestions),
-        _2Marks: toPDFQuestions(twoMarkQuestions),
-        _4Marks: toPDFQuestions(fourMarkQuestions),
-        _6Marks: toPDFQuestions(sixMarkQuestions),
-        _8Marks: toPDFQuestions(eightMarkQuestions),
-      };
-      generatePDF({
-        subjectName: paper.subjectName,
-        examDuration: Number(paper.examDuration),
-        totalMarks: Number(paper.totalMarks),
-        variant: variantLabel,
-        sections,
-        categoryLabel: (cat: string) => {
-          const map: Record<string, string> = {
-            mcqOneMark: 'Section A – MCQ (1 Mark Each)',
-            _2Marks: 'Section B – Short Answer (2 Marks Each)',
-            _4Marks: 'Section C – Short Answer (4 Marks Each)',
-            _6Marks: 'Section D – Long Answer (6 Marks Each)',
-            _8Marks: 'Section E – Long Answer (8 Marks Each)',
-          };
-          return map[cat] ?? cat;
-        },
-      });
-    } finally {
-      setIsGeneratingPDF(false);
-    }
+  const sections = [
+    { title: 'Section A – MCQ (1 Mark Each)', questions: mcqQuestions, marksPerQuestion: 1 },
+    { title: 'Section B – Short Answer (2 Marks Each)', questions: twoMarkQuestions, marksPerQuestion: 2 },
+    { title: 'Section C – Short Answer (4 Marks Each)', questions: fourMarkQuestions, marksPerQuestion: 4 },
+    { title: 'Section D – Long Answer (6 Marks Each)', questions: sixMarkQuestions, marksPerQuestion: 6 },
+    { title: 'Section E – Long Answer (8 Marks Each)', questions: eightMarkQuestions, marksPerQuestion: 8 },
+  ].filter((s) => s.questions.length > 0);
+
+  const handleDownloadPDF = () => {
+    generatePDF({
+      subjectName: paper.subjectName,
+      subjectCode: subject?.code ?? '',
+      examDuration: Number(paper.examDuration),
+      totalMarks: Number(paper.totalMarks),
+      variant: selectedVariant,
+      sections: sections.map((s) => ({
+        title: s.title,
+        questions: toPDFQuestions(s.questions),
+        marksPerQuestion: s.marksPerQuestion,
+      })),
+    });
   };
 
-  // Calculate start numbers for each section
-  const mcqStart = 1;
-  const twoMarkStart = mcqStart + mcqQuestions.length;
-  const fourMarkStart = twoMarkStart + twoMarkQuestions.length;
-  const sixMarkStart = fourMarkStart + fourMarkQuestions.length;
-  const eightMarkStart = sixMarkStart + sixMarkQuestions.length;
-
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate({ to: '/generated-papers' })}
-            className="p-2 rounded-lg hover:bg-muted transition-colors"
+            className="w-9 h-9 rounded-xl border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors"
           >
-            <ArrowLeft className="w-5 h-5 text-muted-foreground" />
+            <ArrowLeft className="w-4 h-4 text-gray-600" />
           </button>
           <div>
-            <h1 className="text-2xl font-bold font-poppins text-foreground">{paper.subjectName}</h1>
-            <p className="text-sm text-muted-foreground">
-              {String(paper.totalMarks)} marks · {String(paper.examDuration)} minutes
+            <h1 className="text-xl font-bold text-navy-900 font-poppins">{paper.subjectName}</h1>
+            <p className="text-gray-500 text-sm">
+              {Number(paper.examDuration)} min • {Number(paper.totalMarks)} marks
             </p>
           </div>
         </div>
         <button
           onClick={handleDownloadPDF}
-          disabled={isGeneratingPDF}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold text-white transition-all disabled:opacity-60"
-          style={{ backgroundColor: 'var(--navy-700)' }}
-          onMouseEnter={(e) => !isGeneratingPDF && (e.currentTarget.style.backgroundColor = 'var(--navy-800)')}
-          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'var(--navy-700)')}
+          className="bg-navy-800 hover:bg-navy-700 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors flex items-center gap-2"
         >
-          {isGeneratingPDF ? (
-            <>
-              <Loader2 className="w-4 h-4 animate-spin" />
-              Preparing PDF...
-            </>
-          ) : (
-            <>
-              <Download className="w-4 h-4" />
-              Download PDF
-            </>
-          )}
+          <Download className="w-4 h-4" />
+          Download PDF
         </button>
       </div>
 
-      {/* Variant Tabs */}
-      {paper.setVariants && paper.setVariants.length > 0 && (
+      {/* Variant Selector */}
+      <div className="bg-white rounded-2xl p-4 shadow-card border border-gray-100">
+        <h3 className="text-sm font-semibold text-navy-800 mb-3">Select Variant</h3>
         <div className="flex gap-2 flex-wrap">
-          {paper.setVariants.map((variant, idx) => (
+          {paper.setVariants.map((v) => (
             <button
-              key={variant.variant}
-              onClick={() => setActiveVariant(idx)}
-              className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
-                activeVariant === idx
-                  ? 'text-white shadow-sm'
-                  : 'text-muted-foreground hover:text-foreground hover:bg-muted border border-border'
+              key={v.variant}
+              onClick={() => setSelectedVariant(v.variant)}
+              className={`w-10 h-10 rounded-xl font-bold text-sm transition-colors ${
+                selectedVariant === v.variant
+                  ? 'bg-navy-800 text-white'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
-              style={activeVariant === idx ? { backgroundColor: 'var(--navy-700)' } : {}}
             >
-              Set {variant.variant}
+              {v.variant}
             </button>
           ))}
         </div>
-      )}
+      </div>
 
       {/* Paper Content */}
-      <div className="academic-card">
+      <div className="bg-white rounded-2xl shadow-card border border-gray-100 overflow-hidden">
         {/* Paper Header */}
-        <div
-          className="text-center p-6 rounded-xl mb-6 text-white"
-          style={{ backgroundColor: 'var(--navy-800)' }}
-        >
-          <div className="flex justify-center mb-3">
+        <div className="bg-navy-800 text-white p-6 text-center">
+          <div className="flex items-center justify-center gap-3 mb-2">
             <img
               src="/assets/generated/college-logo.dim_200x200.png"
               alt="College Logo"
-              className="w-16 h-16 object-contain rounded-full bg-white/10 p-1"
-              onError={(e) => { e.currentTarget.style.display = 'none'; }}
+              className="w-10 h-10 object-contain bg-white rounded-lg p-1"
             />
+            <div>
+              <h2 className="font-bold text-lg font-poppins">Examination Paper</h2>
+              <p className="text-navy-200 text-sm">{paper.subjectName}</p>
+            </div>
           </div>
-          <h2 className="text-lg font-bold font-poppins mb-1">{paper.subjectName}</h2>
-          <div className="flex items-center justify-center gap-6 text-sm opacity-80 mt-2">
-            <span>Duration: {String(paper.examDuration)} min</span>
-            <span>Total Marks: {String(paper.totalMarks)}</span>
-            <span>Set: {currentVariant?.variant ?? 'A'}</span>
+          <div className="flex items-center justify-center gap-6 mt-3 text-sm text-navy-200">
+            <span>Duration: {Number(paper.examDuration)} minutes</span>
+            <span>Total Marks: {Number(paper.totalMarks)}</span>
+            <span className="bg-white/20 px-3 py-1 rounded-full font-bold text-white">
+              SET {selectedVariant}
+            </span>
           </div>
         </div>
 
         {/* Sections */}
-        {variantQuestions.length === 0 ? (
-          <p className="text-sm text-muted-foreground text-center py-8">
-            No questions found for this variant.
-          </p>
-        ) : (
-          <div>
-            <PaperSection
-              title={`Section A – MCQ (1 Mark each) [${mcqQuestions.length} × 1 = ${mcqQuestions.length} Marks]`}
-              questions={mcqQuestions}
-              startNumber={mcqStart}
-            />
-            <PaperSection
-              title={`Section B – Short Answer (2 Marks each) [${twoMarkQuestions.length} × 2 = ${twoMarkQuestions.length * 2} Marks]`}
-              questions={twoMarkQuestions}
-              startNumber={twoMarkStart}
-            />
-            <PaperSection
-              title={`Section C – Medium Answer (4 Marks each) [${fourMarkQuestions.length} × 4 = ${fourMarkQuestions.length * 4} Marks]`}
-              questions={fourMarkQuestions}
-              startNumber={fourMarkStart}
-            />
-            <PaperSection
-              title={`Section D – Long Answer (6 Marks each) [${sixMarkQuestions.length} × 6 = ${sixMarkQuestions.length * 6} Marks]`}
-              questions={sixMarkQuestions}
-              startNumber={sixMarkStart}
-            />
-            <PaperSection
-              title={`Section E – Essay (8 Marks each) [${eightMarkQuestions.length} × 8 = ${eightMarkQuestions.length * 8} Marks]`}
-              questions={eightMarkQuestions}
-              startNumber={eightMarkStart}
-            />
-          </div>
-        )}
+        <div className="p-6 space-y-6">
+          {sections.length === 0 ? (
+            <p className="text-center text-gray-400 py-8">No questions in this variant.</p>
+          ) : (
+            sections.map((section, idx) => (
+              <PaperSection
+                key={idx}
+                title={section.title}
+                questions={section.questions}
+                marksPerQuestion={section.marksPerQuestion}
+                startNumber={
+                  sections
+                    .slice(0, idx)
+                    .reduce((acc, s) => acc + s.questions.length, 0) + 1
+                }
+              />
+            ))
+          )}
+        </div>
       </div>
     </div>
   );

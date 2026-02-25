@@ -1,341 +1,362 @@
-import React, { useState, useRef } from 'react';
+import { useState, useRef } from 'react';
+import { useNavigate } from '@tanstack/react-router';
 import { useGetSubjects, useAddQuestion, useBulkUploadQuestions } from '../hooks/useQueries';
-import { PlusCircle, Upload, Loader2, AlertCircle, CheckCircle2, Download, FileText } from 'lucide-react';
-import { toast } from 'sonner';
+import { QuestionCategory, DifficultyLevel } from '../backend';
 import { parseCSV } from '../utils/csvParser';
 import { parseJSON } from '../utils/jsonParser';
 import { downloadCSVTemplate } from '../utils/csvTemplate';
-import { QuestionCategory, DifficultyLevel } from '../backend';
-import type { Question } from '../backend';
+import { PlusCircle, Upload, Download, X, CheckCircle, AlertCircle } from 'lucide-react';
 
-type TabType = 'single' | 'bulk';
+const CATEGORY_OPTIONS = [
+  { value: QuestionCategory.mcqOneMark, label: 'MCQ (1 Mark)' },
+  { value: QuestionCategory._2Marks, label: '2 Marks' },
+  { value: QuestionCategory._4Marks, label: '4 Marks' },
+  { value: QuestionCategory._6Marks, label: '6 Marks' },
+  { value: QuestionCategory._8Marks, label: '8 Marks' },
+];
+
+const DIFFICULTY_OPTIONS = [
+  { value: DifficultyLevel.easy, label: 'Easy' },
+  { value: DifficultyLevel.medium, label: 'Medium' },
+  { value: DifficultyLevel.hard, label: 'Hard' },
+];
+
+interface ParsedQuestion {
+  subjectId: string;
+  category: QuestionCategory;
+  questionText: string;
+  options?: string[];
+  correctAnswer?: string;
+  difficultyLevel: DifficultyLevel;
+}
 
 export default function AddQuestion() {
-  const [activeTab, setActiveTab] = useState<TabType>('single');
+  const navigate = useNavigate();
   const { data: subjects = [] } = useGetSubjects();
   const addQuestion = useAddQuestion();
   const bulkUpload = useBulkUploadQuestions();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Single question form state
-  const [subjectId, setSubjectId] = useState('');
-  const [category, setCategory] = useState<QuestionCategory>(QuestionCategory.mcqOneMark);
-  const [difficulty, setDifficulty] = useState<DifficultyLevel>(DifficultyLevel.medium);
-  const [questionText, setQuestionText] = useState('');
-  const [options, setOptions] = useState(['', '', '', '']);
-  const [correctAnswer, setCorrectAnswer] = useState('');
+  const [activeTab, setActiveTab] = useState<'single' | 'bulk'>('single');
+  const [form, setForm] = useState({
+    subjectId: '',
+    category: QuestionCategory.mcqOneMark,
+    questionText: '',
+    options: ['', '', '', ''],
+    correctAnswer: '',
+    difficultyLevel: DifficultyLevel.medium,
+  });
+  const [formError, setFormError] = useState('');
+  const [formSuccess, setFormSuccess] = useState('');
 
-  // Bulk upload state
+  const [bulkFile, setBulkFile] = useState<File | null>(null);
+  const [bulkPreview, setBulkPreview] = useState<ParsedQuestion[]>([]);
   const [bulkErrors, setBulkErrors] = useState<string[]>([]);
-  const [bulkSuccess, setBulkSuccess] = useState<string | null>(null);
-  const [isDragging, setIsDragging] = useState(false);
+  const [bulkSuccess, setBulkSuccess] = useState('');
 
-  const isMCQ = category === QuestionCategory.mcqOneMark;
+  const isMCQ = form.category === QuestionCategory.mcqOneMark;
 
-  const resetSingleForm = () => {
-    setSubjectId('');
-    setCategory(QuestionCategory.mcqOneMark);
-    setDifficulty(DifficultyLevel.medium);
-    setQuestionText('');
-    setOptions(['', '', '', '']);
-    setCorrectAnswer('');
+  const handleFormChange = (field: string, value: string) => {
+    setForm((prev) => ({ ...prev, [field]: value }));
+    setFormError('');
+    setFormSuccess('');
   };
 
-  const handleSingleSubmit = async () => {
-    if (!subjectId) { toast.error('Please select a subject'); return; }
-    if (!questionText.trim()) { toast.error('Please enter question text'); return; }
+  const handleOptionChange = (index: number, value: string) => {
+    setForm((prev) => {
+      const newOptions = [...prev.options];
+      newOptions[index] = value;
+      return { ...prev, options: newOptions };
+    });
+  };
+
+  const handleSingleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setFormError('');
+    setFormSuccess('');
+
+    if (!form.subjectId) {
+      setFormError('Please select a subject.');
+      return;
+    }
+    if (!form.questionText.trim()) {
+      setFormError('Question text is required.');
+      return;
+    }
     if (isMCQ) {
-      const filled = options.filter((o) => o.trim());
-      if (filled.length < 2) { toast.error('MCQ requires at least 2 options'); return; }
-      if (!correctAnswer.trim()) { toast.error('Please specify the correct answer'); return; }
+      const filledOptions = form.options.filter((o) => o.trim());
+      if (filledOptions.length < 2) {
+        setFormError('MCQ questions require at least 2 options.');
+        return;
+      }
+      if (!form.correctAnswer.trim()) {
+        setFormError('Please provide the correct answer for MCQ.');
+        return;
+      }
     }
 
     try {
       await addQuestion.mutateAsync({
-        subjectId,
-        category,
-        questionText: questionText.trim(),
-        options: isMCQ ? options.filter((o) => o.trim()) : null,
-        correctAnswer: isMCQ ? correctAnswer.trim() : null,
-        difficultyLevel: difficulty,
+        subjectId: form.subjectId,
+        category: form.category,
+        questionText: form.questionText.trim(),
+        options: isMCQ ? form.options.filter((o) => o.trim()) : undefined,
+        correctAnswer: isMCQ ? form.correctAnswer.trim() : undefined,
+        difficultyLevel: form.difficultyLevel,
       });
-      toast.success('Question added successfully!');
-      resetSingleForm();
+      setFormSuccess('Question added successfully!');
+      setForm({
+        subjectId: form.subjectId,
+        category: form.category,
+        questionText: '',
+        options: ['', '', '', ''],
+        correctAnswer: '',
+        difficultyLevel: form.difficultyLevel,
+      });
     } catch (err: any) {
-      toast.error(err?.message ?? 'Failed to add question');
+      setFormError(err?.message ?? 'Failed to add question.');
     }
   };
 
-  const processFile = async (file: File) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setBulkFile(file);
+    setBulkPreview([]);
     setBulkErrors([]);
-    setBulkSuccess(null);
-
-    const ext = file.name.split('.').pop()?.toLowerCase();
-    let parsed: { questions: Question[]; errors: string[] } = { questions: [], errors: [] };
+    setBulkSuccess('');
 
     try {
-      if (ext === 'csv') {
+      let result: { questions: ParsedQuestion[]; errors: string[] };
+      if (file.name.endsWith('.csv')) {
         const text = await file.text();
-        parsed = parseCSV(text);
-      } else if (ext === 'json') {
+        result = parseCSV(text);
+      } else if (file.name.endsWith('.json')) {
         const text = await file.text();
-        parsed = parseJSON(text);
+        result = parseJSON(text);
       } else {
         setBulkErrors(['Unsupported file format. Please use CSV or JSON.']);
         return;
       }
+      setBulkPreview(result.questions);
+      setBulkErrors(result.errors);
     } catch (err: any) {
-      setBulkErrors([`File parsing error: ${err?.message ?? 'Unknown error'}`]);
-      return;
+      setBulkErrors([err?.message ?? 'Failed to parse file.']);
     }
+  };
 
-    if (parsed.errors.length > 0) {
-      setBulkErrors(parsed.errors);
-    }
-
-    if (parsed.questions.length === 0) {
-      if (parsed.errors.length === 0) {
-        setBulkErrors(['No valid questions found in the file.']);
-      }
-      return;
-    }
+  const handleBulkUpload = async () => {
+    if (bulkPreview.length === 0) return;
+    setBulkSuccess('');
 
     try {
-      const count = await bulkUpload.mutateAsync(parsed.questions);
-      const successMsg = `Successfully uploaded ${count} question${Number(count) !== 1 ? 's' : ''}!`;
-      setBulkSuccess(successMsg);
-      toast.success(successMsg);
+      const count = await bulkUpload.mutateAsync(bulkPreview);
+      setBulkSuccess(`Successfully uploaded ${count} questions!`);
+      setBulkPreview([]);
+      setBulkFile(null);
+      setBulkErrors([]);
+      if (fileInputRef.current) fileInputRef.current.value = '';
     } catch (err: any) {
-      setBulkErrors([err?.message ?? 'Failed to upload questions']);
+      setBulkErrors([err?.message ?? 'Bulk upload failed.']);
     }
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) processFile(file);
-    if (fileInputRef.current) fileInputRef.current.value = '';
-  };
-
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-    const file = e.dataTransfer.files?.[0];
-    if (file) processFile(file);
-  };
-
-  const inputClass = "w-full px-3 py-2 text-sm rounded-lg border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring";
-  const selectClass = "w-full px-3 py-2 text-sm rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring";
-
-  const tabClass = (tab: TabType) =>
-    `px-5 py-2.5 text-sm font-semibold rounded-lg transition-all duration-200 ${
-      activeTab === tab
-        ? 'text-white shadow-sm'
-        : 'text-muted-foreground hover:text-foreground hover:bg-muted'
-    }`;
-
   return (
-    <div className="space-y-6 animate-fade-in max-w-2xl">
-      {/* Page Header */}
-      <div className="flex items-center gap-3">
-        <div
-          className="w-10 h-10 rounded-xl flex items-center justify-center"
-          style={{ backgroundColor: 'var(--navy-100)' }}
-        >
-          <PlusCircle className="w-5 h-5" style={{ color: 'var(--navy-700)' }} />
-        </div>
-        <div>
-          <h1 className="text-2xl font-bold font-poppins text-foreground">Add Question</h1>
-          <p className="text-sm text-muted-foreground">Add questions to your question bank</p>
-        </div>
+    <div className="space-y-6">
+      {/* Header */}
+      <div>
+        <h1 className="text-2xl font-bold text-navy-900 font-poppins">Add Questions</h1>
+        <p className="text-gray-500 text-sm mt-1">
+          Add questions individually or upload in bulk via CSV/JSON
+        </p>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-2 p-1 rounded-xl w-fit" style={{ backgroundColor: 'var(--navy-100)' }}>
+      <div className="flex gap-1 bg-gray-100 rounded-xl p-1 w-fit">
         <button
           onClick={() => setActiveTab('single')}
-          className={tabClass('single')}
-          style={activeTab === 'single' ? { backgroundColor: 'var(--navy-700)' } : {}}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+            activeTab === 'single'
+              ? 'bg-white text-navy-800 shadow-sm'
+              : 'text-gray-500 hover:text-gray-700'
+          }`}
         >
-          Single Question
+          <PlusCircle className="w-4 h-4" />
+          Single Entry
         </button>
         <button
           onClick={() => setActiveTab('bulk')}
-          className={tabClass('bulk')}
-          style={activeTab === 'bulk' ? { backgroundColor: 'var(--navy-700)' } : {}}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+            activeTab === 'bulk'
+              ? 'bg-white text-navy-800 shadow-sm'
+              : 'text-gray-500 hover:text-gray-700'
+          }`}
         >
+          <Upload className="w-4 h-4" />
           Bulk Upload
         </button>
       </div>
 
       {activeTab === 'single' && (
-        <div className="academic-card space-y-4">
-          {/* Subject */}
-          <div>
-            <label className="block text-xs font-semibold text-muted-foreground mb-1.5 uppercase tracking-wide">
-              Subject
-            </label>
-            <select value={subjectId} onChange={(e) => setSubjectId(e.target.value)} className={selectClass}>
-              <option value="">Select subject...</option>
-              {subjects.map((s) => (
-                <option key={s.id} value={s.id}>{s.name} ({s.code})</option>
-              ))}
-            </select>
-          </div>
-
-          {/* Category */}
-          <div>
-            <label className="block text-xs font-semibold text-muted-foreground mb-1.5 uppercase tracking-wide">
-              Category
-            </label>
-            <select
-              value={category}
-              onChange={(e) => {
-                setCategory(e.target.value as QuestionCategory);
-                setOptions(['', '', '', '']);
-                setCorrectAnswer('');
-              }}
-              className={selectClass}
-            >
-              <option value={QuestionCategory.mcqOneMark}>MCQ (1 Mark)</option>
-              <option value={QuestionCategory._2Marks}>2 Marks</option>
-              <option value={QuestionCategory._4Marks}>4 Marks</option>
-              <option value={QuestionCategory._6Marks}>6 Marks</option>
-              <option value={QuestionCategory._8Marks}>8 Marks</option>
-            </select>
-          </div>
-
-          {/* Difficulty */}
-          <div>
-            <label className="block text-xs font-semibold text-muted-foreground mb-1.5 uppercase tracking-wide">
-              Difficulty Level
-            </label>
-            <select value={difficulty} onChange={(e) => setDifficulty(e.target.value as DifficultyLevel)} className={selectClass}>
-              <option value={DifficultyLevel.easy}>Easy</option>
-              <option value={DifficultyLevel.medium}>Medium</option>
-              <option value={DifficultyLevel.hard}>Hard</option>
-            </select>
-          </div>
-
-          {/* Question Text */}
-          <div>
-            <label className="block text-xs font-semibold text-muted-foreground mb-1.5 uppercase tracking-wide">
-              Question Text
-            </label>
-            <textarea
-              value={questionText}
-              onChange={(e) => setQuestionText(e.target.value)}
-              rows={3}
-              className={inputClass}
-              placeholder="Enter your question here..."
-            />
-          </div>
-
-          {/* MCQ Options */}
-          {isMCQ && (
-            <>
+        <div className="bg-white rounded-2xl p-6 shadow-card border border-gray-100">
+          <form onSubmit={handleSingleSubmit} className="space-y-5">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-muted-foreground mb-1.5 uppercase tracking-wide">
-                  Options
-                </label>
-                <div className="space-y-2">
-                  {options.map((opt, idx) => (
-                    <div key={idx} className="flex items-center gap-2">
-                      <span
-                        className="w-6 h-6 rounded flex items-center justify-center text-xs font-bold text-white shrink-0"
-                        style={{ backgroundColor: 'var(--navy-600)' }}
-                      >
-                        {['A', 'B', 'C', 'D'][idx]}
-                      </span>
-                      <input
-                        type="text"
-                        value={opt}
-                        onChange={(e) => {
-                          const newOpts = [...options];
-                          newOpts[idx] = e.target.value;
-                          setOptions(newOpts);
-                        }}
-                        className={inputClass}
-                        placeholder={`Option ${['A', 'B', 'C', 'D'][idx]}`}
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-muted-foreground mb-1.5 uppercase tracking-wide">
-                  Correct Answer
-                </label>
+                <label className="block text-sm font-medium text-navy-800 mb-1">Subject *</label>
                 <select
-                  value={correctAnswer}
-                  onChange={(e) => setCorrectAnswer(e.target.value)}
-                  className={selectClass}
+                  value={form.subjectId}
+                  onChange={(e) => handleFormChange('subjectId', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-navy-300 bg-white"
                 >
-                  <option value="">Select correct answer...</option>
-                  {options.filter((o) => o.trim()).map((opt, idx) => (
-                    <option key={idx} value={opt}>{opt}</option>
+                  <option value="">Select Subject</option>
+                  {subjects.map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.name}
+                    </option>
                   ))}
                 </select>
               </div>
-            </>
-          )}
+              <div>
+                <label className="block text-sm font-medium text-navy-800 mb-1">Category *</label>
+                <select
+                  value={form.category}
+                  onChange={(e) => handleFormChange('category', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-navy-300 bg-white"
+                >
+                  {CATEGORY_OPTIONS.map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-navy-800 mb-1">Difficulty *</label>
+                <select
+                  value={form.difficultyLevel}
+                  onChange={(e) => handleFormChange('difficultyLevel', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-navy-300 bg-white"
+                >
+                  {DIFFICULTY_OPTIONS.map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
 
-          {/* Submit */}
-          <button
-            onClick={handleSingleSubmit}
-            disabled={addQuestion.isPending}
-            className="w-full py-3 rounded-xl text-sm font-semibold text-white flex items-center justify-center gap-2 transition-all disabled:opacity-60"
-            style={{ backgroundColor: 'var(--navy-700)' }}
-            onMouseEnter={(e) => !addQuestion.isPending && (e.currentTarget.style.backgroundColor = 'var(--navy-800)')}
-            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'var(--navy-700)')}
-          >
-            {addQuestion.isPending ? (
+            <div>
+              <label className="block text-sm font-medium text-navy-800 mb-1">Question Text *</label>
+              <textarea
+                value={form.questionText}
+                onChange={(e) => handleFormChange('questionText', e.target.value)}
+                rows={3}
+                placeholder="Enter the question text..."
+                className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-navy-300 resize-none"
+              />
+            </div>
+
+            {isMCQ && (
               <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                Adding Question...
-              </>
-            ) : (
-              <>
-                <PlusCircle className="w-4 h-4" />
-                Add Question
+                <div>
+                  <label className="block text-sm font-medium text-navy-800 mb-2">Options *</label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {form.options.map((opt, idx) => (
+                      <div key={idx} className="flex items-center gap-2">
+                        <span className="w-6 h-6 rounded-full bg-navy-100 text-navy-700 text-xs font-bold flex items-center justify-center shrink-0">
+                          {String.fromCharCode(65 + idx)}
+                        </span>
+                        <input
+                          type="text"
+                          value={opt}
+                          onChange={(e) => handleOptionChange(idx, e.target.value)}
+                          placeholder={`Option ${String.fromCharCode(65 + idx)}`}
+                          className="flex-1 px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-navy-300"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-navy-800 mb-1">Correct Answer *</label>
+                  <input
+                    type="text"
+                    value={form.correctAnswer}
+                    onChange={(e) => handleFormChange('correctAnswer', e.target.value)}
+                    placeholder="Enter the correct answer (e.g., A or the answer text)"
+                    className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-navy-300"
+                  />
+                </div>
               </>
             )}
-          </button>
+
+            {formError && (
+              <div className="flex items-center gap-2 text-red-600 bg-red-50 rounded-xl px-4 py-3 text-sm">
+                <AlertCircle className="w-4 h-4 shrink-0" />
+                {formError}
+              </div>
+            )}
+            {formSuccess && (
+              <div className="flex items-center gap-2 text-green-600 bg-green-50 rounded-xl px-4 py-3 text-sm">
+                <CheckCircle className="w-4 h-4 shrink-0" />
+                {formSuccess}
+              </div>
+            )}
+
+            <div className="flex gap-3">
+              <button
+                type="submit"
+                disabled={addQuestion.isPending}
+                className="bg-navy-800 hover:bg-navy-700 disabled:opacity-60 text-white px-6 py-2 rounded-xl text-sm font-medium transition-colors flex items-center gap-2"
+              >
+                {addQuestion.isPending ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    Adding...
+                  </>
+                ) : (
+                  <>
+                    <PlusCircle className="w-4 h-4" />
+                    Add Question
+                  </>
+                )}
+              </button>
+              <button
+                type="button"
+                onClick={() => navigate({ to: '/question-bank' })}
+                className="border border-gray-200 hover:bg-gray-50 text-gray-700 px-6 py-2 rounded-xl text-sm font-medium transition-colors"
+              >
+                View Question Bank
+              </button>
+            </div>
+          </form>
         </div>
       )}
 
       {activeTab === 'bulk' && (
         <div className="space-y-4">
-          {/* Template Downloads */}
-          <div className="academic-card">
-            <h3 className="text-sm font-semibold font-poppins text-foreground mb-3">Download Templates</h3>
-            <div className="flex flex-wrap gap-3">
+          <div className="bg-white rounded-2xl p-6 shadow-card border border-gray-100">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="font-semibold text-navy-800">Upload Questions File</h2>
               <button
                 onClick={downloadCSVTemplate}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border border-border hover:bg-muted transition-colors"
+                className="flex items-center gap-2 text-lightblue-600 hover:text-lightblue-700 text-sm font-medium"
               >
-                <Download className="w-4 h-4" style={{ color: 'var(--navy-600)' }} />
-                CSV Template
+                <Download className="w-4 h-4" />
+                Download CSV Template
               </button>
             </div>
-          </div>
 
-          {/* Upload Area */}
-          <div className="academic-card">
-            <h3 className="text-sm font-semibold font-poppins text-foreground mb-3">Upload File</h3>
             <div
-              onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
-              onDragLeave={() => setIsDragging(false)}
-              onDrop={handleDrop}
+              className="border-2 border-dashed border-gray-200 rounded-2xl p-8 text-center cursor-pointer hover:border-navy-300 transition-colors"
               onClick={() => fileInputRef.current?.click()}
-              className="border-2 border-dashed rounded-xl p-10 text-center cursor-pointer transition-all border-border hover:border-muted-foreground"
-              style={isDragging ? { borderColor: 'var(--navy-500)', backgroundColor: 'var(--navy-50)' } : {}}
             >
-              <Upload className="w-10 h-10 mx-auto mb-3 text-muted-foreground" />
-              <p className="text-sm font-medium text-foreground mb-1">
-                {bulkUpload.isPending ? 'Processing...' : 'Drop file here or click to browse'}
+              <Upload className="w-10 h-10 text-gray-300 mx-auto mb-3" />
+              <p className="text-navy-700 font-medium mb-1">
+                {bulkFile ? bulkFile.name : 'Click to upload or drag and drop'}
               </p>
-              <p className="text-xs text-muted-foreground">Supports CSV and JSON</p>
+              <p className="text-gray-400 text-sm">Supports CSV and JSON formats</p>
               <input
                 ref={fileInputRef}
                 type="file"
@@ -346,27 +367,72 @@ export default function AddQuestion() {
             </div>
           </div>
 
-          {/* Errors */}
           {bulkErrors.length > 0 && (
-            <div className="academic-card border-destructive/30 bg-destructive/5">
-              <div className="flex items-center gap-2 mb-3">
-                <AlertCircle className="w-4 h-4 text-destructive" />
-                <span className="text-sm font-semibold text-destructive">Upload Errors</span>
-              </div>
-              <ul className="space-y-1 max-h-48 overflow-y-auto">
-                {bulkErrors.map((err, i) => (
-                  <li key={i} className="text-xs text-destructive">• {err}</li>
+            <div className="bg-red-50 rounded-2xl p-4 border border-red-100">
+              <h3 className="font-semibold text-red-700 mb-2 flex items-center gap-2">
+                <AlertCircle className="w-4 h-4" />
+                Errors ({bulkErrors.length})
+              </h3>
+              <ul className="space-y-1">
+                {bulkErrors.map((err, idx) => (
+                  <li key={idx} className="text-red-600 text-sm">
+                    • {err}
+                  </li>
                 ))}
               </ul>
             </div>
           )}
 
-          {/* Success */}
           {bulkSuccess && (
-            <div className="academic-card border-green-200 bg-green-50">
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-green-600" />
-                <span className="text-sm font-semibold text-green-700">{bulkSuccess}</span>
+            <div className="flex items-center gap-2 text-green-600 bg-green-50 rounded-xl px-4 py-3 text-sm border border-green-100">
+              <CheckCircle className="w-4 h-4 shrink-0" />
+              {bulkSuccess}
+            </div>
+          )}
+
+          {bulkPreview.length > 0 && (
+            <div className="bg-white rounded-2xl p-6 shadow-card border border-gray-100">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-semibold text-navy-800">
+                  Preview ({bulkPreview.length} questions)
+                </h3>
+                <button
+                  onClick={handleBulkUpload}
+                  disabled={bulkUpload.isPending}
+                  className="bg-navy-800 hover:bg-navy-700 disabled:opacity-60 text-white px-4 py-2 rounded-xl text-sm font-medium flex items-center gap-2"
+                >
+                  {bulkUpload.isPending ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      Uploading...
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="w-4 h-4" />
+                      Upload All
+                    </>
+                  )}
+                </button>
+              </div>
+              <div className="space-y-2 max-h-64 overflow-y-auto">
+                {bulkPreview.slice(0, 10).map((q, idx) => (
+                  <div key={idx} className="flex items-start gap-3 p-3 bg-gray-50 rounded-xl text-sm">
+                    <span className="w-6 h-6 rounded-full bg-navy-100 text-navy-700 text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">
+                      {idx + 1}
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-navy-800 truncate">{q.questionText}</p>
+                      <p className="text-gray-400 text-xs mt-0.5">
+                        {q.subjectId} • {q.category} • {q.difficultyLevel}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+                {bulkPreview.length > 10 && (
+                  <p className="text-center text-gray-400 text-sm py-2">
+                    +{bulkPreview.length - 10} more questions
+                  </p>
+                )}
               </div>
             </div>
           )}

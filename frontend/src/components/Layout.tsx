@@ -1,133 +1,116 @@
-import React from 'react';
-import { Link, useLocation, useNavigate } from '@tanstack/react-router';
+import { useNavigate, useLocation } from '@tanstack/react-router';
 import { useInternetIdentity } from '../hooks/useInternetIdentity';
 import { useQueryClient } from '@tanstack/react-query';
-import {
-  LayoutDashboard,
-  BookOpen,
-  FileText,
-  PlusCircle,
-  Wand2,
-  LogOut,
-  GraduationCap,
-} from 'lucide-react';
-
-const navItems = [
-  { path: '/', label: 'Dashboard', icon: LayoutDashboard },
-  { path: '/question-bank', label: 'Question Bank', icon: BookOpen },
-  { path: '/add-question', label: 'Add Question', icon: PlusCircle },
-  { path: '/generate-paper', label: 'Generate Paper', icon: Wand2 },
-  { path: '/generated-papers', label: 'Generated Papers', icon: FileText },
-];
+import { LayoutDashboard, BookOpen, PlusCircle, FileText, List, LogOut, GraduationCap } from 'lucide-react';
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
+const navItems = [
+  { path: '/', label: 'Dashboard', icon: LayoutDashboard, img: '/assets/generated/icon-dashboard.dim_24x24.png' },
+  { path: '/question-bank', label: 'Question Bank', icon: BookOpen, img: '/assets/generated/icon-question-bank.dim_24x24.png' },
+  { path: '/add-question', label: 'Add Question', icon: PlusCircle, img: '/assets/generated/icon-add-question.dim_24x24.png' },
+  { path: '/generate-paper', label: 'Generate Paper', icon: FileText, img: '/assets/generated/icon-generate.dim_24x24.png' },
+  { path: '/generated-papers', label: 'Generated Papers', icon: List, img: '/assets/generated/icon-papers.dim_24x24.png' },
+];
+
 export default function Layout({ children }: LayoutProps) {
-  const location = useLocation();
   const navigate = useNavigate();
-  const { clear, identity } = useInternetIdentity();
+  const location = useLocation();
+  const { identity, clear } = useInternetIdentity();
   const queryClient = useQueryClient();
+
+  const principalId = identity?.getPrincipal().toString() ?? '';
+  const shortPrincipal = principalId ? `${principalId.slice(0, 8)}...` : '';
 
   const handleLogout = async () => {
     await clear();
     queryClient.clear();
-    navigate({ to: '/login' });
   };
 
-  const principalStr = identity?.getPrincipal().toString() ?? '';
-  const shortPrincipal = principalStr.length > 12
-    ? `${principalStr.slice(0, 6)}...${principalStr.slice(-4)}`
-    : principalStr;
-
   return (
-    <div className="flex min-h-screen bg-background">
+    <div className="flex h-screen bg-gray-50 overflow-hidden">
       {/* Sidebar */}
-      <aside
-        className="fixed left-0 top-0 h-full w-64 flex flex-col shadow-sidebar z-30"
-        style={{ backgroundColor: 'var(--sidebar-bg)' }}
-      >
-        {/* Logo / Brand */}
-        <div
-          className="flex items-center gap-3 px-6 py-5 border-b"
-          style={{ borderColor: 'var(--sidebar-border)' }}
-        >
-          <div
-            className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0"
-            style={{ backgroundColor: 'var(--sidebar-active)' }}
-          >
-            <GraduationCap className="w-6 h-6 text-white" />
-          </div>
-          <div>
-            <p className="text-white font-semibold text-sm font-poppins leading-tight">
-              ExamCraft
-            </p>
-            <p className="text-xs" style={{ color: 'var(--sidebar-text)', opacity: 0.7 }}>
-              Paper Generator
-            </p>
+      <aside className="w-64 bg-navy-900 text-white flex flex-col shrink-0">
+        {/* Logo */}
+        <div className="p-5 border-b border-navy-700">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
+              <img
+                src="/assets/generated/college-logo.dim_200x200.png"
+                alt="Logo"
+                className="w-7 h-7 object-contain"
+              />
+            </div>
+            <div>
+              <h1 className="font-bold text-sm font-poppins">ExamCraft</h1>
+              <p className="text-navy-400 text-xs">Exam Generator</p>
+            </div>
           </div>
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-          {navItems.map(({ path, label, icon: Icon }) => {
-            const isActive = location.pathname === path;
+        <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
+          {navItems.map((item) => {
+            const isActive = location.pathname === item.path;
             return (
-              <Link
-                key={path}
-                to={path}
-                className={`sidebar-nav-item ${isActive ? 'active' : ''}`}
+              <button
+                key={item.path}
+                onClick={() => navigate({ to: item.path })}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                  isActive
+                    ? 'bg-lightblue-600 text-white'
+                    : 'text-navy-300 hover:bg-navy-800 hover:text-white'
+                }`}
               >
-                <Icon className="w-5 h-5 shrink-0" />
-                <span>{label}</span>
-              </Link>
+                <item.icon className="w-4 h-4 shrink-0" />
+                {item.label}
+              </button>
             );
           })}
         </nav>
 
         {/* User Info & Logout */}
-        <div
-          className="px-4 py-4 border-t"
-          style={{ borderColor: 'var(--sidebar-border)' }}
-        >
-          {shortPrincipal && (
-            <div className="mb-3 px-2">
-              <p className="text-xs font-medium mb-0.5" style={{ color: 'var(--sidebar-text)', opacity: 0.6 }}>
-                Logged in as
-              </p>
-              <p className="text-xs font-mono truncate" style={{ color: 'var(--sidebar-text)' }}>
-                {shortPrincipal}
-              </p>
+        <div className="p-3 border-t border-navy-700">
+          <div className="flex items-center gap-2 px-3 py-2 mb-1">
+            <div className="w-7 h-7 rounded-full bg-lightblue-600 flex items-center justify-center shrink-0">
+              <GraduationCap className="w-4 h-4 text-white" />
             </div>
-          )}
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-medium text-white truncate">Teacher</p>
+              <p className="text-xs text-navy-400 truncate">{shortPrincipal}</p>
+            </div>
+          </div>
           <button
             onClick={handleLogout}
-            className="sidebar-nav-item w-full text-left hover:bg-red-900/30"
-            style={{ color: 'oklch(0.75 0.12 25)' }}
+            className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-navy-300 hover:bg-navy-800 hover:text-white transition-colors"
           >
-            <LogOut className="w-5 h-5 shrink-0" />
-            <span>Logout</span>
+            <LogOut className="w-4 h-4 shrink-0" />
+            Sign Out
           </button>
         </div>
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 ml-64 min-h-screen flex flex-col">
-        <div className="flex-1 p-8">
+      <main className="flex-1 overflow-y-auto">
+        <div className="p-6 max-w-6xl mx-auto">
           {children}
         </div>
-        <footer className="px-8 py-4 border-t border-border text-center text-xs text-muted-foreground">
-          © {new Date().getFullYear()} ExamCraft &mdash; Built with{' '}
-          <span className="text-red-500">♥</span> using{' '}
-          <a
-            href={`https://caffeine.ai/?utm_source=Caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(window.location.hostname)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline hover:text-foreground transition-colors"
-          >
-            caffeine.ai
-          </a>
+        {/* Footer */}
+        <footer className="px-6 py-4 border-t border-gray-200 text-center">
+          <p className="text-xs text-gray-400">
+            © {new Date().getFullYear()} ExamCraft. Built with{' '}
+            <span className="text-red-400">♥</span> using{' '}
+            <a
+              href={`https://caffeine.ai/?utm_source=Caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(typeof window !== 'undefined' ? window.location.hostname : 'examcraft')}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-lightblue-600 hover:underline"
+            >
+              caffeine.ai
+            </a>
+          </p>
         </footer>
       </main>
     </div>

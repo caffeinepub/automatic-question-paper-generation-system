@@ -1,34 +1,27 @@
-import React from 'react';
-import { ArrowRight } from 'lucide-react';
-
 const steps = [
-  { number: 1, label: 'Add Subjects', color: 'var(--navy-700)' },
-  { number: 2, label: 'Add Questions', color: 'var(--navy-600)' },
-  { number: 3, label: 'Set Parameters', color: 'var(--lightblue-600)' },
-  { number: 4, label: 'Generate Paper', color: 'var(--lightblue-500)' },
-  { number: 5, label: 'Download PDF', color: 'var(--navy-500)' },
+  { number: 1, title: 'Add Subjects', description: 'Create subjects with codes' },
+  { number: 2, title: 'Add Questions', description: 'Build your question bank' },
+  { number: 3, title: 'Configure Paper', description: 'Set marks and duration' },
+  { number: 4, title: 'Generate', description: 'Auto-create 5 variants' },
+  { number: 5, title: 'Download PDF', description: 'Print-ready exam papers' },
 ];
 
 export default function WorkflowDiagram() {
   return (
-    <div className="flex items-center justify-between flex-wrap gap-4">
+    <div className="flex items-start gap-2 overflow-x-auto pb-2">
       {steps.map((step, index) => (
-        <React.Fragment key={step.number}>
-          <div className="flex flex-col items-center gap-2 flex-1 min-w-[80px]">
-            <div
-              className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-md"
-              style={{ backgroundColor: step.color }}
-            >
+        <div key={step.number} className="flex items-center gap-2 shrink-0">
+          <div className="flex flex-col items-center text-center w-28">
+            <div className="w-10 h-10 rounded-full bg-navy-800 text-white font-bold text-sm flex items-center justify-center mb-2">
               {step.number}
             </div>
-            <span className="text-xs text-center text-muted-foreground font-medium leading-tight">
-              {step.label}
-            </span>
+            <p className="text-navy-800 font-semibold text-xs">{step.title}</p>
+            <p className="text-gray-400 text-xs mt-0.5">{step.description}</p>
           </div>
           {index < steps.length - 1 && (
-            <ArrowRight className="w-5 h-5 shrink-0" style={{ color: 'var(--navy-300)' }} />
+            <div className="w-8 h-0.5 bg-gray-200 shrink-0 mt-[-20px]" />
           )}
-        </React.Fragment>
+        </div>
       ))}
     </div>
   );

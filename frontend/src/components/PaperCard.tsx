@@ -1,67 +1,49 @@
-import React from 'react';
 import { useNavigate } from '@tanstack/react-router';
-import { Clock, Award, Calendar, Eye } from 'lucide-react';
-import type { GeneratedPaper } from '../backend';
+import { GeneratedPaper, Subject } from '../backend';
+import { FileText, Clock, Award, Eye } from 'lucide-react';
 
 interface PaperCardProps {
   paper: GeneratedPaper;
+  subjects: Subject[];
 }
 
-export default function PaperCard({ paper }: PaperCardProps) {
+export default function PaperCard({ paper, subjects }: PaperCardProps) {
   const navigate = useNavigate();
+  const subject = subjects.find((s) => s.id === paper.subjectId);
 
-  const createdDate = new Date(Number(paper.createdAt) / 1_000_000).toLocaleDateString('en-IN', {
+  const createdDate = new Date(Number(paper.createdAt) / 1_000_000);
+  const formattedDate = createdDate.toLocaleDateString('en-IN', {
     day: '2-digit',
     month: 'short',
     year: 'numeric',
   });
 
   return (
-    <div className="academic-card hover:shadow-card-hover transition-all duration-200 group">
-      {/* Subject Name */}
-      <div className="flex items-start justify-between mb-4">
-        <div>
-          <h3 className="text-base font-semibold font-poppins text-foreground group-hover:text-navy-700 transition-colors">
-            {paper.subjectName}
-          </h3>
-          <p className="text-xs text-muted-foreground mt-0.5">
-            Paper #{String(paper.id)}
-          </p>
+    <div className="bg-white rounded-2xl p-5 shadow-card border border-gray-100 hover:shadow-md transition-shadow">
+      <div className="flex items-start justify-between mb-3">
+        <div className="w-10 h-10 rounded-xl bg-navy-50 flex items-center justify-center shrink-0">
+          <FileText className="w-5 h-5 text-navy-600" />
         </div>
-        <span
-          className="text-xs px-2.5 py-1 rounded-full font-semibold"
-          style={{ backgroundColor: 'var(--navy-100)', color: 'var(--navy-700)' }}
-        >
-          {paper.setVariants?.length ?? 0} Sets
+        <span className="text-xs text-gray-400">{formattedDate}</span>
+      </div>
+
+      <h3 className="font-semibold text-navy-900 mb-1 line-clamp-1">{paper.subjectName}</h3>
+      {subject && <p className="text-gray-400 text-xs mb-3">{subject.code}</p>}
+
+      <div className="flex items-center gap-3 text-xs text-gray-500 mb-4">
+        <span className="flex items-center gap-1">
+          <Clock className="w-3 h-3" />
+          {Number(paper.examDuration)} min
+        </span>
+        <span className="flex items-center gap-1">
+          <Award className="w-3 h-3" />
+          {Number(paper.totalMarks)} marks
         </span>
       </div>
 
-      {/* Metadata */}
-      <div className="grid grid-cols-3 gap-3 mb-5">
-        <div className="flex flex-col items-center p-2 rounded-lg" style={{ backgroundColor: 'var(--navy-50)' }}>
-          <Clock className="w-4 h-4 mb-1" style={{ color: 'var(--navy-600)' }} />
-          <span className="text-xs font-semibold text-foreground">{String(paper.examDuration)} min</span>
-          <span className="text-xs text-muted-foreground">Duration</span>
-        </div>
-        <div className="flex flex-col items-center p-2 rounded-lg" style={{ backgroundColor: 'var(--navy-50)' }}>
-          <Award className="w-4 h-4 mb-1" style={{ color: 'var(--navy-600)' }} />
-          <span className="text-xs font-semibold text-foreground">{String(paper.totalMarks)}</span>
-          <span className="text-xs text-muted-foreground">Marks</span>
-        </div>
-        <div className="flex flex-col items-center p-2 rounded-lg" style={{ backgroundColor: 'var(--navy-50)' }}>
-          <Calendar className="w-4 h-4 mb-1" style={{ color: 'var(--navy-600)' }} />
-          <span className="text-xs font-semibold text-foreground text-center leading-tight">{createdDate}</span>
-          <span className="text-xs text-muted-foreground">Created</span>
-        </div>
-      </div>
-
-      {/* View Button */}
       <button
-        onClick={() => navigate({ to: '/paper-preview/$paperId', params: { paperId: String(paper.id) } })}
-        className="w-full py-2.5 rounded-lg text-sm font-semibold flex items-center justify-center gap-2 transition-all duration-200 text-white"
-        style={{ backgroundColor: 'var(--navy-700)' }}
-        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--navy-800)')}
-        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'var(--navy-700)')}
+        onClick={() => navigate({ to: '/paper-preview', search: { paperId: String(paper.id) } })}
+        className="w-full flex items-center justify-center gap-2 bg-navy-50 hover:bg-navy-100 text-navy-700 py-2 rounded-xl text-sm font-medium transition-colors"
       >
         <Eye className="w-4 h-4" />
         View Paper

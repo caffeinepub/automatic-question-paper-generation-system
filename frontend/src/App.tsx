@@ -1,15 +1,14 @@
-import { createRouter, createRoute, createRootRoute, RouterProvider, Outlet, redirect } from '@tanstack/react-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { RouterProvider, createRouter, createRoute, createRootRoute, Outlet, redirect } from '@tanstack/react-router';
 import { useInternetIdentity } from './hooks/useInternetIdentity';
-import { Toaster } from '@/components/ui/sonner';
 import Layout from './components/Layout';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import QuestionBank from './pages/QuestionBank';
 import AddQuestion from './pages/AddQuestion';
 import GeneratePaper from './pages/GeneratePaper';
-import PaperPreview from './pages/PaperPreview';
 import GeneratedPapers from './pages/GeneratedPapers';
+import PaperPreview from './pages/PaperPreview';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -19,15 +18,6 @@ const queryClient = new QueryClient({
     },
   },
 });
-
-function RootComponent() {
-  return (
-    <>
-      <Outlet />
-      <Toaster />
-    </>
-  );
-}
 
 function AuthGuardedLayout() {
   const { identity } = useInternetIdentity();
@@ -41,7 +31,9 @@ function AuthGuardedLayout() {
   );
 }
 
-const rootRoute = createRootRoute({ component: RootComponent });
+const rootRoute = createRootRoute({
+  component: AuthGuardedLayout,
+});
 
 const loginRoute = createRoute({
   getParentRoute: () => rootRoute,
@@ -49,58 +41,50 @@ const loginRoute = createRoute({
   component: Login,
 });
 
-const layoutRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  id: 'layout',
-  component: AuthGuardedLayout,
-});
-
 const dashboardRoute = createRoute({
-  getParentRoute: () => layoutRoute,
+  getParentRoute: () => rootRoute,
   path: '/',
   component: Dashboard,
 });
 
 const questionBankRoute = createRoute({
-  getParentRoute: () => layoutRoute,
+  getParentRoute: () => rootRoute,
   path: '/question-bank',
   component: QuestionBank,
 });
 
 const addQuestionRoute = createRoute({
-  getParentRoute: () => layoutRoute,
+  getParentRoute: () => rootRoute,
   path: '/add-question',
   component: AddQuestion,
 });
 
 const generatePaperRoute = createRoute({
-  getParentRoute: () => layoutRoute,
+  getParentRoute: () => rootRoute,
   path: '/generate-paper',
   component: GeneratePaper,
 });
 
-const paperPreviewRoute = createRoute({
-  getParentRoute: () => layoutRoute,
-  path: '/paper-preview/$paperId',
-  component: PaperPreview,
-});
-
 const generatedPapersRoute = createRoute({
-  getParentRoute: () => layoutRoute,
+  getParentRoute: () => rootRoute,
   path: '/generated-papers',
   component: GeneratedPapers,
 });
 
+const paperPreviewRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/paper-preview',
+  component: PaperPreview,
+});
+
 const routeTree = rootRoute.addChildren([
   loginRoute,
-  layoutRoute.addChildren([
-    dashboardRoute,
-    questionBankRoute,
-    addQuestionRoute,
-    generatePaperRoute,
-    paperPreviewRoute,
-    generatedPapersRoute,
-  ]),
+  dashboardRoute,
+  questionBankRoute,
+  addQuestionRoute,
+  generatePaperRoute,
+  generatedPapersRoute,
+  paperPreviewRoute,
 ]);
 
 const router = createRouter({ routeTree });

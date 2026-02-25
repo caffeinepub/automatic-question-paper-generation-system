@@ -1,46 +1,39 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-25T06:36:23.138Z",
-  "summary": "The diff implements visual/format restoration across all major frontend files. REQ-1 (colour theme) and REQ-2 (layout/formatting) appear well-covered with navy-blue CSS custom properties in index.css, Tailwind config with navy/lightblue/sidebar token mappings, and all page/component files using those tokens. REQ-3 (pdfGenerator.ts) is referenced in the file summaries but the actual file content is not shown in the diff, making it impossible to fully verify the PDF format restoration. There is also a mismatch in tailwind.config.js where background and foreground use hsl() wrappers instead of oklch() like all other tokens. Additionally, extra debug/console logging was added to several pages, which is a non-visual change not requested.",
+  "generatedAt": "2026-02-25T07:45:44.032Z",
+  "summary": "The diff shows frontend files being modified (reverting various components, pages, hooks, and utilities). However, the backend (main.mo) is entirely absent from the diff, meaning REQ-2 (reverting the backend to Version 13) is not addressed. On the frontend side, the file summaries explicitly describe changes like 'fixed import from useGetPapers to useGetMyPapers', 'removed broken imports for docxParser and docxTemplate', 'replaced flex-shrink-0 with shrink-0', 'added comprehensive logging', etc. These are incremental fixes, not a clean revert to Version 13 state.",
   "missing_requirements": [
     {
-      "id": "REQ-3",
-      "requirement": "Restore the original PDF/print generation format in frontend/src/utils/pdfGenerator.ts, ensuring the printable HTML exam paper layout, section labels, question formatting, MCQ option layout, marks display, and instructions all match the original paper format exactly.",
-      "reason": "The file frontend/src/utils/pdfGenerator.ts is mentioned in the file summaries but its actual diff content is truncated and not fully present. There is insufficient evidence to confirm that the college header, instructions box, section headers, MCQ option layout, and marks display have all been restored to their original format.",
+      "id": "REQ-2",
+      "requirement": "Revert the entire backend codebase to its Version 13 state, undoing all changes introduced in Versions 14 through 20. This includes the main Motoko actor, data types, CRUD operations, and access control logic.",
+      "reason": "No backend files (e.g., main.mo) appear anywhere in the diff. The diff only modifies frontend files. The backend revert is completely absent.",
+      "evidence": []
+    },
+    {
+      "id": "REQ-1",
+      "requirement": "All frontend pages, components, hooks, utilities, styles, and configuration files must match their Version 13 implementation with no changes from Versions 14-20 remaining.",
+      "reason": "The file summaries explicitly describe incremental fixes applied on top of existing code rather than a clean revert to Version 13. Examples include: removing docxParser/docxTemplate imports described as a targeted fix, replacing flex-shrink-0 with shrink-0 described as a fix, adding comprehensive logging to GeneratePaper and QuestionBank, fixing import from useGetPapers to useGetMyPapers. These descriptions indicate forward-patching, not reverting to Version 13.",
       "evidence": [
-        "frontend-file-summaries.txt"
+        "frontend-file-summaries.txt",
+        "frontend/src/pages/GeneratePaper.tsx",
+        "frontend/src/pages/QuestionBank.tsx",
+        "frontend/src/hooks/useQueries.ts"
       ]
     }
   ],
   "hallucinated_features": [
     {
-      "description": "Extensive console logging and debug output added to QuestionBank and GeneratePaper pages",
-      "reason": "The file summaries explicitly describe detailed console logging for query state changes and comprehensive logging throughout the generation flow in QuestionBank.tsx and GeneratePaper.tsx. The build request only asks for visual/format restoration and explicitly states do not change any existing functionality.",
+      "description": "Comprehensive console logging added to GeneratePaper and QuestionBank pages",
+      "reason": "The file summaries explicitly mention extensive console logging throughout the generation flow in GeneratePaper.tsx and detailed console logging for query state changes in QuestionBank.tsx. These were not part of a Version 13 revert and represent new additions not requested.",
       "evidence": [
-        "frontend/src/pages/QuestionBank.tsx",
         "frontend/src/pages/GeneratePaper.tsx",
+        "frontend/src/pages/QuestionBank.tsx",
         "frontend-file-summaries.txt"
-      ]
-    },
-    {
-      "description": "DOCX upload support removed from AddQuestion page",
-      "reason": "The file summary states DOCX upload support was removed because the parser files were empty. Removing existing functionality was not requested and the build request explicitly prohibits changing any existing functionality.",
-      "evidence": [
-        "frontend/src/pages/AddQuestion.tsx",
-        "frontend-file-summaries.txt"
-      ]
-    },
-    {
-      "description": "Tailwind config uses hsl() wrapper for background and foreground tokens instead of oklch() like all other tokens",
-      "reason": "In tailwind.config.js, background and foreground colours use hsl(var(--background)) and hsl(var(--foreground)) while the CSS custom properties in index.css define these as oklch values and all other Tailwind tokens consistently use the oklch() wrapper. This inconsistency introduces a potential theme breakage not present in other tokens.",
-      "evidence": [
-        "frontend/tailwind.config.js",
-        "frontend/src/index.css"
       ]
     }
   ],
-  "confidence": 0.72,
+  "confidence": 0.75,
   "changed_files": [
     "frontend-file-summaries.txt",
     "frontend/src/App.tsx",
@@ -52,7 +45,7 @@
     "frontend/src/components/StatsCard.tsx",
     "frontend/src/components/SubjectManager.tsx",
     "frontend/src/components/WorkflowDiagram.tsx",
-    "frontend/src/index.css",
+    "frontend/src/hooks/useQueries.ts",
     "frontend/src/pages/AddQuestion.tsx",
     "frontend/src/pages/Dashboard.tsx",
     "frontend/src/pages/GeneratePaper.tsx",
@@ -60,7 +53,8 @@
     "frontend/src/pages/Login.tsx",
     "frontend/src/pages/PaperPreview.tsx",
     "frontend/src/pages/QuestionBank.tsx",
-    "frontend/tailwind.config.js",
+    "frontend/src/utils/csvParser.ts",
+    "frontend/src/utils/pdfGenerator.ts",
     "project_state.json"
   ]
 }

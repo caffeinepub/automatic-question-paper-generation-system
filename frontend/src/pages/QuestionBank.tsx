@@ -1,72 +1,82 @@
-import React, { useState } from 'react';
-import { useGetAllQuestions, useGetSubjects } from '../hooks/useQueries';
+import { useState } from 'react';
+import { useGetSubjects, useGetAllQuestions, useDeleteQuestion } from '../hooks/useQueries';
 import QuestionCard from '../components/QuestionCard';
 import SubjectManager from '../components/SubjectManager';
-import { BookOpen, Search, Filter, Loader2, RefreshCw } from 'lucide-react';
+import { Search, Filter, BookOpen, Layers } from 'lucide-react';
+import { QuestionCategory, DifficultyLevel } from '../backend';
 
-type TabType = 'questions' | 'subjects';
+const CATEGORY_LABELS: Record<string, string> = {
+  mcqOneMark: 'MCQ (1 Mark)',
+  _2Marks: '2 Marks',
+  _4Marks: '4 Marks',
+  _6Marks: '6 Marks',
+  _8Marks: '8 Marks',
+};
+
+const DIFFICULTY_LABELS: Record<string, string> = {
+  easy: 'Easy',
+  medium: 'Medium',
+  hard: 'Hard',
+};
 
 export default function QuestionBank() {
-  const [activeTab, setActiveTab] = useState<TabType>('questions');
+  const [activeTab, setActiveTab] = useState<'questions' | 'subjects'>('questions');
   const [searchQuery, setSearchQuery] = useState('');
-  const [filterSubject, setFilterSubject] = useState('');
-  const [filterCategory, setFilterCategory] = useState('');
-  const [filterDifficulty, setFilterDifficulty] = useState('');
+  const [selectedSubject, setSelectedSubject] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedDifficulty, setSelectedDifficulty] = useState('');
 
-  const {
-    data: questions = [],
-    isLoading: questionsLoading,
-    isError: questionsError,
-    refetch: refetchQuestions,
-  } = useGetAllQuestions();
-
-  const { data: subjects = [], isLoading: subjectsLoading } = useGetSubjects();
+  const { data: subjects = [] } = useGetSubjects();
+  const { data: questions = [], isLoading, isError, refetch } = useGetAllQuestions();
+  const deleteQuestion = useDeleteQuestion();
 
   const filteredQuestions = questions.filter((q) => {
-    const matchesSearch = !searchQuery || q.questionText.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesSubject = !filterSubject || q.subjectId === filterSubject;
-    const matchesCategory = !filterCategory || q.category === filterCategory;
-    const matchesDifficulty = !filterDifficulty || q.difficultyLevel === filterDifficulty;
+    const matchesSearch =
+      !searchQuery || q.questionText.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSubject = !selectedSubject || q.subjectId === selectedSubject;
+    const matchesCategory = !selectedCategory || q.category === selectedCategory;
+    const matchesDifficulty = !selectedDifficulty || q.difficultyLevel === selectedDifficulty;
     return matchesSearch && matchesSubject && matchesCategory && matchesDifficulty;
   });
 
-  const tabClass = (tab: TabType) =>
-    `px-5 py-2.5 text-sm font-semibold rounded-lg transition-all duration-200 ${
-      activeTab === tab
-        ? 'text-white shadow-sm'
-        : 'text-muted-foreground hover:text-foreground hover:bg-muted'
-    }`;
+  const getSubjectName = (subjectId: string) => {
+    return subjects.find((s) => s.id === subjectId)?.name ?? subjectId;
+  };
 
   return (
-    <div className="space-y-6 animate-fade-in">
-      {/* Page Header */}
-      <div className="flex items-center gap-3">
-        <div
-          className="w-10 h-10 rounded-xl flex items-center justify-center"
-          style={{ backgroundColor: 'var(--navy-100)' }}
-        >
-          <BookOpen className="w-5 h-5" style={{ color: 'var(--navy-700)' }} />
-        </div>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
-          <h1 className="text-2xl font-bold font-poppins text-foreground">Question Bank</h1>
-          <p className="text-sm text-muted-foreground">Manage your questions and subjects</p>
+          <h1 className="text-2xl font-bold text-navy-900 font-poppins">Question Bank</h1>
+          <p className="text-gray-500 text-sm mt-1">
+            Manage your questions and subjects
+          </p>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-2 p-1 rounded-xl w-fit" style={{ backgroundColor: 'var(--navy-100)' }}>
+      <div className="flex gap-1 bg-gray-100 rounded-xl p-1 w-fit">
         <button
           onClick={() => setActiveTab('questions')}
-          className={tabClass('questions')}
-          style={activeTab === 'questions' ? { backgroundColor: 'var(--navy-700)' } : {}}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+            activeTab === 'questions'
+              ? 'bg-white text-navy-800 shadow-sm'
+              : 'text-gray-500 hover:text-gray-700'
+          }`}
         >
+          <BookOpen className="w-4 h-4" />
           Questions ({questions.length})
         </button>
         <button
           onClick={() => setActiveTab('subjects')}
-          className={tabClass('subjects')}
-          style={activeTab === 'subjects' ? { backgroundColor: 'var(--navy-700)' } : {}}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+            activeTab === 'subjects'
+              ? 'bg-white text-navy-800 shadow-sm'
+              : 'text-gray-500 hover:text-gray-700'
+          }`}
         >
+          <Layers className="w-4 h-4" />
           Subjects ({subjects.length})
         </button>
       </div>
@@ -74,99 +84,103 @@ export default function QuestionBank() {
       {activeTab === 'questions' && (
         <div className="space-y-4">
           {/* Filters */}
-          <div className="academic-card">
-            <div className="flex flex-wrap gap-3">
-              {/* Search */}
-              <div className="flex-1 min-w-[200px] relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <div className="bg-white rounded-2xl p-4 shadow-card border border-gray-100">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input
                   type="text"
                   placeholder="Search questions..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                  className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-navy-300"
                 />
               </div>
-
-              {/* Subject Filter */}
               <select
-                value={filterSubject}
-                onChange={(e) => setFilterSubject(e.target.value)}
-                className="px-3 py-2 text-sm rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                value={selectedSubject}
+                onChange={(e) => setSelectedSubject(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-navy-300 bg-white"
               >
                 <option value="">All Subjects</option>
                 {subjects.map((s) => (
-                  <option key={s.id} value={s.id}>{s.name}</option>
+                  <option key={s.id} value={s.id}>
+                    {s.name}
+                  </option>
                 ))}
               </select>
-
-              {/* Category Filter */}
               <select
-                value={filterCategory}
-                onChange={(e) => setFilterCategory(e.target.value)}
-                className="px-3 py-2 text-sm rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-navy-300 bg-white"
               >
                 <option value="">All Categories</option>
-                <option value="mcqOneMark">MCQ (1 Mark)</option>
-                <option value="_2Marks">2 Marks</option>
-                <option value="_4Marks">4 Marks</option>
-                <option value="_6Marks">6 Marks</option>
-                <option value="_8Marks">8 Marks</option>
+                {Object.entries(CATEGORY_LABELS).map(([value, label]) => (
+                  <option key={value} value={value}>
+                    {label}
+                  </option>
+                ))}
               </select>
-
-              {/* Difficulty Filter */}
               <select
-                value={filterDifficulty}
-                onChange={(e) => setFilterDifficulty(e.target.value)}
-                className="px-3 py-2 text-sm rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                value={selectedDifficulty}
+                onChange={(e) => setSelectedDifficulty(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-navy-300 bg-white"
               >
                 <option value="">All Difficulties</option>
-                <option value="easy">Easy</option>
-                <option value="medium">Medium</option>
-                <option value="hard">Hard</option>
+                {Object.entries(DIFFICULTY_LABELS).map(([value, label]) => (
+                  <option key={value} value={value}>
+                    {label}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
 
           {/* Questions List */}
-          {questionsLoading ? (
-            <div className="flex items-center justify-center py-16 gap-3 text-muted-foreground">
-              <Loader2 className="w-6 h-6 animate-spin" />
-              <span className="text-sm">Loading questions...</span>
+          {isLoading ? (
+            <div className="bg-white rounded-2xl p-8 shadow-card border border-gray-100 text-center">
+              <div className="w-8 h-8 border-2 border-navy-300 border-t-navy-700 rounded-full animate-spin mx-auto mb-3" />
+              <p className="text-gray-500 text-sm">Loading questions...</p>
             </div>
-          ) : questionsError ? (
-            <div className="academic-card text-center py-12">
-              <p className="text-sm text-destructive mb-4">Failed to load questions.</p>
+          ) : isError ? (
+            <div className="bg-white rounded-2xl p-8 shadow-card border border-gray-100 text-center">
+              <p className="text-red-500 text-sm mb-3">Failed to load questions.</p>
               <button
-                onClick={() => refetchQuestions()}
-                className="flex items-center gap-2 mx-auto px-4 py-2 rounded-lg text-sm font-medium border border-border hover:bg-muted transition-colors"
+                onClick={() => refetch()}
+                className="bg-navy-800 hover:bg-navy-700 text-white px-4 py-2 rounded-xl text-sm font-medium"
               >
-                <RefreshCw className="w-4 h-4" />
                 Retry
               </button>
             </div>
           ) : filteredQuestions.length === 0 ? (
-            <div className="academic-card text-center py-12">
-              <Filter className="w-10 h-10 mx-auto mb-3 text-muted-foreground opacity-50" />
-              <p className="text-sm text-muted-foreground">
+            <div className="bg-white rounded-2xl p-8 shadow-card border border-gray-100 text-center">
+              <BookOpen className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+              <h3 className="font-semibold text-navy-800 mb-1">No Questions Found</h3>
+              <p className="text-gray-500 text-sm">
                 {questions.length === 0
-                  ? 'No questions in the bank yet. Add questions to get started.'
+                  ? 'Your question bank is empty. Add questions to get started.'
                   : 'No questions match your current filters.'}
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              {filteredQuestions.map((q) => (
-                <QuestionCard key={String(q.id)} question={q} subjects={subjects} />
+            <div className="space-y-3">
+              <p className="text-sm text-gray-500">
+                Showing {filteredQuestions.length} of {questions.length} questions
+              </p>
+              {filteredQuestions.map((question) => (
+                <QuestionCard
+                  key={String(question.id)}
+                  question={question}
+                  subjectName={getSubjectName(question.subjectId)}
+                  onDelete={(id) => deleteQuestion.mutate(id)}
+                  isDeleting={deleteQuestion.isPending}
+                />
               ))}
             </div>
           )}
         </div>
       )}
 
-      {activeTab === 'subjects' && (
-        <SubjectManager />
-      )}
+      {activeTab === 'subjects' && <SubjectManager />}
     </div>
   );
 }

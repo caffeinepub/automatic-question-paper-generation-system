@@ -6,13 +6,19 @@ interface PDFQuestion {
   category: string;
 }
 
+interface PDFSection {
+  title: string;
+  questions: PDFQuestion[];
+  marksPerQuestion: number;
+}
+
 interface PDFGeneratorOptions {
   subjectName: string;
+  subjectCode?: string;
   examDuration: number;
   totalMarks: number;
   variant: string;
-  sections: Record<string, PDFQuestion[]>;
-  categoryLabel: (cat: string) => string;
+  sections: PDFSection[];
 }
 
 function escapeHtml(text: string): string {
@@ -24,73 +30,31 @@ function escapeHtml(text: string): string {
     .replace(/'/g, '&#039;');
 }
 
-function getSectionMeta(cat: string): { letter: string; title: string; marks: number; instruction: string } {
-  const map: Record<string, { letter: string; title: string; marks: number; instruction: string }> = {
-    mcqOneMark: {
-      letter: 'A',
-      title: 'Multiple Choice Questions',
-      marks: 1,
-      instruction: 'Choose the correct answer. Each question carries 1 mark.',
-    },
-    _2Marks: {
-      letter: 'B',
-      title: 'Short Answer Questions',
-      marks: 2,
-      instruction: 'Answer all questions. Each question carries 2 marks.',
-    },
-    _4Marks: {
-      letter: 'C',
-      title: 'Short Answer Questions',
-      marks: 4,
-      instruction: 'Answer all questions. Each question carries 4 marks.',
-    },
-    _6Marks: {
-      letter: 'D',
-      title: 'Long Answer Questions',
-      marks: 6,
-      instruction: 'Answer all questions. Each question carries 6 marks.',
-    },
-    _8Marks: {
-      letter: 'E',
-      title: 'Long Answer Questions',
-      marks: 8,
-      instruction: 'Answer all questions. Each question carries 8 marks.',
-    },
-  };
-  return map[cat] ?? { letter: '?', title: cat, marks: 0, instruction: '' };
-}
-
 export function generatePDF(opts: PDFGeneratorOptions) {
-  const { subjectName, examDuration, totalMarks, variant, sections, categoryLabel } = opts;
-
-  // Determine section letter ordering based on category keys present
-  const sectionLetters = ['A', 'B', 'C', 'D', 'E'];
-  let usedLetterIdx = 0;
+  const { subjectName, subjectCode, examDuration, totalMarks, variant, sections } = opts;
 
   let questionNumber = 1;
   let sectionsHTML = '';
+  const sectionLetters = ['A', 'B', 'C', 'D', 'E'];
 
-  Object.entries(sections).forEach(([cat, questions]) => {
-    if (questions.length === 0) return;
+  sections.forEach((section, sectionIdx) => {
+    if (section.questions.length === 0) return;
 
-    const meta = getSectionMeta(cat);
-    const sectionLetter = sectionLetters[usedLetterIdx] ?? meta.letter;
-    usedLetterIdx++;
-
-    const totalSectionMarks = meta.marks * questions.length;
+    const sectionLetter = sectionLetters[sectionIdx] ?? String(sectionIdx + 1);
+    const totalSectionMarks = section.marksPerQuestion * section.questions.length;
 
     sectionsHTML += `
       <div class="section">
         <div class="section-header">
           <div class="section-title-row">
             <span class="section-label">SECTION ${sectionLetter}</span>
-            <span class="section-name">${escapeHtml(meta.title)}</span>
+            <span class="section-name">${escapeHtml(section.title)}</span>
             <span class="section-marks">[${totalSectionMarks} Marks]</span>
           </div>
-          <p class="section-instruction">${escapeHtml(meta.instruction)}</p>
+          <p class="section-instruction">Each question carries ${section.marksPerQuestion} mark${section.marksPerQuestion !== 1 ? 's' : ''}.</p>
         </div>
         <ol start="${questionNumber}">
-          ${questions.map((q) => {
+          ${section.questions.map((q) => {
             const qHTML = `
               <li>
                 <div class="question-row">
@@ -107,7 +71,7 @@ export function generatePDF(opts: PDFGeneratorOptions) {
                       </div>
                     ` : ''}
                   </div>
-                  <div class="question-marks">${meta.marks > 0 ? `[${meta.marks}]` : ''}</div>
+                  <div class="question-marks">[${section.marksPerQuestion}]</div>
                 </div>
               </li>
             `;
@@ -388,7 +352,7 @@ export function generatePDF(opts: PDFGeneratorOptions) {
     <table class="paper-info">
       <tr>
         <td class="label">Subject&nbsp;:</td>
-        <td class="value">${escapeHtml(subjectName)}</td>
+        <td class="value">${escapeHtml(subjectName)}${subjectCode ? ` (${escapeHtml(subjectCode)})` : ''}</td>
         <td class="label">Duration&nbsp;:</td>
         <td class="value">${examDuration} Minutes</td>
       </tr>

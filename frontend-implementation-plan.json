@@ -1,132 +1,137 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Restore original application format and colour theme",
+  "title": "Revert ExamCraft Frontend to Version 13",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Restore the original visual colour theme across all pages and components, including the navy-blue academic palette defined in frontend/src/index.css and frontend/tailwind.config.js",
+      "summary": "Revert all frontend pages to Version 13 implementation",
       "acceptanceCriteria": [
-        "All pages render with the original navy-blue academic colour scheme",
-        "CSS custom properties in frontend/src/index.css match the original theme tokens",
-        "Tailwind config colour palette is unchanged from the original configuration",
-        "Dark and light mode colour tokens are intact and functioning"
+        "All frontend pages (Dashboard, Login, QuestionBank, AddQuestion, GeneratePaper, GeneratedPapers, PaperPreview) match their Version 13 implementation",
+        "All frontend components (Layout, StatsCard, WorkflowDiagram, PaperCard, PaperSection, QuestionCard, SubjectManager, EditQuestionModal) match their Version 13 implementation",
+        "All utility files, hooks, styles, and configuration files match their Version 13 state",
+        "No code changes introduced in Versions 14 through 20 remain in the frontend"
       ],
       "file_operations": [
-        {
-          "path": "frontend/src/index.css",
-          "operation": "modify",
-          "description": "Review and restore the original CSS custom properties for the navy-blue academic color theme, ensuring all theme tokens (--primary, --secondary, --accent, --background, --foreground, --card, --muted, etc.) match the original light and dark mode values. Verify Poppins and Inter font imports are intact. Ensure no color values have been altered from the original navy-blue palette."
-        },
-        {
-          "path": "frontend/tailwind.config.js",
-          "operation": "modify",
-          "description": "Review and restore the original Tailwind color palette configuration to match the navy-blue academic theme. Verify the oklch-based color system is intact with the original primary, secondary, accent, and neutral color values. Ensure dark mode configuration ('class' strategy) and custom fonts (Poppins, Inter) remain unchanged from original."
-        }
-      ]
-    },
-    {
-      "id": "REQ-2",
-      "summary": "Restore the original layout and formatting of all application pages including sidebar, navigation, cards, typography, spacing, and component structure to match the original design",
-      "acceptanceCriteria": [
-        "Sidebar in Layout.tsx renders with original navy-blue styling and navigation items",
-        "Dashboard stats cards, workflow diagram, and system overview banner appear in original format",
-        "PaperCard, QuestionCard, StatsCard, and all shared components match original visual design",
-        "Typography (Poppins/Inter fonts) and spacing are consistent with the original design",
-        "No layout shifts, missing styles, or visual regressions compared to original"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/Layout.tsx",
-          "operation": "modify",
-          "description": "Review and restore the original navy-blue sidebar styling, navigation link formatting with icons, user principal display, and logout button appearance. Ensure the fixed sidebar layout, spacing, and color scheme match the original design without any visual modifications."
-        },
         {
           "path": "frontend/src/pages/Dashboard.tsx",
           "operation": "modify",
-          "description": "Review and restore the original dashboard layout including stats cards grid arrangement, system overview banner styling, and workflow diagram placement. Verify all typography, spacing, and color applications match the original design. Ensure icons reference the correct generated assets: frontend/public/assets/generated/icon-subjects.dim_48x48.png, frontend/public/assets/generated/icon-questions.dim_48x48.png, frontend/public/assets/generated/icon-paper-count.dim_48x48.png."
-        },
-        {
-          "path": "frontend/src/components/StatsCard.tsx",
-          "operation": "modify",
-          "description": "Review and restore the original stats card styling including card background, title typography, numeric count display, and colored gradient icon container. Ensure all color values and spacing match the navy-blue academic theme."
-        },
-        {
-          "path": "frontend/src/components/WorkflowDiagram.tsx",
-          "operation": "modify",
-          "description": "Review and restore the original workflow diagram styling including numbered circles, step labels, arrows, and horizontal layout. Verify all colors match the navy-blue theme and spacing is consistent with the original design."
-        },
-        {
-          "path": "frontend/src/components/PaperCard.tsx",
-          "operation": "modify",
-          "description": "Review and restore the original paper card styling including card container, subject name heading, metadata display (duration, marks, date), and button appearance. Ensure all typography, spacing, and colors match the original navy-blue academic theme."
-        },
-        {
-          "path": "frontend/src/components/QuestionCard.tsx",
-          "operation": "modify",
-          "description": "Review and restore the original question card styling including card container, question text display, badge styling for subject/category/difficulty, MCQ options grid layout with correct answer highlighting, and edit/delete button appearance. Verify all colors and spacing match the original design."
+          "description": "Revert Dashboard page to Version 13 implementation, restoring the original welcome banner, stats cards, system overview, and workflow diagram layout"
         },
         {
           "path": "frontend/src/pages/Login.tsx",
           "operation": "modify",
-          "description": "Review and restore the original login page styling including page layout, title typography, Internet Identity login button appearance, and background colors. Ensure all visual elements match the navy-blue academic theme. Verify the college logo references frontend/public/assets/generated/college-logo.dim_200x200.png."
+          "description": "Revert Login page to Version 13 implementation, restoring the original branding, feature highlights, and Internet Identity integration"
         },
         {
           "path": "frontend/src/pages/QuestionBank.tsx",
           "operation": "modify",
-          "description": "Review and restore the original question bank page layout including tab navigation styling, question cards grid arrangement, filter controls appearance, and SubjectManager component integration. Verify all colors, typography, and spacing match the original design. Ensure icons reference frontend/public/assets/generated/icon-question-bank.dim_24x24.png where used in navigation."
-        },
-        {
-          "path": "frontend/src/pages/GeneratePaper.tsx",
-          "operation": "modify",
-          "description": "Review and restore the original generate paper page styling including form layout, subject selector, question count input fields, availability validation display, and generate button appearance. Ensure all typography, spacing, and colors match the navy-blue academic theme. Verify icon references frontend/public/assets/generated/icon-generate.dim_24x24.png if used."
-        },
-        {
-          "path": "frontend/src/pages/GeneratedPapers.tsx",
-          "operation": "modify",
-          "description": "Review and restore the original generated papers page layout including page title, paper cards grid arrangement, empty state styling, and navigation link appearance. Verify all colors and spacing match the original design. Ensure icons reference frontend/public/assets/generated/icon-papers.dim_24x24.png where used."
-        },
-        {
-          "path": "frontend/src/pages/PaperPreview.tsx",
-          "operation": "modify",
-          "description": "Review and restore the original paper preview page styling including paper header display, tab navigation for set variants, question sections layout, and PDF download button appearance. Ensure all typography, spacing, and colors match the navy-blue academic theme."
+          "description": "Revert QuestionBank page to Version 13 implementation, restoring the original tabbed interface for questions and subjects with search and filter controls"
         },
         {
           "path": "frontend/src/pages/AddQuestion.tsx",
           "operation": "modify",
-          "description": "Review and restore the original add question page styling including tab navigation (single/bulk), form field layouts, file upload button appearance, validation error display, and submit button styling. Verify all colors, typography, and spacing match the original navy-blue academic design. Ensure icon references frontend/public/assets/generated/icon-add-question.dim_24x24.png if used."
+          "description": "Revert AddQuestion page to Version 13 implementation, restoring the original form for individual question entry and bulk CSV/JSON upload functionality"
         },
         {
-          "path": "frontend/src/components/SubjectManager.tsx",
+          "path": "frontend/src/pages/GeneratePaper.tsx",
           "operation": "modify",
-          "description": "Review and restore the original subject manager component styling including add subject form layout, input field appearance, subject list display, and delete button styling. Ensure all colors and spacing match the navy-blue academic theme."
+          "description": "Revert GeneratePaper page to Version 13 implementation, restoring the original exam paper configuration form with subject selection and question count inputs"
+        },
+        {
+          "path": "frontend/src/pages/GeneratedPapers.tsx",
+          "operation": "modify",
+          "description": "Revert GeneratedPapers page to Version 13 implementation, restoring the original list view of previously generated papers sorted by creation date"
+        },
+        {
+          "path": "frontend/src/pages/PaperPreview.tsx",
+          "operation": "modify",
+          "description": "Revert PaperPreview page to Version 13 implementation, restoring the original paper preview with variant selection and PDF download functionality"
+        },
+        {
+          "path": "frontend/src/components/Layout.tsx",
+          "operation": "modify",
+          "description": "Revert Layout component to Version 13 implementation, restoring the original sidebar navigation with navy-blue theme, navigation links, user display, and logout button"
+        },
+        {
+          "path": "frontend/src/components/StatsCard.tsx",
+          "operation": "modify",
+          "description": "Revert StatsCard component to Version 13 implementation, restoring the original card design for displaying statistics with icons and gradient styles"
+        },
+        {
+          "path": "frontend/src/components/WorkflowDiagram.tsx",
+          "operation": "modify",
+          "description": "Revert WorkflowDiagram component to Version 13 implementation, restoring the original horizontal step-by-step workflow visualization"
+        },
+        {
+          "path": "frontend/src/components/PaperCard.tsx",
+          "operation": "modify",
+          "description": "Revert PaperCard component to Version 13 implementation, restoring the original summary card for generated exam papers"
         },
         {
           "path": "frontend/src/components/PaperSection.tsx",
           "operation": "modify",
-          "description": "Review and restore the original paper section component styling including section title display, question numbering, question text layout, and MCQ options grid formatting. Verify all typography and spacing match the original design."
+          "description": "Revert PaperSection component to Version 13 implementation, restoring the original section display for exam questions with sequential numbering"
+        },
+        {
+          "path": "frontend/src/components/QuestionCard.tsx",
+          "operation": "modify",
+          "description": "Revert QuestionCard component to Version 13 implementation, restoring the original question display with badges, expandable options, and edit/delete actions"
+        },
+        {
+          "path": "frontend/src/components/SubjectManager.tsx",
+          "operation": "modify",
+          "description": "Revert SubjectManager component to Version 13 implementation, restoring the original UI for adding, editing, and deleting subjects"
         },
         {
           "path": "frontend/src/components/EditQuestionModal.tsx",
           "operation": "modify",
-          "description": "Review and restore the original edit question modal styling including modal dialog container, form field layouts, category/difficulty selectors, MCQ option inputs, and save/cancel button appearance. Ensure all colors, typography, and spacing match the navy-blue academic theme."
-        }
-      ]
-    },
-    {
-      "id": "REQ-3",
-      "summary": "Restore the original PDF/print generation format in frontend/src/utils/pdfGenerator.ts, ensuring the printable HTML exam paper layout matches the original paper format exactly",
-      "acceptanceCriteria": [
-        "PDF download from PaperPreview produces output in the original paper layout",
-        "Exam paper sections, question numbering, and MCQ options render correctly in print view",
-        "Paper header with subject, duration, and total marks displays in original format",
-        "Print layout does not break or reflow when generating PDF"
-      ],
-      "file_operations": [
+          "description": "Revert EditQuestionModal component to Version 13 implementation, restoring the original modal dialog for editing questions with validation"
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Revert App root component to Version 13 implementation, restoring the original TanStack Router configuration with all page routes and AuthGuardedLayout"
+        },
+        {
+          "path": "frontend/src/hooks/useQueries.ts",
+          "operation": "modify",
+          "description": "Revert useQueries hook to Version 13 implementation, restoring the original React Query hooks for CRUD operations on subjects, questions, and papers"
+        },
+        {
+          "path": "frontend/src/utils/csvParser.ts",
+          "operation": "modify",
+          "description": "Revert CSV parser utility to Version 13 implementation, restoring the original parsing logic for question imports with validation"
+        },
+        {
+          "path": "frontend/src/utils/csvTemplate.ts",
+          "operation": "modify",
+          "description": "Revert CSV template generator to Version 13 implementation, restoring the original sample CSV generation for question imports"
+        },
+        {
+          "path": "frontend/src/utils/jsonParser.ts",
+          "operation": "modify",
+          "description": "Revert JSON parser utility to Version 13 implementation, restoring the original parsing logic for question imports with validation"
+        },
         {
           "path": "frontend/src/utils/pdfGenerator.ts",
           "operation": "modify",
-          "description": "Review and restore the original printable HTML exam paper template including paper header format (subject name, duration, total marks, instructions), section labels and numbering, question text formatting, MCQ options layout with letter prefixes, marks display per question, and page break handling. Ensure the print styles, typography, and spacing exactly match the original PDF output format. Verify the college logo references frontend/public/assets/generated/college-logo.dim_200x200.png in the paper header."
+          "description": "Revert PDF generator utility to Version 13 implementation, restoring the original printable HTML exam paper generation"
+        },
+        {
+          "path": "frontend/src/utils/urlParams.ts",
+          "operation": "modify",
+          "description": "Revert URL parameters utility to Version 13 implementation, restoring the original query string and hash-based route parameter handling"
+        },
+        {
+          "path": "frontend/src/index.css",
+          "operation": "modify",
+          "description": "Revert global stylesheet to Version 13 implementation, restoring the original Tailwind configuration with navy-blue academic theme and CSS custom properties"
+        },
+        {
+          "path": "frontend/tailwind.config.js",
+          "operation": "modify",
+          "description": "Revert Tailwind configuration to Version 13 implementation, restoring the original theme extensions with custom fonts, colors, and animations"
         }
       ]
     }
