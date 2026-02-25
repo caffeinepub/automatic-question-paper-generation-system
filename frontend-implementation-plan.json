@@ -1,137 +1,21 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Revert ExamCraft Frontend to Version 13",
+  "title": "Allow non-admin (Teacher) users to add subjects",
   "requirements": [
     {
-      "id": "REQ-1",
-      "summary": "Revert all frontend pages to Version 13 implementation",
+      "id": "REQ-2",
+      "summary": "Remove UI-level admin-only restriction from SubjectManager component so Teacher users can add subjects",
       "acceptanceCriteria": [
-        "All frontend pages (Dashboard, Login, QuestionBank, AddQuestion, GeneratePaper, GeneratedPapers, PaperPreview) match their Version 13 implementation",
-        "All frontend components (Layout, StatsCard, WorkflowDiagram, PaperCard, PaperSection, QuestionCard, SubjectManager, EditQuestionModal) match their Version 13 implementation",
-        "All utility files, hooks, styles, and configuration files match their Version 13 state",
-        "No code changes introduced in Versions 14 through 20 remain in the frontend"
+        "The 'Add Subject' button is visible and enabled for Teacher-role users.",
+        "No 'only admins' warning or disabled state is shown to non-admin authenticated users.",
+        "The Add Subject dialog opens and submits successfully for Teacher users."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/Dashboard.tsx",
-          "operation": "modify",
-          "description": "Revert Dashboard page to Version 13 implementation, restoring the original welcome banner, stats cards, system overview, and workflow diagram layout"
-        },
-        {
-          "path": "frontend/src/pages/Login.tsx",
-          "operation": "modify",
-          "description": "Revert Login page to Version 13 implementation, restoring the original branding, feature highlights, and Internet Identity integration"
-        },
-        {
-          "path": "frontend/src/pages/QuestionBank.tsx",
-          "operation": "modify",
-          "description": "Revert QuestionBank page to Version 13 implementation, restoring the original tabbed interface for questions and subjects with search and filter controls"
-        },
-        {
-          "path": "frontend/src/pages/AddQuestion.tsx",
-          "operation": "modify",
-          "description": "Revert AddQuestion page to Version 13 implementation, restoring the original form for individual question entry and bulk CSV/JSON upload functionality"
-        },
-        {
-          "path": "frontend/src/pages/GeneratePaper.tsx",
-          "operation": "modify",
-          "description": "Revert GeneratePaper page to Version 13 implementation, restoring the original exam paper configuration form with subject selection and question count inputs"
-        },
-        {
-          "path": "frontend/src/pages/GeneratedPapers.tsx",
-          "operation": "modify",
-          "description": "Revert GeneratedPapers page to Version 13 implementation, restoring the original list view of previously generated papers sorted by creation date"
-        },
-        {
-          "path": "frontend/src/pages/PaperPreview.tsx",
-          "operation": "modify",
-          "description": "Revert PaperPreview page to Version 13 implementation, restoring the original paper preview with variant selection and PDF download functionality"
-        },
-        {
-          "path": "frontend/src/components/Layout.tsx",
-          "operation": "modify",
-          "description": "Revert Layout component to Version 13 implementation, restoring the original sidebar navigation with navy-blue theme, navigation links, user display, and logout button"
-        },
-        {
-          "path": "frontend/src/components/StatsCard.tsx",
-          "operation": "modify",
-          "description": "Revert StatsCard component to Version 13 implementation, restoring the original card design for displaying statistics with icons and gradient styles"
-        },
-        {
-          "path": "frontend/src/components/WorkflowDiagram.tsx",
-          "operation": "modify",
-          "description": "Revert WorkflowDiagram component to Version 13 implementation, restoring the original horizontal step-by-step workflow visualization"
-        },
-        {
-          "path": "frontend/src/components/PaperCard.tsx",
-          "operation": "modify",
-          "description": "Revert PaperCard component to Version 13 implementation, restoring the original summary card for generated exam papers"
-        },
-        {
-          "path": "frontend/src/components/PaperSection.tsx",
-          "operation": "modify",
-          "description": "Revert PaperSection component to Version 13 implementation, restoring the original section display for exam questions with sequential numbering"
-        },
-        {
-          "path": "frontend/src/components/QuestionCard.tsx",
-          "operation": "modify",
-          "description": "Revert QuestionCard component to Version 13 implementation, restoring the original question display with badges, expandable options, and edit/delete actions"
-        },
-        {
           "path": "frontend/src/components/SubjectManager.tsx",
           "operation": "modify",
-          "description": "Revert SubjectManager component to Version 13 implementation, restoring the original UI for adding, editing, and deleting subjects"
-        },
-        {
-          "path": "frontend/src/components/EditQuestionModal.tsx",
-          "operation": "modify",
-          "description": "Revert EditQuestionModal component to Version 13 implementation, restoring the original modal dialog for editing questions with validation"
-        },
-        {
-          "path": "frontend/src/App.tsx",
-          "operation": "modify",
-          "description": "Revert App root component to Version 13 implementation, restoring the original TanStack Router configuration with all page routes and AuthGuardedLayout"
-        },
-        {
-          "path": "frontend/src/hooks/useQueries.ts",
-          "operation": "modify",
-          "description": "Revert useQueries hook to Version 13 implementation, restoring the original React Query hooks for CRUD operations on subjects, questions, and papers"
-        },
-        {
-          "path": "frontend/src/utils/csvParser.ts",
-          "operation": "modify",
-          "description": "Revert CSV parser utility to Version 13 implementation, restoring the original parsing logic for question imports with validation"
-        },
-        {
-          "path": "frontend/src/utils/csvTemplate.ts",
-          "operation": "modify",
-          "description": "Revert CSV template generator to Version 13 implementation, restoring the original sample CSV generation for question imports"
-        },
-        {
-          "path": "frontend/src/utils/jsonParser.ts",
-          "operation": "modify",
-          "description": "Revert JSON parser utility to Version 13 implementation, restoring the original parsing logic for question imports with validation"
-        },
-        {
-          "path": "frontend/src/utils/pdfGenerator.ts",
-          "operation": "modify",
-          "description": "Revert PDF generator utility to Version 13 implementation, restoring the original printable HTML exam paper generation"
-        },
-        {
-          "path": "frontend/src/utils/urlParams.ts",
-          "operation": "modify",
-          "description": "Revert URL parameters utility to Version 13 implementation, restoring the original query string and hash-based route parameter handling"
-        },
-        {
-          "path": "frontend/src/index.css",
-          "operation": "modify",
-          "description": "Revert global stylesheet to Version 13 implementation, restoring the original Tailwind configuration with navy-blue academic theme and CSS custom properties"
-        },
-        {
-          "path": "frontend/tailwind.config.js",
-          "operation": "modify",
-          "description": "Revert Tailwind configuration to Version 13 implementation, restoring the original theme extensions with custom fonts, colors, and animations"
+          "description": "Remove the admin-only check from the Add Subject dialog. Currently, the component displays 'Unauthorized: Only admins can add subjects' for non-admin users. Remove the `useGetCallerUserRole` hook call and the conditional rendering that shows the unauthorized message. Ensure the Add Subject dialog is accessible to all authenticated users (including Teacher role). Keep the dialog structure, form validation, and `useAddSubject` mutation intact. Do not modify the Subject data model (name and code fields only)."
         }
       ]
     }

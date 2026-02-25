@@ -9,7 +9,7 @@ interface PaperCardProps {
 
 export default function PaperCard({ paper, subjects }: PaperCardProps) {
   const navigate = useNavigate();
-  const subject = subjects.find((s) => s.id === paper.subjectId);
+  const subject = subjects.find((s) => s.code === paper.subjectId);
 
   const createdDate = new Date(Number(paper.createdAt) / 1_000_000);
   const formattedDate = createdDate.toLocaleDateString('en-IN', {

@@ -1,10 +1,8 @@
 import { useInternetIdentity } from '../hooks/useInternetIdentity';
-import { useQueryClient } from '@tanstack/react-query';
 import { BookOpen, Users, FileText, Shield } from 'lucide-react';
 
 export default function Login() {
-  const { login, loginStatus, identity } = useInternetIdentity();
-  const queryClient = useQueryClient();
+  const { login, loginStatus } = useInternetIdentity();
 
   const isLoggingIn = loginStatus === 'logging-in';
 
@@ -45,7 +43,7 @@ export default function Login() {
         {/* Left Panel - Branding */}
         <div className="text-white space-y-8">
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-2xl overflow-hidden bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center">
+            <div className="w-16 h-16 rounded-2xl overflow-hidden bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center shrink-0">
               <img
                 src="/assets/generated/college-logo.dim_200x200.png"
                 alt="College Logo"
@@ -53,7 +51,7 @@ export default function Login() {
               />
             </div>
             <div>
-              <h1 className="text-2xl font-bold font-poppins">ExamCraft</h1>
+              <h1 className="text-xl font-bold font-poppins leading-tight">Automatic Question Paper Generation System</h1>
               <p className="text-navy-200 text-sm">Intelligent Exam Paper Generator</p>
             </div>
           </div>
@@ -100,7 +98,7 @@ export default function Login() {
             <div className="bg-navy-50 rounded-2xl p-4 border border-navy-100">
               <h3 className="font-semibold text-navy-800 mb-2 text-sm">Secure Authentication</h3>
               <p className="text-navy-600 text-xs leading-relaxed">
-                ExamCraft uses Internet Identity for secure, passwordless authentication. Your identity is cryptographically secured and never stored on any server.
+                This system uses Internet Identity for secure, passwordless authentication. Your identity is cryptographically secured and never stored on any server.
               </p>
             </div>
 

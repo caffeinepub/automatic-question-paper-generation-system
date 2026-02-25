@@ -1,54 +1,54 @@
 {
   "kind": "build_request",
-  "title": "Revert to Version 13",
-  "projectName": "ExamCraft",
-  "priority": "high",
+  "title": "Allow non-admin (Teacher) users to add subjects",
+  "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Revert the entire frontend codebase to its Version 13 state, undoing all changes introduced in Versions 14 through 20. This includes all pages, components, hooks, utilities, styles, and configuration files.",
-      "target": "frontend",
+      "text": "Remove the admin-only restriction on the 'add subject' operation so that all authenticated users (including Teacher role) can add subjects. The backend currently rejects subject creation with 'Unauthorized: Only admins can add subjects' for non-admin principals — this restriction should be lifted so any logged-in user can create subjects.",
+      "target": "backend",
       "source": {
         "messageIds": [
-          "msg-5"
+          "msg-1"
         ],
         "quotes": [
-          "provide me version13"
+          "subject should add",
+          "Unauthorized: Only admins can add subjects"
         ]
       },
       "acceptanceCriteria": [
-        "All frontend pages (Dashboard, Login, QuestionBank, AddQuestion, GeneratePaper, GeneratedPapers, PaperPreview) match their Version 13 implementation",
-        "All frontend components (Layout, StatsCard, WorkflowDiagram, PaperCard, PaperSection, QuestionCard, SubjectManager, EditQuestionModal) match their Version 13 implementation",
-        "All utility files, hooks, styles, and configuration files match their Version 13 state",
-        "No code changes introduced in Versions 14 through 20 remain in the frontend"
+        "A logged-in Teacher user can successfully add a subject via the Add Subject dialog without receiving an 'Unauthorized' error.",
+        "The subject is persisted after submission and appears in the Subjects list.",
+        "Admin users retain the ability to add subjects as before."
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Revert the entire backend codebase to its Version 13 state, undoing all changes introduced in Versions 14 through 20. This includes the main Motoko actor, data types, CRUD operations, and access control logic.",
-      "target": "backend",
+      "text": "Update the SubjectManager frontend component to remove any UI-level guard or messaging that implies only admins can add subjects, so Teacher users see the Add Subject form and button without restriction.",
+      "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-5"
+          "msg-1"
         ],
         "quotes": [
-          "provide me version13"
+          "Unauthorized: Only admins can add subjects"
         ]
       },
       "acceptanceCriteria": [
-        "The backend main.mo actor matches its Version 13 implementation",
-        "All data types, CRUD operations, and role-based access control logic match their Version 13 state",
-        "No code changes introduced in Versions 14 through 20 remain in the backend"
+        "The 'Add Subject' button is visible and enabled for Teacher-role users.",
+        "No 'only admins' warning or disabled state is shown to non-admin authenticated users.",
+        "The Add Subject dialog opens and submits successfully for Teacher users."
       ]
     }
   ],
   "constraints": [
-    "Do not introduce any new features or changes beyond restoring Version 13",
-    "Immutable frontend paths (useInternetIdentity.ts, useActor.ts, main.tsx, components/ui) must not be modified"
+    "Do not change the Subject data model (name and code fields only).",
+    "Do not modify files listed in frontend.immutablePaths."
   ],
   "nonGoals": [
-    "Adding new features",
-    "Applying any changes from Versions 14 through 20"
+    "Adding new fields to the Subject form.",
+    "Changing any other role-based access controls beyond subject creation.",
+    "Modifying question or paper generation permissions."
   ],
   "imageRequirements": {
     "required": [],

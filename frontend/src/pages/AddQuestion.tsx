@@ -210,7 +210,7 @@ export default function AddQuestion() {
                 >
                   <option value="">Select Subject</option>
                   {subjects.map((s) => (
-                    <option key={s.id} value={s.id}>
+                    <option key={s.code} value={s.code}>
                       {s.name}
                     </option>
                   ))}
@@ -415,24 +415,29 @@ export default function AddQuestion() {
                 </button>
               </div>
               <div className="space-y-2 max-h-64 overflow-y-auto">
-                {bulkPreview.slice(0, 10).map((q, idx) => (
+                {bulkPreview.map((q, idx) => (
                   <div key={idx} className="flex items-start gap-3 p-3 bg-gray-50 rounded-xl text-sm">
                     <span className="w-6 h-6 rounded-full bg-navy-100 text-navy-700 text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">
                       {idx + 1}
                     </span>
                     <div className="flex-1 min-w-0">
-                      <p className="text-navy-800 truncate">{q.questionText}</p>
-                      <p className="text-gray-400 text-xs mt-0.5">
-                        {q.subjectId} • {q.category} • {q.difficultyLevel}
-                      </p>
+                      <p className="text-navy-800 line-clamp-2">{q.questionText}</p>
+                      <div className="flex items-center gap-2 mt-1 flex-wrap">
+                        <span className="text-xs bg-navy-100 text-navy-600 px-2 py-0.5 rounded-lg">
+                          {q.subjectId}
+                        </span>
+                        <span className="text-xs text-gray-400">{q.category}</span>
+                        <span className="text-xs text-gray-400">{q.difficultyLevel}</span>
+                      </div>
                     </div>
+                    <button
+                      onClick={() => setBulkPreview((prev) => prev.filter((_, i) => i !== idx))}
+                      className="text-gray-400 hover:text-red-500 transition-colors shrink-0"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
                   </div>
                 ))}
-                {bulkPreview.length > 10 && (
-                  <p className="text-center text-gray-400 text-sm py-2">
-                    +{bulkPreview.length - 10} more questions
-                  </p>
-                )}
               </div>
             </div>
           )}

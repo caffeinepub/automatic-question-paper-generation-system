@@ -45,7 +45,7 @@ export type QuestionCategory = { '_2Marks' : null } |
   { '_4Marks' : null } |
   { 'mcqOneMark' : null };
 export type QuestionId = bigint;
-export interface Subject { 'id' : SubjectId, 'code' : string, 'name' : string }
+export interface Subject { 'code' : string, 'name' : string }
 export type SubjectId = string;
 export interface UserProfile {
   'name' : string,
@@ -69,7 +69,7 @@ export interface _SERVICE {
     QuestionId
   >,
   'addQuestionsInBulk' : ActorMethod<[Array<Question>], bigint>,
-  'addSubject' : ActorMethod<[SubjectId, string, string], undefined>,
+  'addSubject' : ActorMethod<[string, string], undefined>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
   'deletePaper' : ActorMethod<[PaperId], boolean>,
   'deleteQuestion' : ActorMethod<[QuestionId], boolean>,

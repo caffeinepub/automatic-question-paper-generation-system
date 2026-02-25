@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useGetSubjects, useGetAllQuestions, useDeleteQuestion } from '../hooks/useQueries';
 import QuestionCard from '../components/QuestionCard';
 import SubjectManager from '../components/SubjectManager';
-import { Search, Filter, BookOpen, Layers } from 'lucide-react';
+import { Search, BookOpen, Layers } from 'lucide-react';
 import { QuestionCategory, DifficultyLevel } from '../backend';
 
 const CATEGORY_LABELS: Record<string, string> = {
@@ -40,7 +40,7 @@ export default function QuestionBank() {
   });
 
   const getSubjectName = (subjectId: string) => {
-    return subjects.find((s) => s.id === subjectId)?.name ?? subjectId;
+    return subjects.find((s) => s.code === subjectId)?.name ?? subjectId;
   };
 
   return (
@@ -103,7 +103,7 @@ export default function QuestionBank() {
               >
                 <option value="">All Subjects</option>
                 {subjects.map((s) => (
-                  <option key={s.id} value={s.id}>
+                  <option key={s.code} value={s.code}>
                     {s.name}
                   </option>
                 ))}

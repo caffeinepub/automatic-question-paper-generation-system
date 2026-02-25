@@ -98,7 +98,7 @@ export default function GeneratePaper() {
     }
   };
 
-  const selectedSubject = subjects.find((s) => s.id === form.subjectId);
+  const selectedSubject = subjects.find((s) => s.code === form.subjectId);
 
   const questionCounts = form.subjectId
     ? [
@@ -133,7 +133,7 @@ export default function GeneratePaper() {
                 >
                   <option value="">Select Subject</option>
                   {subjects.map((s) => (
-                    <option key={s.id} value={s.id}>
+                    <option key={s.code} value={s.code}>
                       {s.name} ({s.code})
                     </option>
                   ))}
@@ -254,7 +254,7 @@ export default function GeneratePaper() {
           <div className="bg-navy-50 rounded-2xl p-4 border border-navy-100">
             <h3 className="font-semibold text-navy-800 mb-2 text-sm">About Variants</h3>
             <p className="text-navy-600 text-xs leading-relaxed">
-              ExamCraft generates 5 variants (A–E) of your exam paper. Each variant contains the same number of questions but in a different order, helping prevent cheating.
+              The system generates 5 variants (A–E) of your exam paper. Each variant contains the same number of questions but in a different order, helping prevent cheating.
             </p>
           </div>
         </div>

@@ -20,9 +20,9 @@ export function useAddSubject() {
   const { actor } = useActor();
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ id, name, code }: { id: string; name: string; code: string }) => {
+    mutationFn: async ({ name, code }: { name: string; code: string }) => {
       if (!actor) throw new Error('Actor not available');
-      return actor.addSubject(id, name, code);
+      return actor.addSubject(name, code);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['subjects'] });

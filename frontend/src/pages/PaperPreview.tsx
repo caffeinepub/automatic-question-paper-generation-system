@@ -62,7 +62,7 @@ export default function PaperPreview() {
     );
   }
 
-  const subject = subjects.find((s) => s.id === paper.subjectId);
+  const subject = subjects.find((s) => s.code === paper.subjectId);
   const variantData = paper.setVariants.find((v) => v.variant === selectedVariant);
   const variantQuestionIds = variantData?.questions ?? paper.questions;
 
@@ -184,7 +184,7 @@ export default function PaperPreview() {
                 startNumber={
                   sections
                     .slice(0, idx)
-                    .reduce((acc, s) => acc + s.questions.length, 0) + 1
+                    .reduce((acc, s) => acc + s.questions.length, 1)
                 }
               />
             ))

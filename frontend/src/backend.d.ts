@@ -41,7 +41,6 @@ export interface UserProfile {
     department?: string;
 }
 export interface Subject {
-    id: SubjectId;
     code: string;
     name: string;
 }
@@ -65,7 +64,7 @@ export enum UserRole {
 export interface backendInterface {
     addQuestion(subjectId: SubjectId, category: QuestionCategory, questionText: string, options: Array<string> | null, correctAnswer: string | null, difficultyLevel: DifficultyLevel): Promise<QuestionId>;
     addQuestionsInBulk(questionsArray: Array<Question>): Promise<bigint>;
-    addSubject(id: SubjectId, name: string, code: string): Promise<void>;
+    addSubject(name: string, code: string): Promise<void>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
     deletePaper(id: PaperId): Promise<boolean>;
     deleteQuestion(id: QuestionId): Promise<boolean>;

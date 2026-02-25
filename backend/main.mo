@@ -33,7 +33,6 @@ actor {
   };
 
   type Subject = {
-    id : SubjectId;
     name : Text;
     code : Text;
   };
@@ -102,21 +101,18 @@ actor {
     userProfiles.add(caller, profile);
   };
 
-  // ── Subject Management (Admin only) ────────────────────────────────────────
+  // ── Subject Management (User/Admin) ────────────────────────────────────────
 
-  public shared ({ caller }) func addSubject(id : SubjectId, name : Text, code : Text) : async () {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
-      Runtime.trap("Unauthorized: Only admins can add subjects");
+  public shared ({ caller }) func addSubject(name : Text, code : Text) : async () {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only users can add subjects");
     };
-    if (subjects.containsKey(id)) {
-      Runtime.trap("Subject already exists!");
-    };
+
     let subject : Subject = {
-      id;
       name;
       code;
     };
-    subjects.add(id, subject);
+    subjects.add(code, subject);
   };
 
   public shared ({ caller }) func updateSubject(id : SubjectId, name : Text, code : Text) : async Bool {
@@ -126,7 +122,7 @@ actor {
     switch (subjects.get(id)) {
       case (null) { false };
       case (?_) {
-        let updated : Subject = { id; name; code };
+        let updated : Subject = { name; code };
         subjects.add(id, updated);
         true;
       };

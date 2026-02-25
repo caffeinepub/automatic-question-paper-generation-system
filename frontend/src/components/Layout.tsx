@@ -34,7 +34,7 @@ export default function Layout({ children }: LayoutProps) {
       {/* Sidebar */}
       <aside className="w-64 bg-navy-900 text-white flex flex-col shrink-0">
         {/* Logo */}
-        <div className="p-5 border-b border-navy-700">
+        <div className="p-4 border-b border-navy-700">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
               <img
@@ -43,9 +43,8 @@ export default function Layout({ children }: LayoutProps) {
                 className="w-7 h-7 object-contain"
               />
             </div>
-            <div>
-              <h1 className="font-bold text-sm font-poppins">ExamCraft</h1>
-              <p className="text-navy-400 text-xs">Exam Generator</p>
+            <div className="min-w-0">
+              <h1 className="font-bold text-xs font-poppins leading-tight">Automatic Question Paper Generation System</h1>
             </div>
           </div>
         </div>
@@ -78,8 +77,8 @@ export default function Layout({ children }: LayoutProps) {
               <GraduationCap className="w-4 h-4 text-white" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-medium text-white truncate">Teacher</p>
-              <p className="text-xs text-navy-400 truncate">{shortPrincipal}</p>
+              <p className="text-xs text-navy-300 truncate">Teacher</p>
+              <p className="text-xs text-navy-400 truncate font-mono">{shortPrincipal}</p>
             </div>
           </div>
           <button
@@ -90,28 +89,27 @@ export default function Layout({ children }: LayoutProps) {
             Sign Out
           </button>
         </div>
-      </aside>
 
-      {/* Main Content */}
-      <main className="flex-1 overflow-y-auto">
-        <div className="p-6 max-w-6xl mx-auto">
-          {children}
-        </div>
         {/* Footer */}
-        <footer className="px-6 py-4 border-t border-gray-200 text-center">
-          <p className="text-xs text-gray-400">
-            © {new Date().getFullYear()} ExamCraft. Built with{' '}
-            <span className="text-red-400">♥</span> using{' '}
+        <div className="px-4 py-3 border-t border-navy-700">
+          <p className="text-navy-500 text-xs text-center">
+            © {new Date().getFullYear()} Automatic Question Paper Generation System.{' '}
+            Built with ❤ using{' '}
             <a
-              href={`https://caffeine.ai/?utm_source=Caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(typeof window !== 'undefined' ? window.location.hostname : 'examcraft')}`}
+              href={`https://caffeine.ai/?utm_source=Caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(typeof window !== 'undefined' ? window.location.hostname : 'unknown-app')}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-lightblue-600 hover:underline"
+              className="text-navy-400 hover:text-white transition-colors underline"
             >
               caffeine.ai
             </a>
           </p>
-        </footer>
+        </div>
+      </aside>
+
+      {/* Main Content */}
+      <main className="flex-1 overflow-y-auto">
+        {children}
       </main>
     </div>
   );

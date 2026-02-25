@@ -1,12 +1,10 @@
 # Specification
 
 ## Summary
-**Goal:** Revert the entire ExamCraft application (frontend and backend) to its Version 13 state, undoing all changes introduced in Versions 14 through 20.
+**Goal:** Allow Teacher (non-admin) users to add subjects, removing the admin-only restriction on subject creation.
 
 **Planned changes:**
-- Revert all frontend pages (Dashboard, Login, QuestionBank, AddQuestion, GeneratePaper, GeneratedPapers, PaperPreview) to their Version 13 implementation
-- Revert all frontend components (Layout, StatsCard, WorkflowDiagram, PaperCard, PaperSection, QuestionCard, SubjectManager, EditQuestionModal) to their Version 13 implementation
-- Revert all frontend utility files, hooks, styles, and configuration files to their Version 13 state
-- Revert the backend main.mo actor, data types, CRUD operations, and role-based access control logic to their Version 13 state
+- Remove the admin-only guard in the backend subject creation endpoint so any authenticated user can add subjects
+- Remove any UI-level restriction in the SubjectManager frontend component that hides or disables the "Add Subject" button/form for non-admin users
 
-**User-visible outcome:** The application behaves exactly as it did at Version 13, with no features or changes from Versions 14 through 20 present.
+**User-visible outcome:** A logged-in Teacher can open the Add Subject dialog, fill in the subject name and code, and successfully save the subject without receiving an "Unauthorized: Only admins can add subjects" error.

@@ -5,27 +5,32 @@
   "architectural_notes": [],
   "known_issues": [],
   "isFixRequest": false,
-  "existing_features": [
+  "existing_features": [],
+  "new_feature_requests": [
     {
-      "id": "feature-revert-the-entire-frontend-codebase-to-its-version-13-state-undoing-all-changes-introduced-in-versions-14-through-20-this-includes-all-pages-components-hooks-utilities-styles-and-configuration-files",
-      "title": "Revert the entire frontend codebase to its Version 13 state, undoing all changes introduced in Versions 14 through 20. This includes all pages, components, hooks, utilities, styles, and configuration files.",
+      "id": "AR-1",
+      "summary": "Add 'subject' field",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Remove the admin-only restriction on the 'add subject' operation so that all authenticated users (including Teacher role) can add subjects. The backend currently rejects subject creation with 'Unauthorized: Only admins can add subjects' for non-admin principals — this restriction should be lifted so any logged-in user can create subjects.",
       "reqIds": [
         "REQ-1"
       ],
-      "version": 1
-    }
-  ],
-  "new_feature_requests": [
+      "status": "pending"
+    },
     {
-      "id": "AR-2",
-      "summary": "Revert the entire backend codebase to its Version 13 state, undoing all changes introduced in Versions 14 through 20. This includes the main Motoko actor, data types, CRUD operations, and access control logic.",
+      "id": "AR-3",
+      "summary": "Update the SubjectManager frontend component to remove any UI-level guard or messaging that implies only admins can add subjects, so Teacher users see the Add Subject form and button without restriction.",
       "reqIds": [
         "REQ-2"
       ],
       "status": "pending"
     }
   ],
-  "projectName": "ExamCraft",
+  "projectName": "Allow non-admin (Teacher) users to add subjects",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

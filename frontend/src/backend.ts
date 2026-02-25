@@ -123,7 +123,6 @@ export interface UserProfile {
     department?: string;
 }
 export interface Subject {
-    id: SubjectId;
     code: string;
     name: string;
 }
@@ -148,7 +147,7 @@ export interface backendInterface {
     _initializeAccessControlWithSecret(userSecret: string): Promise<void>;
     addQuestion(subjectId: SubjectId, category: QuestionCategory, questionText: string, options: Array<string> | null, correctAnswer: string | null, difficultyLevel: DifficultyLevel): Promise<QuestionId>;
     addQuestionsInBulk(questionsArray: Array<Question>): Promise<bigint>;
-    addSubject(id: SubjectId, name: string, code: string): Promise<void>;
+    addSubject(name: string, code: string): Promise<void>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
     deletePaper(id: PaperId): Promise<boolean>;
     deleteQuestion(id: QuestionId): Promise<boolean>;
@@ -216,17 +215,17 @@ export class Backend implements backendInterface {
             return result;
         }
     }
-    async addSubject(arg0: SubjectId, arg1: string, arg2: string): Promise<void> {
+    async addSubject(arg0: string, arg1: string): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor.addSubject(arg0, arg1, arg2);
+                const result = await this.actor.addSubject(arg0, arg1);
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.addSubject(arg0, arg1, arg2);
+            const result = await this.actor.addSubject(arg0, arg1);
             return result;
         }
     }

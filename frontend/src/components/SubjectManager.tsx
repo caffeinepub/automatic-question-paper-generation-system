@@ -11,7 +11,15 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { PlusCircle, Edit2, Trash2, CheckCircle, AlertCircle } from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogClose,
+} from '@/components/ui/dialog';
+import { PlusCircle, Edit2, Trash2, CheckCircle, AlertCircle, BookMarked } from 'lucide-react';
 import { Subject } from '../backend';
 
 export default function SubjectManager() {
@@ -20,164 +28,250 @@ export default function SubjectManager() {
   const updateSubject = useUpdateSubject();
   const deleteSubject = useDeleteSubject();
 
-  const [showAddForm, setShowAddForm] = useState(false);
+  const [showAddDialog, setShowAddDialog] = useState(false);
   const [editingSubject, setEditingSubject] = useState<Subject | null>(null);
-  const [form, setForm] = useState({ id: '', name: '', code: '' });
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [addForm, setAddForm] = useState({ name: '', code: '' });
+  const [editForm, setEditForm] = useState({ name: '', code: '' });
+  const [addError, setAddError] = useState('');
+  const [editError, setEditError] = useState('');
+  const [deleteError, setDeleteError] = useState('');
 
-  const resetForm = () => {
-    setForm({ id: '', name: '', code: '' });
-    setError('');
-    setSuccess('');
-    setShowAddForm(false);
-    setEditingSubject(null);
+  const resetAddForm = () => {
+    setAddForm({ name: '', code: '' });
+    setAddError('');
   };
 
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
-    setSuccess('');
-    if (!form.id.trim() || !form.name.trim() || !form.code.trim()) {
-      setError('All fields are required.');
+    setAddError('');
+    if (!addForm.name.trim() || !addForm.code.trim()) {
+      setAddError('All fields are required.');
       return;
     }
     try {
-      await addSubject.mutateAsync({ id: form.id.trim(), name: form.name.trim(), code: form.code.trim() });
-      setSuccess('Subject added successfully!');
-      setForm({ id: '', name: '', code: '' });
-      setShowAddForm(false);
+      await addSubject.mutateAsync({
+        name: addForm.name.trim(),
+        code: addForm.code.trim(),
+      });
+      resetAddForm();
+      setShowAddDialog(false);
     } catch (err: any) {
-      setError(err?.message ?? 'Failed to add subject.');
+      setAddError(err?.message ?? 'Failed to add subject.');
     }
   };
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
-    setSuccess('');
+    setEditError('');
     if (!editingSubject) return;
-    if (!form.name.trim() || !form.code.trim()) {
-      setError('Name and code are required.');
+    if (!editForm.name.trim() || !editForm.code.trim()) {
+      setEditError('Name and code are required.');
       return;
     }
     try {
-      await updateSubject.mutateAsync({ id: editingSubject.id, name: form.name.trim(), code: form.code.trim() });
-      setSuccess('Subject updated successfully!');
-      resetForm();
+      await updateSubject.mutateAsync({
+        id: editingSubject.code,
+        name: editForm.name.trim(),
+        code: editForm.code.trim(),
+      });
+      setEditingSubject(null);
+      setEditForm({ name: '', code: '' });
+      setEditError('');
     } catch (err: any) {
-      setError(err?.message ?? 'Failed to update subject.');
+      setEditError(err?.message ?? 'Failed to update subject.');
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (code: string) => {
+    setDeleteError('');
     try {
-      await deleteSubject.mutateAsync(id);
+      await deleteSubject.mutateAsync(code);
     } catch (err: any) {
-      setError(err?.message ?? 'Failed to delete subject.');
+      setDeleteError(err?.message ?? 'Failed to delete subject.');
     }
   };
 
   const startEdit = (subject: Subject) => {
     setEditingSubject(subject);
-    setForm({ id: subject.id, name: subject.name, code: subject.code });
-    setShowAddForm(false);
-    setError('');
-    setSuccess('');
+    setEditForm({ name: subject.name, code: subject.code });
+    setEditError('');
   };
 
   return (
     <div className="space-y-4">
-      {/* Add Subject Button */}
-      {!showAddForm && !editingSubject && (
+      {/* Header row with Add Subject button always visible */}
+      <div className="flex items-center justify-between gap-4">
+        <div>
+          <h2 className="text-lg font-semibold text-navy-900 font-poppins">Subjects</h2>
+          <p className="text-sm text-gray-500">
+            {subjects.length} subject{subjects.length !== 1 ? 's' : ''} in your bank
+          </p>
+        </div>
         <button
-          onClick={() => setShowAddForm(true)}
-          className="flex items-center gap-2 bg-navy-800 hover:bg-navy-700 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors"
+          onClick={() => {
+            resetAddForm();
+            setShowAddDialog(true);
+          }}
+          className="flex items-center gap-2 bg-navy-800 hover:bg-navy-700 active:bg-navy-900 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-colors shadow-md shadow-navy-900/20"
         >
           <PlusCircle className="w-4 h-4" />
           Add Subject
         </button>
-      )}
+      </div>
 
-      {/* Add/Edit Form */}
-      {(showAddForm || editingSubject) && (
-        <div className="bg-white rounded-2xl p-5 shadow-card border border-gray-100">
-          <h3 className="font-semibold text-navy-800 mb-4">
-            {editingSubject ? 'Edit Subject' : 'Add New Subject'}
-          </h3>
-          <form onSubmit={editingSubject ? handleUpdate : handleAdd} className="space-y-3">
-            {!editingSubject && (
-              <div>
-                <label className="block text-sm font-medium text-navy-800 mb-1">Subject ID *</label>
-                <input
-                  type="text"
-                  value={form.id}
-                  onChange={(e) => setForm((p) => ({ ...p, id: e.target.value }))}
-                  placeholder="e.g., CS101"
-                  className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-navy-300"
-                />
-              </div>
-            )}
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block text-sm font-medium text-navy-800 mb-1">Subject Name *</label>
-                <input
-                  type="text"
-                  value={form.name}
-                  onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
-                  placeholder="e.g., Computer Science"
-                  className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-navy-300"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-navy-800 mb-1">Subject Code *</label>
-                <input
-                  type="text"
-                  value={form.code}
-                  onChange={(e) => setForm((p) => ({ ...p, code: e.target.value }))}
-                  placeholder="e.g., CS-101"
-                  className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-navy-300"
-                />
-              </div>
+      {/* Add Subject Dialog */}
+      <Dialog open={showAddDialog} onOpenChange={(open) => {
+        if (!open) resetAddForm();
+        setShowAddDialog(open);
+      }}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-navy-900 font-poppins">Add New Subject</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleAdd} className="space-y-4 pt-2">
+            <div>
+              <label className="block text-sm font-medium text-navy-800 mb-1">
+                Subject Name <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                value={addForm.name}
+                onChange={(e) => setAddForm((p) => ({ ...p, name: e.target.value }))}
+                placeholder="e.g., Computer Science"
+                className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-navy-300"
+                autoFocus
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-navy-800 mb-1">
+                Subject Code <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                value={addForm.code}
+                onChange={(e) => setAddForm((p) => ({ ...p, code: e.target.value }))}
+                placeholder="e.g., CS-101"
+                className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-navy-300"
+              />
             </div>
 
-            {error && (
+            {addError && (
               <div className="flex items-center gap-2 text-red-600 bg-red-50 rounded-xl px-3 py-2 text-sm">
                 <AlertCircle className="w-4 h-4 shrink-0" />
-                {error}
-              </div>
-            )}
-            {success && (
-              <div className="flex items-center gap-2 text-green-600 bg-green-50 rounded-xl px-3 py-2 text-sm">
-                <CheckCircle className="w-4 h-4 shrink-0" />
-                {success}
+                {addError}
               </div>
             )}
 
-            <div className="flex gap-2">
+            <DialogFooter className="pt-2">
+              <DialogClose asChild>
+                <button
+                  type="button"
+                  className="border border-gray-200 hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-xl text-sm font-medium transition-colors"
+                >
+                  Cancel
+                </button>
+              </DialogClose>
               <button
                 type="submit"
-                disabled={addSubject.isPending || updateSubject.isPending}
-                className="bg-navy-800 hover:bg-navy-700 disabled:opacity-60 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors flex items-center gap-2"
+                disabled={addSubject.isPending}
+                className="bg-navy-800 hover:bg-navy-700 disabled:opacity-60 text-white px-5 py-2 rounded-xl text-sm font-semibold transition-colors flex items-center gap-2"
               >
-                {(addSubject.isPending || updateSubject.isPending) ? (
+                {addSubject.isPending ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    Adding...
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle className="w-4 h-4" />
+                    Add Subject
+                  </>
+                )}
+              </button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Subject Dialog */}
+      <Dialog open={!!editingSubject} onOpenChange={(open) => {
+        if (!open) {
+          setEditingSubject(null);
+          setEditForm({ name: '', code: '' });
+          setEditError('');
+        }
+      }}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-navy-900 font-poppins">Edit Subject</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleUpdate} className="space-y-4 pt-2">
+            <div>
+              <label className="block text-sm font-medium text-navy-800 mb-1">
+                Subject Name <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                value={editForm.name}
+                onChange={(e) => setEditForm((p) => ({ ...p, name: e.target.value }))}
+                placeholder="e.g., Computer Science"
+                className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-navy-300"
+                autoFocus
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-navy-800 mb-1">
+                Subject Code <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                value={editForm.code}
+                onChange={(e) => setEditForm((p) => ({ ...p, code: e.target.value }))}
+                placeholder="e.g., CS-101"
+                className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-navy-300"
+              />
+            </div>
+
+            {editError && (
+              <div className="flex items-center gap-2 text-red-600 bg-red-50 rounded-xl px-3 py-2 text-sm">
+                <AlertCircle className="w-4 h-4 shrink-0" />
+                {editError}
+              </div>
+            )}
+
+            <DialogFooter className="pt-2">
+              <DialogClose asChild>
+                <button
+                  type="button"
+                  className="border border-gray-200 hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-xl text-sm font-medium transition-colors"
+                >
+                  Cancel
+                </button>
+              </DialogClose>
+              <button
+                type="submit"
+                disabled={updateSubject.isPending}
+                className="bg-navy-800 hover:bg-navy-700 disabled:opacity-60 text-white px-5 py-2 rounded-xl text-sm font-semibold transition-colors flex items-center gap-2"
+              >
+                {updateSubject.isPending ? (
                   <>
                     <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                     Saving...
                   </>
                 ) : (
-                  editingSubject ? 'Update Subject' : 'Add Subject'
+                  'Update Subject'
                 )}
               </button>
-              <button
-                type="button"
-                onClick={resetForm}
-                className="border border-gray-200 hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-xl text-sm font-medium transition-colors"
-              >
-                Cancel
-              </button>
-            </div>
+            </DialogFooter>
           </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete error */}
+      {deleteError && (
+        <div className="flex items-center gap-2 text-red-600 bg-red-50 rounded-xl px-3 py-2 text-sm">
+          <AlertCircle className="w-4 h-4 shrink-0" />
+          {deleteError}
         </div>
       )}
 
@@ -188,35 +282,52 @@ export default function SubjectManager() {
           <p className="text-gray-500 text-sm">Loading subjects...</p>
         </div>
       ) : subjects.length === 0 ? (
-        <div className="bg-white rounded-2xl p-8 shadow-card border border-gray-100 text-center">
-          <p className="text-gray-500 text-sm">No subjects yet. Add your first subject above.</p>
+        <div className="bg-white rounded-2xl p-10 shadow-card border border-gray-100 text-center">
+          <BookMarked className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+          <h3 className="font-semibold text-navy-800 mb-1">No Subjects Yet</h3>
+          <p className="text-gray-500 text-sm mb-4">
+            Get started by adding your first subject using the button above.
+          </p>
+          <button
+            onClick={() => {
+              resetAddForm();
+              setShowAddDialog(true);
+            }}
+            className="inline-flex items-center gap-2 bg-navy-800 hover:bg-navy-700 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-colors"
+          >
+            <PlusCircle className="w-4 h-4" />
+            Add Your First Subject
+          </button>
         </div>
       ) : (
         <div className="space-y-2">
           {subjects.map((subject) => (
             <div
-              key={subject.id}
+              key={subject.code}
               className="bg-white rounded-2xl p-4 shadow-card border border-gray-100 flex items-center justify-between gap-3"
             >
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
                   <span className="font-semibold text-navy-800 text-sm">{subject.name}</span>
-                  <span className="text-xs bg-navy-100 text-navy-600 px-2 py-0.5 rounded-lg">
+                  <span className="text-xs bg-navy-100 text-navy-600 px-2 py-0.5 rounded-lg font-medium">
                     {subject.code}
                   </span>
                 </div>
-                <p className="text-xs text-gray-400 mt-0.5">ID: {subject.id}</p>
               </div>
               <div className="flex items-center gap-1 shrink-0">
                 <button
                   onClick={() => startEdit(subject)}
                   className="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center text-gray-400 hover:text-navy-600 transition-colors"
+                  title="Edit subject"
                 >
                   <Edit2 className="w-3.5 h-3.5" />
                 </button>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
-                    <button className="w-8 h-8 rounded-lg hover:bg-red-50 flex items-center justify-center text-gray-400 hover:text-red-500 transition-colors">
+                    <button
+                      className="w-8 h-8 rounded-lg hover:bg-red-50 flex items-center justify-center text-gray-400 hover:text-red-500 transition-colors"
+                      title="Delete subject"
+                    >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
                   </AlertDialogTrigger>
@@ -230,7 +341,7 @@ export default function SubjectManager() {
                     <AlertDialogFooter>
                       <AlertDialogCancel>Cancel</AlertDialogCancel>
                       <AlertDialogAction
-                        onClick={() => handleDelete(subject.id)}
+                        onClick={() => handleDelete(subject.code)}
                         className="bg-red-600 hover:bg-red-700 text-white"
                       >
                         Delete

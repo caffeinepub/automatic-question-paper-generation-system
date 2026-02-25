@@ -58,11 +58,7 @@ export const UserProfile = IDL.Record({
   'designation' : IDL.Opt(IDL.Text),
   'department' : IDL.Opt(IDL.Text),
 });
-export const Subject = IDL.Record({
-  'id' : SubjectId,
-  'code' : IDL.Text,
-  'name' : IDL.Text,
-});
+export const Subject = IDL.Record({ 'code' : IDL.Text, 'name' : IDL.Text });
 
 export const idlService = IDL.Service({
   '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
@@ -79,7 +75,7 @@ export const idlService = IDL.Service({
       [],
     ),
   'addQuestionsInBulk' : IDL.Func([IDL.Vec(Question)], [IDL.Nat], []),
-  'addSubject' : IDL.Func([SubjectId, IDL.Text, IDL.Text], [], []),
+  'addSubject' : IDL.Func([IDL.Text, IDL.Text], [], []),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
   'deletePaper' : IDL.Func([PaperId], [IDL.Bool], []),
   'deleteQuestion' : IDL.Func([QuestionId], [IDL.Bool], []),
@@ -181,11 +177,7 @@ export const idlFactory = ({ IDL }) => {
     'designation' : IDL.Opt(IDL.Text),
     'department' : IDL.Opt(IDL.Text),
   });
-  const Subject = IDL.Record({
-    'id' : SubjectId,
-    'code' : IDL.Text,
-    'name' : IDL.Text,
-  });
+  const Subject = IDL.Record({ 'code' : IDL.Text, 'name' : IDL.Text });
   
   return IDL.Service({
     '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
@@ -202,7 +194,7 @@ export const idlFactory = ({ IDL }) => {
         [],
       ),
     'addQuestionsInBulk' : IDL.Func([IDL.Vec(Question)], [IDL.Nat], []),
-    'addSubject' : IDL.Func([SubjectId, IDL.Text, IDL.Text], [], []),
+    'addSubject' : IDL.Func([IDL.Text, IDL.Text], [], []),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
     'deletePaper' : IDL.Func([PaperId], [IDL.Bool], []),
     'deleteQuestion' : IDL.Func([QuestionId], [IDL.Bool], []),
