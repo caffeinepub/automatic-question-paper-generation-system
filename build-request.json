@@ -1,0 +1,82 @@
+{
+  "kind": "build_request",
+  "title": "Restore original application format and colour theme",
+  "projectName": "Exam Paper Generator",
+  "priority": "high",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "text": "Restore the original visual colour theme across all pages and components, including the navy-blue academic palette defined in frontend/src/index.css and frontend/tailwind.config.js, ensuring no colour tokens, gradients, or theme variables have been altered from the original.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-6"
+        ],
+        "quotes": [
+          "provide original format of applications...colour theme and all dont change"
+        ]
+      },
+      "acceptanceCriteria": [
+        "All pages render with the original navy-blue academic colour scheme",
+        "CSS custom properties in frontend/src/index.css match the original theme tokens",
+        "Tailwind config colour palette is unchanged from the original configuration",
+        "Dark and light mode colour tokens are intact and functioning"
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "text": "Restore the original layout and formatting of all application pages (Dashboard, Login, QuestionBank, GeneratePaper, GeneratedPapers, PaperPreview, AddQuestion) including sidebar, navigation, cards, typography, spacing, and component structure to match the original design without any visual modifications.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-6"
+        ],
+        "quotes": [
+          "provide original format of applications...colour theme and all dont change"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Sidebar in Layout.tsx renders with original navy-blue styling and navigation items",
+        "Dashboard stats cards, workflow diagram, and system overview banner appear in original format",
+        "PaperCard, QuestionCard, StatsCard, and all shared components match original visual design",
+        "Typography (Poppins/Inter fonts) and spacing are consistent with the original design",
+        "No layout shifts, missing styles, or visual regressions compared to original"
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "text": "Restore the original PDF/print generation format in frontend/src/utils/pdfGenerator.ts, ensuring the printable HTML exam paper layout, section labels, question formatting, MCQ option layout, marks display, and instructions all match the original paper format exactly as it was before any modifications.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-6"
+        ],
+        "quotes": [
+          "provide original format of applications...colour theme and all dont change"
+        ]
+      },
+      "acceptanceCriteria": [
+        "PDF download from PaperPreview produces output in the original paper layout",
+        "Exam paper sections, question numbering, and MCQ options render correctly in print view",
+        "Paper header with subject, duration, and total marks displays in original format",
+        "Print layout does not break or reflow when generating PDF"
+      ]
+    }
+  ],
+  "constraints": [
+    "Do not change any existing functionality — only restore visual/format elements to original state",
+    "Do not modify immutable paths: frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, frontend/src/components/ui",
+    "Do not alter backend logic in backend/main.mo",
+    "Colour theme must remain navy-blue academic palette — do not introduce new colours"
+  ],
+  "nonGoals": [
+    "Adding new features or pages",
+    "Changing authentication flow",
+    "Modifying backend data models or CRUD operations",
+    "Introducing a new design system or colour palette"
+  ],
+  "imageRequirements": {
+    "required": [],
+    "edits": []
+  }
+}

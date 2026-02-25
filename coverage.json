@@ -1,0 +1,104 @@
+{
+  "kind": "coverage_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-25T06:36:23.141Z",
+  "sources": {
+    "buildRequest": true,
+    "implementationPlan": true
+  },
+  "requirements": {
+    "total": 3,
+    "implemented": 2,
+    "items": [
+      {
+        "id": "REQ-1",
+        "summary": "Restore the original visual colour theme across all pages and components, including the navy-blue academic palette defined in frontend/src/index.css and frontend/tailwind.config.js, ensuring no colour tokens, gradients, or theme variables have been altered from the original.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/index.css",
+          "frontend/tailwind.config.js"
+        ],
+        "matchedFiles": [
+          "frontend/src/index.css",
+          "frontend/tailwind.config.js"
+        ]
+      },
+      {
+        "id": "REQ-2",
+        "summary": "Restore the original layout and formatting of all application pages (Dashboard, Login, QuestionBank, GeneratePaper, GeneratedPapers, PaperPreview, AddQuestion) including sidebar, navigation, cards, typography, spacing, and component structure to match the original design without any visual modifications.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/Layout.tsx",
+          "frontend/src/pages/Dashboard.tsx",
+          "frontend/src/components/StatsCard.tsx",
+          "frontend/src/components/WorkflowDiagram.tsx",
+          "frontend/src/components/PaperCard.tsx",
+          "frontend/src/components/QuestionCard.tsx",
+          "frontend/src/pages/Login.tsx",
+          "frontend/src/pages/QuestionBank.tsx",
+          "frontend/src/pages/GeneratePaper.tsx",
+          "frontend/src/pages/GeneratedPapers.tsx",
+          "frontend/src/pages/PaperPreview.tsx",
+          "frontend/src/pages/AddQuestion.tsx",
+          "frontend/src/components/SubjectManager.tsx",
+          "frontend/src/components/PaperSection.tsx",
+          "frontend/src/components/EditQuestionModal.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/Layout.tsx",
+          "frontend/src/pages/Dashboard.tsx",
+          "frontend/src/components/StatsCard.tsx",
+          "frontend/src/components/WorkflowDiagram.tsx",
+          "frontend/src/components/PaperCard.tsx",
+          "frontend/src/components/QuestionCard.tsx",
+          "frontend/src/pages/Login.tsx",
+          "frontend/src/pages/QuestionBank.tsx",
+          "frontend/src/pages/GeneratePaper.tsx",
+          "frontend/src/pages/GeneratedPapers.tsx",
+          "frontend/src/pages/PaperPreview.tsx",
+          "frontend/src/pages/AddQuestion.tsx",
+          "frontend/src/components/SubjectManager.tsx",
+          "frontend/src/components/PaperSection.tsx",
+          "frontend/src/components/EditQuestionModal.tsx"
+        ]
+      },
+      {
+        "id": "REQ-3",
+        "summary": "Restore the original PDF/print generation format in frontend/src/utils/pdfGenerator.ts, ensuring the printable HTML exam paper layout, section labels, question formatting, MCQ option layout, marks display, and instructions all match the original paper format exactly as it was before any modifications.",
+        "status": "missing",
+        "plannedFiles": [
+          "frontend/src/utils/pdfGenerator.ts"
+        ],
+        "matchedFiles": []
+      }
+    ]
+  },
+  "changedFiles": [
+    "build-request.json",
+    "feature_evidence.json",
+    "frontend-file-summaries.txt",
+    "frontend-implementation-plan.json",
+    "frontend/src/App.tsx",
+    "frontend/src/components/EditQuestionModal.tsx",
+    "frontend/src/components/Layout.tsx",
+    "frontend/src/components/PaperCard.tsx",
+    "frontend/src/components/PaperSection.tsx",
+    "frontend/src/components/QuestionCard.tsx",
+    "frontend/src/components/StatsCard.tsx",
+    "frontend/src/components/SubjectManager.tsx",
+    "frontend/src/components/WorkflowDiagram.tsx",
+    "frontend/src/index.css",
+    "frontend/src/pages/AddQuestion.tsx",
+    "frontend/src/pages/Dashboard.tsx",
+    "frontend/src/pages/GeneratePaper.tsx",
+    "frontend/src/pages/GeneratedPapers.tsx",
+    "frontend/src/pages/Login.tsx",
+    "frontend/src/pages/PaperPreview.tsx",
+    "frontend/src/pages/QuestionBank.tsx",
+    "frontend/tailwind.config.js",
+    "project_state.json",
+    "scratch/component-selection.json",
+    "spec.md",
+    "spec_vs_diff_report.json"
+  ]
+}

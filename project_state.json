@@ -1,0 +1,48 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 3,
+  "summary": "PDF/document application with specific colour theme and original format that must be preserved.",
+  "architectural_notes": [
+    "Original application format and colour theme must be preserved — do not alter layout, colours, or styling"
+  ],
+  "known_issues": [],
+  "isFixRequest": true,
+  "existing_features": [
+    {
+      "id": "feature-restore-the-original-visual-colour-theme-across-all-pages-and-components-including-the-navy-blue-academic-palette-defined-in-frontend-src-index-css-and-frontend-tailwind-config-js-ensuring-no-colour-tokens-gradients-or-theme-variables-have-been-altered-from-the-original",
+      "title": "Restore the original visual colour theme across all pages and components, including the navy-blue academic palette defined in frontend/src/index.css and frontend/tailwind.config.js, ensuring no colour tokens, gradients, or theme variables have been altered from the original.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-restore-the-original-layout-and-formatting-of-all-application-pages-dashboard-login-questionbank-generatepaper-generatedpapers-paperpreview-addquestion-including-sidebar-navigation-cards-typography-spacing-and-component-structure-to-match-the-original-design-without-any-visual-modifications",
+      "title": "Restore the original layout and formatting of all application pages (Dashboard, Login, QuestionBank, GeneratePaper, GeneratedPapers, PaperPreview, AddQuestion) including sidebar, navigation, cards, typography, spacing, and component structure to match the original design without any visual modifications.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Restore and preserve original format of applications including colour theme without any changes",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Restore the original PDF/print generation format in frontend/src/utils/pdfGenerator.ts, ensuring the printable HTML exam paper layout, section labels, question formatting, MCQ option layout, marks display, and instructions all match the original paper format exactly as it was before any modifications.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "status": "pending"
+    }
+  ],
+  "gameProjectType": "none",
+  "projectName": "Exam Paper Generator",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}

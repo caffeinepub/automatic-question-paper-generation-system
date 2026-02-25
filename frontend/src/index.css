@@ -1,0 +1,168 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: oklch(0.97 0.005 240);
+    --foreground: oklch(0.15 0.03 240);
+
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.15 0.03 240);
+
+    --popover: oklch(1 0 0);
+    --popover-foreground: oklch(0.15 0.03 240);
+
+    --primary: oklch(0.28 0.08 240);
+    --primary-foreground: oklch(0.97 0.005 240);
+
+    --secondary: oklch(0.45 0.12 220);
+    --secondary-foreground: oklch(0.97 0.005 240);
+
+    --accent: oklch(0.55 0.15 210);
+    --accent-foreground: oklch(0.97 0.005 240);
+
+    --muted: oklch(0.92 0.01 240);
+    --muted-foreground: oklch(0.45 0.03 240);
+
+    --destructive: oklch(0.55 0.22 25);
+    --destructive-foreground: oklch(0.97 0.005 240);
+
+    --border: oklch(0.85 0.02 240);
+    --input: oklch(0.85 0.02 240);
+    --ring: oklch(0.45 0.12 220);
+
+    --success: oklch(0.55 0.15 145);
+    --success-foreground: oklch(0.97 0.005 240);
+
+    --warning: oklch(0.75 0.18 75);
+    --warning-foreground: oklch(0.15 0.03 240);
+
+    --radius: 0.5rem;
+
+    /* Navy blue academic theme custom tokens */
+    --navy-900: oklch(0.18 0.07 240);
+    --navy-800: oklch(0.22 0.08 240);
+    --navy-700: oklch(0.28 0.08 240);
+    --navy-600: oklch(0.35 0.09 235);
+    --navy-500: oklch(0.42 0.10 230);
+    --navy-400: oklch(0.52 0.11 225);
+    --navy-300: oklch(0.65 0.10 220);
+    --navy-200: oklch(0.80 0.07 220);
+    --navy-100: oklch(0.92 0.04 220);
+    --navy-50: oklch(0.96 0.02 220);
+
+    --lightblue-600: oklch(0.50 0.14 210);
+    --lightblue-500: oklch(0.58 0.16 205);
+    --lightblue-400: oklch(0.66 0.15 200);
+    --lightblue-300: oklch(0.74 0.12 200);
+    --lightblue-200: oklch(0.84 0.08 200);
+    --lightblue-100: oklch(0.93 0.04 200);
+    --lightblue-50: oklch(0.97 0.02 200);
+
+    --sidebar-bg: oklch(0.18 0.07 240);
+    --sidebar-text: oklch(0.85 0.04 220);
+    --sidebar-active: oklch(0.45 0.12 220);
+    --sidebar-hover: oklch(0.25 0.07 240);
+    --sidebar-border: oklch(0.28 0.06 240);
+  }
+
+  .dark {
+    --background: oklch(0.12 0.04 240);
+    --foreground: oklch(0.92 0.02 220);
+
+    --card: oklch(0.16 0.05 240);
+    --card-foreground: oklch(0.92 0.02 220);
+
+    --popover: oklch(0.16 0.05 240);
+    --popover-foreground: oklch(0.92 0.02 220);
+
+    --primary: oklch(0.65 0.12 220);
+    --primary-foreground: oklch(0.12 0.04 240);
+
+    --secondary: oklch(0.45 0.10 220);
+    --secondary-foreground: oklch(0.92 0.02 220);
+
+    --accent: oklch(0.55 0.14 210);
+    --accent-foreground: oklch(0.92 0.02 220);
+
+    --muted: oklch(0.22 0.04 240);
+    --muted-foreground: oklch(0.60 0.04 230);
+
+    --destructive: oklch(0.55 0.22 25);
+    --destructive-foreground: oklch(0.97 0.005 240);
+
+    --border: oklch(0.28 0.05 240);
+    --input: oklch(0.28 0.05 240);
+    --ring: oklch(0.55 0.14 210);
+
+    --success: oklch(0.55 0.15 145);
+    --success-foreground: oklch(0.97 0.005 240);
+
+    --warning: oklch(0.75 0.18 75);
+    --warning-foreground: oklch(0.15 0.03 240);
+
+    --sidebar-bg: oklch(0.12 0.05 240);
+    --sidebar-text: oklch(0.80 0.04 220);
+    --sidebar-active: oklch(0.40 0.12 220);
+    --sidebar-hover: oklch(0.20 0.06 240);
+    --sidebar-border: oklch(0.22 0.05 240);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', sans-serif;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Poppins', sans-serif;
+  }
+}
+
+@layer utilities {
+  .sidebar-nav-item {
+    @apply flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200;
+    color: var(--sidebar-text);
+  }
+  .sidebar-nav-item:hover {
+    background-color: var(--sidebar-hover);
+  }
+  .sidebar-nav-item.active {
+    background-color: var(--sidebar-active);
+    color: white;
+  }
+  .academic-card {
+    @apply bg-card rounded-xl shadow-md border border-border p-6;
+  }
+  .academic-btn-primary {
+    @apply px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200;
+    background-color: var(--navy-700);
+    color: white;
+  }
+  .academic-btn-primary:hover {
+    background-color: var(--navy-800);
+  }
+  .academic-btn-secondary {
+    @apply px-6 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 border;
+    border-color: var(--navy-700);
+    color: var(--navy-700);
+  }
+  .academic-btn-secondary:hover {
+    background-color: var(--navy-50);
+  }
+  .stats-gradient-blue {
+    background: linear-gradient(135deg, oklch(0.45 0.12 220), oklch(0.35 0.10 235));
+  }
+  .stats-gradient-teal {
+    background: linear-gradient(135deg, oklch(0.55 0.14 185), oklch(0.45 0.12 200));
+  }
+  .stats-gradient-indigo {
+    background: linear-gradient(135deg, oklch(0.45 0.15 270), oklch(0.38 0.14 255));
+  }
+}

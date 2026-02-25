@@ -1,0 +1,58 @@
+{
+  "kind": "feature_evidence_report",
+  "features": [
+    {
+      "featureId": "feature-restore-the-original-visual-colour-theme-across-all-pages-and-components-including-the-navy-blue-academic-palette-defined-in-frontend-src-index-css-and-frontend-tailwind-config-js-ensuring-no-colour-tokens-gradients-or-theme-variables-have-been-altered-from-the-original",
+      "featureTitle": "Restore the original visual colour theme across all pages and components, including the navy-blue academic palette defined in frontend/src/index.css and frontend/tailwind.config.js, ensuring no colour tokens, gradients, or theme variables have been altered from the original.",
+      "files": [
+        "frontend/src/index.css",
+        "frontend/tailwind.config.js"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0"
+      ],
+      "testIds": [
+        "REQ-1"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-restore-the-original-layout-and-formatting-of-all-application-pages-dashboard-login-questionbank-generatepaper-generatedpapers-paperpreview-addquestion-including-sidebar-navigation-cards-typography-spacing-and-component-structure-to-match-the-original-design-without-any-visual-modifications",
+      "featureTitle": "Restore the original layout and formatting of all application pages (Dashboard, Login, QuestionBank, GeneratePaper, GeneratedPapers, PaperPreview, AddQuestion) including sidebar, navigation, cards, typography, spacing, and component structure to match the original design without any visual modifications.",
+      "files": [
+        "frontend/src/components/EditQuestionModal.tsx",
+        "frontend/src/components/Layout.tsx",
+        "frontend/src/components/PaperCard.tsx",
+        "frontend/src/components/PaperSection.tsx",
+        "frontend/src/components/QuestionCard.tsx",
+        "frontend/src/components/StatsCard.tsx",
+        "frontend/src/components/SubjectManager.tsx",
+        "frontend/src/components/WorkflowDiagram.tsx",
+        "frontend/src/pages/AddQuestion.tsx",
+        "frontend/src/pages/Dashboard.tsx",
+        "frontend/src/pages/GeneratePaper.tsx",
+        "frontend/src/pages/GeneratedPapers.tsx",
+        "frontend/src/pages/Login.tsx",
+        "frontend/src/pages/PaperPreview.tsx",
+        "frontend/src/pages/QuestionBank.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0"
+      ],
+      "testIds": [
+        "REQ-2"
+      ],
+      "confidence": "high"
+    }
+  ]
+}
